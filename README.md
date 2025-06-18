@@ -1,24 +1,28 @@
 # IT Tools MCP Server
 
-A comprehensive Model Context Protocol (MCP) server that provides access to 72+ IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to 70+ IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 ## Features
 
-### 🔧 Encoding & Decoding Tools (8 tools)
+### 🔧 Encoding & Decoding Tools (9 tools)
+
 - **Base64**: Encode and decode Base64 strings
 - **URL**: URL encoding and decoding  
 - **HTML**: HTML entity encoding and decoding (basic and extended)
 - **Text to Binary**: Convert text to binary and vice versa
+- **Text to Unicode**: Convert text to Unicode and vice versa
 
-### 📝 Data Format Tools (10 tools)
-- **JSON**: Format, minify, validate, and convert JSON to CSV
+### 📝 Data Format Tools (11 tools)
+
+- **JSON**: Format, minify, validate, convert to CSV/TOML, and compare differences
 - **XML**: Format and prettify XML
 - **YAML**: Format and prettify YAML
 - **SQL**: Format and prettify SQL queries
-- **TOML**: Convert between TOML and JSON formats
+- **TOML**: Convert TOML to JSON format
 - **Markdown ↔ HTML**: Convert between Markdown and HTML formats
 
-### 🔐 Security & Crypto Tools (11 tools)
+### 🔐 Security & Crypto Tools (12 tools)
+
 - **Hashing**: Generate MD5, SHA1, SHA256, SHA512 hashes
 - **HMAC**: Generate Hash-based Message Authentication Codes
 - **Bcrypt**: Generate bcrypt hashes and verify passwords
@@ -29,7 +33,8 @@ A comprehensive Model Context Protocol (MCP) server that provides access to 72+ 
 - **Token Generator**: Generate secure random tokens
 - **OTP Generator**: Generate Time-based One-Time Password codes
 
-### ✨ Text Processing Tools (13 tools)
+### ✨ Text Processing Tools (16 tools)
+
 - **Case Conversion**: UPPERCASE, lowercase, camelCase, PascalCase, kebab-case, snake_case, Capitalize
 - **Text Statistics**: Analyze character count, word count, lines, paragraphs
 - **Text Comparison**: Compare two texts and show differences
@@ -42,6 +47,7 @@ A comprehensive Model Context Protocol (MCP) server that provides access to 72+ 
 - **Emoji Search**: Search for emojis by name or category
 
 ### 🌐 Network & Web Tools (8 tools)
+
 - **IPv4 Subnet Calculator**: Calculate subnet information and network details
 - **IPv6 ULA Generator**: Generate IPv6 Unique Local Address prefixes
 - **URL Parser**: Parse URLs into components (protocol, host, path, etc.)
@@ -51,55 +57,60 @@ A comprehensive Model Context Protocol (MCP) server that provides access to 72+ 
 - **IBAN Validator**: Validate and parse International Bank Account Numbers
 
 ### 🔢 Math & Calculation Tools (6 tools)
+
 - **Math Evaluator**: Evaluate mathematical expressions safely
 - **Base Converter**: Convert numbers between different bases (2-36)
 - **Roman Numerals**: Convert between decimal and Roman numerals
 - **Temperature Converter**: Convert between Celsius, Fahrenheit, and Kelvin
 - **Percentage Calculator**: Calculate percentages and percentage changes
 
-### 🆔 ID & Code Generators (6 tools)
+### 🆔 ID & Code Generators (5 tools)
+
 - **UUID**: Generate random UUID v4
 - **ULID**: Generate Universally Unique Lexicographically Sortable Identifiers
-- **QR Code**: Generate ASCII QR codes for text
+- **QR Code**: Generate ASCII QR codes for text (with image output)
 - **WiFi QR Code**: Generate QR code data for WiFi network connection
 - **SVG Placeholder**: Generate SVG placeholder images with custom dimensions
 
-### 🔧 Development Tools (8 tools)
+### 🔧 Development Tools (6 tools)
+
 - **Regex Tester**: Test regular expressions against text with flags support
 - **Crontab Generator**: Generate cron expressions with human-readable descriptions
-- **JSON Diff**: Compare two JSON objects and highlight differences
 - **List Converter**: Convert between different list formats (CSV, JSON, etc.)
+- **JSON Diff**: Compare two JSON objects and highlight differences
+
+### 🎨 Utility Tools (6 tools)
+
+- **Color Conversion**: Convert between HEX and RGB color formats
+- **Email Normalizer**: Normalize email addresses (remove dots, aliases, etc.)
 - **MIME Types**: Look up MIME types for file extensions and vice versa
 - **HTTP Status Codes**: Reference lookup for HTTP status codes
 - **Device Information**: Get basic system/environment information
 
-### 🎨 Utility Tools (2 tools)
-- **Color Conversion**: Convert between HEX and RGB color formats
-- **Email Normalizer**: Normalize email addresses (remove dots, aliases, etc.)
-
-### 🔐 JWT Tools
-- **JWT Decoder**: Decode JWT tokens (header and payload display only)
-
 ## Installation
 
 ### Prerequisites
-- Node.js 16+ 
+
+- Node.js 16+
 - npm or yarn
 
 ### Build from Source
 
 1. Clone or download this repository
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Build the project:
+
    ```bash
    npm run build
    ```
 
 4. Run the server:
+
    ```bash
    npm start
    ```
@@ -142,23 +153,29 @@ For detailed Docker usage instructions, see [DOCKER-USAGE.md](DOCKER-USAGE.md).
 
 ## Docker Setup for VS Code MCP Integration
 
-The IT Tools MCP Server is now configured to run inside a Docker container for VS Code integration. This provides better isolation and consistency across different environments.
+The IT Tools MCP Server is configured to run inside a Docker container for VS Code integration. This provides better isolation and consistency across different environments.
 
 ### Configuration Files
 
 #### `.vscode/mcp.json`
+
 ```json
 {
-  "servers": {
-    "it-tools-mcp": {
-      "type": "stdio",
-      "command": "/Volumes/Source/it-tools-mcp/mcp-docker-wrapper.sh"
+    "servers": {
+        "it-tools-mcp": {
+            "type": "stdio",
+            "command": "bash",
+            "args": [
+                "-c",
+                "cd \"${workspaceFolder}\" && docker compose run --rm -T it-tools-mcp"
+            ]
+        }
     }
-  }
 }
 ```
 
 #### `docker-compose.yml`
+
 ```yaml
 services:
   it-tools-mcp:
@@ -179,18 +196,9 @@ networks:
     driver: bridge
 ```
 
-### Docker Scripts
-
-- **`mcp-docker-wrapper.sh`** - Main wrapper script for VS Code MCP integration
-- **`start-mcp-docker.sh`** - Manual startup script with status checks
-- **`stop-mcp-docker.sh`** - Clean shutdown script
-- **`test-docker-mcp.sh`** - Comprehensive testing script
-
 ### Usage
 
-1. **Automatic (VS Code)**: The MCP configuration will automatically start the container when VS Code connects
-2. **Manual**: Use `./start-mcp-docker.sh` to start the container manually
-3. **Testing**: Use `./test-docker-mcp.sh` to verify functionality
+The MCP configuration will automatically start the container when VS Code connects to the MCP server. The setup uses Docker Compose to build and run the server in an isolated container environment.
 
 ### Benefits of Docker Setup
 
@@ -204,7 +212,10 @@ networks:
 
 To use this MCP server with Claude Desktop, add the following configuration to your `claude_desktop_config.json`:
 
-### macOS/Linux
+### For Direct Node.js Execution
+
+#### macOS/Linux
+
 ```json
 {
   "mcpServers": {
@@ -216,7 +227,8 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 }
 ```
 
-### Windows
+#### Windows
+
 ```json
 {
   "mcpServers": {
@@ -228,13 +240,17 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 }
 ```
 
-### Using Docker with Claude Desktop
+### For Docker Execution
+
 ```json
 {
   "mcpServers": {
     "it-tools": {
-      "command": "docker",
-      "args": ["run", "-i", "--rm", "it-tools-mcp"]
+      "command": "bash",
+      "args": [
+        "-c", 
+        "cd /absolute/path/to/it-tools-mcp && docker compose run --rm -T it-tools-mcp"
+      ]
     }
   }
 }
@@ -244,21 +260,42 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 
 | Tool | Description | Parameters |
 |------|-------------|------------|
+| **Encoding & Decoding** | | |
 | `base64-encode` | Encode text to Base64 | `text: string` |
 | `base64-decode` | Decode Base64 text | `text: string` |
 | `url-encode` | URL encode text | `text: string` |
 | `url-decode` | URL decode text | `text: string` |
 | `html-encode` | Encode HTML entities | `text: string` |
 | `html-decode` | Decode HTML entities | `text: string` |
+| `html-entities-extended` | Extended HTML entity encoding/decoding | `text: string`, `operation: 'encode'|'decode'` |
+| `text-to-binary` | Convert text to binary and vice versa | `input: string`, `operation: 'encode'|'decode'` |
+| `text-to-unicode` | Convert text to Unicode and vice versa | `input: string`, `operation: 'encode'|'decode'` |
+| **Data Format** | | |
 | `json-format` | Format and validate JSON | `json: string`, `indent?: number` |
 | `json-minify` | Minify JSON | `json: string` |
+| `json-to-csv` | Convert JSON to CSV | `json: string`, `delimiter?: string` |
+| `json-to-toml` | Convert JSON to TOML | `json: string` |
+| `json-diff` | Compare JSON objects | `json1: string`, `json2: string` |
+| `xml-format` | Format XML | `xml: string`, `indent?: number` |
+| `yaml-format` | Format YAML | `yaml: string` |
+| `sql-format` | Format SQL | `sql: string` |
+| `toml-to-json` | Convert TOML to JSON | `toml: string` |
+| `markdown-to-html` | Convert Markdown to HTML | `markdown: string` |
+| `html-to-markdown` | Convert HTML to Markdown | `html: string` |
+| **Security & Crypto** | | |
 | `hash-md5` | Generate MD5 hash | `text: string` |
 | `hash-sha1` | Generate SHA1 hash | `text: string` |
 | `hash-sha256` | Generate SHA256 hash | `text: string` |
 | `hash-sha512` | Generate SHA512 hash | `text: string` |
-| `uuid-generate` | Generate UUID v4 | None |
-| `ulid-generate` | Generate ULID | None |
+| `hmac-generator` | Generate HMAC | `message: string`, `key: string`, `algorithm?: 'sha1'|'sha256'|'sha512'` |
+| `jwt-decode` | Decode JWT token | `token: string` |
+| `basic-auth-generator` | Generate Basic Auth header | `username: string`, `password: string` |
+| `bcrypt-hash` | Generate/verify bcrypt hash | `password: string`, `rounds?: number`, `hash?: string` |
+| `bip39-generate` | Generate BIP39 mnemonic | `wordCount?: '12'|'15'|'18'|'21'|'24'` |
 | `password-generate` | Generate secure password | `length?: number`, `includeUppercase?: boolean`, `includeLowercase?: boolean`, `includeNumbers?: boolean`, `includeSymbols?: boolean` |
+| `token-generator` | Generate secure token | `length?: number`, `charset?: 'alphanumeric'|'hex'|'base64'|'custom'`, `customChars?: string` |
+| `otp-code-generator` | Generate TOTP codes | `secret: string`, `digits?: number`, `period?: number` |
+| **Text Processing** | | |
 | `text-uppercase` | Convert to uppercase | `text: string` |
 | `text-lowercase` | Convert to lowercase | `text: string` |
 | `text-capitalize` | Capitalize words | `text: string` |
@@ -266,22 +303,55 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 | `text-pascalcase` | Convert to PascalCase | `text: string` |
 | `text-kebabcase` | Convert to kebab-case | `text: string` |
 | `text-snakecase` | Convert to snake_case | `text: string` |
-| `timestamp-convert` | Convert timestamps | `input: string` |
 | `text-stats` | Get text statistics | `text: string` |
-| `qr-generate` | Generate ASCII QR code | `text: string`, `size?: number` |
+| `text-diff` | Compare texts | `text1: string`, `text2: string` |
+| `ascii-art-text` | Generate ASCII art | `text: string`, `font?: 'small'|'standard'|'big'` |
+| `text-to-nato-alphabet` | Convert to NATO alphabet | `text: string` |
+| `string-obfuscator` | Obfuscate text | `text: string`, `method?: 'html-entities'|'unicode'|'base64'` |
+| `slugify-string` | Convert to URL slug | `text: string`, `separator?: string`, `lowercase?: boolean` |
+| `lorem-ipsum-generator` | Generate Lorem Ipsum | `type?: 'words'|'sentences'|'paragraphs'`, `count?: number` |
+| `numeronym-generator` | Generate numeronyms | `text: string` |
+| `emoji-search` | Search emojis | `query: string` |
+| **Network & Web** | | |
+| `ip-subnet-calculator` | Calculate IPv4 subnet | `ip: string`, `cidr: number` |
+| `ipv4-subnet-calc` | Enhanced IPv4 subnet calc | `cidr: string` |
+| `ipv6-ula-generator` | Generate IPv6 ULA | `globalId?: string` |
+| `url-parse` | Parse URL components | `url: string` |
+| `random-port` | Generate random ports | `count?: number`, `min?: number`, `max?: number`, `exclude?: number[]` |
+| `mac-address-generate` | Generate MAC address | `prefix?: string`, `separator?: ':'|'-'` |
+| `phone-format` | Format phone numbers | `phoneNumber: string`, `countryCode?: string` |
+| `iban-validate` | Validate IBAN | `iban: string` |
+| **Math & Calculations** | | |
+| `math-evaluate` | Evaluate expressions | `expression: string` |
+| `number-base-converter` | Convert number bases | `number: string`, `fromBase: number`, `toBase: number` |
+| `roman-numeral-converter` | Convert Roman numerals | `input: string` |
+| `temperature-converter` | Convert temperatures | `temperature: number`, `from: 'celsius'|'fahrenheit'|'kelvin'`, `to: 'celsius'|'fahrenheit'|'kelvin'` |
+| `percentage-calculator` | Calculate percentages | `operation: 'percentage-of'|'what-percentage'|'percentage-change'`, `value1: number`, `value2: number` |
+| `unix-timestamp-converter` | Convert timestamps | `input: string` |
+| **ID & Code Generators** | | |
+| `uuid-generate` | Generate UUID v4 | None |
+| `ulid-generate` | Generate ULID | None |
+| `qr-generate` | Generate QR code | `text: string`, `size?: number` |
+| `wifi-qr-code-generator` | Generate WiFi QR | `ssid: string`, `password: string`, `security?: 'WPA'|'WEP'|'nopass'`, `hidden?: boolean` |
+| `svg-placeholder-generator` | Generate SVG placeholder | `width?: number`, `height?: number`, `text?: string`, `backgroundColor?: string`, `textColor?: string` |
+| **Development Tools** | | |
+| `regex-tester` | Test regular expressions | `pattern: string`, `text: string`, `flags?: string` |
+| `crontab-generate` | Generate cron expressions | `minute?: string`, `hour?: string`, `dayOfMonth?: string`, `month?: string`, `dayOfWeek?: string` |
+| `list-converter` | Convert list formats | `list: string`, `inputFormat: 'comma'|'semicolon'|'newline'|'space'|'pipe'`, `outputFormat: 'comma'|'semicolon'|'newline'|'space'|'pipe'|'json'|'quoted'`, `trim?: boolean` |
+| **Utility Tools** | | |
 | `color-hex-to-rgb` | Convert HEX to RGB | `hex: string` |
 | `color-rgb-to-hex` | Convert RGB to HEX | `r: number`, `g: number`, `b: number` |
-| `ip-subnet-calculator` | Calculate IPv4 subnet info | `ip: string`, `cidr: number` |
-| `number-base-convert` | Convert number bases | `number: string`, `fromBase: number`, `toBase: number` |
-| `lorem-ipsum` | Generate Lorem Ipsum text | `type?: 'words'|'sentences'|'paragraphs'`, `count?: number` |
-| `mac-address-generate` | Generate MAC address | `prefix?: string`, `separator?: ':'|'-'` |
-| `jwt-decode` | Decode JWT token | `token: string` |
+| `email-normalizer` | Normalize email addresses | `email: string` |
+| `mime-types` | Look up MIME types | `input: string`, `lookupType?: 'extension-to-mime'|'mime-to-extension'` |
+| `device-info` | Get system information | None |
+| `http-status-codes` | HTTP status reference | `code?: number` |
 
 ## Complete Tool Reference
 
-### All 72 Available Tools:
+### All Available Tools
 
-**Encoding & Decoding (8 tools):**
+**Encoding & Decoding (9 tools):**
+
 - `base64-encode` - Encode text to Base64
 - `base64-decode` - Decode Base64 text
 - `url-encode` - URL encode text
@@ -290,8 +360,9 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 - `html-decode` - Decode HTML entities
 - `html-entities-extended` - Extended HTML entity encoding/decoding
 - `text-to-binary` - Convert text to binary and vice versa
+- `text-to-unicode` - Convert text to Unicode and vice versa
 
-**Data Format Conversion (10 tools):**
+**Data Format Conversion (11 tools):**
 - `json-format` - Format and validate JSON
 - `json-minify` - Minify JSON by removing whitespace
 - `json-to-csv` - Convert JSON to CSV format
@@ -304,7 +375,8 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 - `markdown-to-html` - Convert Markdown to HTML
 - `html-to-markdown` - Convert HTML to Markdown
 
-**Security & Crypto (11 tools):**
+**Security & Crypto (12 tools):**
+
 - `hash-md5` - Generate MD5 hash
 - `hash-sha1` - Generate SHA1 hash
 - `hash-sha256` - Generate SHA256 hash
@@ -318,7 +390,8 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 - `token-generator` - Generate secure random tokens
 - `otp-code-generator` - Generate TOTP codes
 
-**Text Processing (13 tools):**
+**Text Processing (16 tools):**
+
 - `text-uppercase` - Convert text to UPPERCASE
 - `text-lowercase` - Convert text to lowercase
 - `text-capitalize` - Capitalize first letter of each word
@@ -333,7 +406,7 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 - `string-obfuscator` - Obfuscate text using various methods
 - `slugify-string` - Convert text to URL-friendly slugs
 - `numeronym-generator` - Generate numeronyms (e.g., i18n)
-- `lorem-ipsum` - Generate Lorem Ipsum placeholder text
+- `lorem-ipsum-generator` - Generate Lorem Ipsum placeholder text
 - `emoji-search` - Search for emojis by name or category
 
 **Network & Web (8 tools):**
@@ -347,42 +420,53 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 - `iban-validate` - Validate and parse IBAN numbers
 
 **Math & Calculations (6 tools):**
-- `math-eval` - Evaluate mathematical expressions
-- `number-base-convert` - Convert numbers between bases
-- `roman-numeral-convert` - Convert between decimal and Roman numerals
-- `temperature-convert` - Convert between temperature units
-- `percentage-calc` - Calculate percentages and changes
+- `math-evaluate` - Evaluate mathematical expressions
+- `number-base-converter` - Convert numbers between bases
+- `roman-numeral-converter` - Convert between decimal and Roman numerals
+- `temperature-converter` - Convert between temperature units
+- `percentage-calculator` - Calculate percentages and changes
+- `unix-timestamp-converter` - Convert Unix timestamps to dates
 
-**ID & Code Generators (6 tools):**
+**ID & Code Generators (5 tools):**
+
 - `uuid-generate` - Generate random UUID v4
 - `ulid-generate` - Generate ULID identifiers
 - `qr-generate` - Generate ASCII QR codes
 - `wifi-qr-code-generator` - Generate WiFi QR code data
 - `svg-placeholder-generator` - Generate SVG placeholder images
 
-**Development Tools (8 tools):**
+**Development Tools (3 tools):**
+
 - `regex-tester` - Test regular expressions
 - `crontab-generate` - Generate cron expressions
 - `list-converter` - Convert between list formats
-- `mime-types` - Look up MIME types
-- `http-status-codes` - HTTP status code reference
-- `device-info` - Get system information
 
-**Utility Tools (2 tools):**
+**Utility Tools (6 tools):**
+
 - `color-hex-to-rgb` - Convert HEX to RGB colors
 - `color-rgb-to-hex` - Convert RGB to HEX colors
 - `email-normalizer` - Normalize email addresses
+- `mime-types` - Look up MIME types
+- `http-status-codes` - HTTP status code reference  
+- `device-info` - Get system information
 
 ## Architecture
 
 This MCP server is built with:
+
 - **TypeScript** for type safety and better development experience
 - **Zod** for robust input validation and schema definition
 - **Node.js built-in modules** (crypto, Buffer, etc.) for maximum compatibility
 - **MCP SDK** for proper Model Context Protocol implementation
 - **Docker support** for easy deployment and containerization
 
-The server implements 72 distinct tools across 8 major categories, providing comprehensive IT utility functionality that matches and extends the popular IT Tools web application.
+The server implements 76 distinct tools across 8 major categories, organized in a modular architecture:
+
+- **Modular Design**: Each tool category is organized into separate TypeScript modules
+- **Type Safety**: Full TypeScript coverage with strict type checking
+- **Input Validation**: All tool inputs validated using Zod schemas
+- **Error Handling**: Comprehensive error handling with user-friendly messages
+- **Extensible**: Easy to add new tools by creating new tool functions in the appropriate module
 
 ## Examples
 
@@ -401,30 +485,42 @@ Once configured, you can ask Claude to use these tools:
 - "Convert the number FF from hexadecimal to decimal"
 - "Generate a random MAC address with prefix 00:1B:44"
 - "Generate 3 paragraphs of Lorem Ipsum text"
-- "Create an ASCII QR code for 'https://example.com'"
+- "Create an ASCII QR code for a URL like 'example.com'"
 - "Decode this JWT token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
 
 ## Development
 
 ### Project Structure
-```
+
+```text
 it-tools-mcp/
 ├── src/
-│   └── index.ts          # Main MCP server implementation
-├── build/                # Compiled JavaScript output
-├── .github/
-│   └── copilot-instructions.md
+│   ├── index.ts              # Main MCP server implementation
+│   └── tools/                # Tool modules organized by category
+│       ├── color.ts          # Color conversion tools
+│       ├── crypto.ts         # Cryptographic and security tools
+│       ├── dataFormat.ts     # Data format conversion tools
+│       ├── development.ts    # Development utilities
+│       ├── encoding.ts       # Encoding/decoding tools
+│       ├── idGenerators.ts   # ID and code generators
+│       ├── math.ts           # Mathematical calculation tools
+│       ├── network.ts        # Network and web utilities
+│       ├── text.ts           # Text processing tools
+│       └── utility.ts        # General utility tools
+├── build/                    # Compiled JavaScript output
+├── tests/                    # Test files
 ├── .vscode/
-│   ├── mcp.json         # MCP server configuration
-│   └── tasks.json       # VS Code tasks
-├── Dockerfile           # Docker configuration
-├── docker-compose.yml   # Docker Compose setup
+│   ├── mcp.json             # MCP server configuration
+│   └── tasks.json           # VS Code tasks
+├── Dockerfile               # Docker configuration
+├── docker-compose.yml       # Docker Compose setup
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
 ### Scripts
+
 - `npm run build` - Build the TypeScript project
 - `npm run start` - Start the server
 - `npm run dev` - Build and start in development mode
@@ -433,11 +529,45 @@ it-tools-mcp/
 
 To add a new tool:
 
-1. Add the tool definition using `server.tool()` in `src/index.ts`
-2. Define the input schema using Zod
-3. Implement the tool logic
+1. Choose the appropriate tool module in `src/tools/` (or create a new one)
+2. Add the tool definition using `server.tool()` with:
+   - Tool name (kebab-case)
+   - Description
+   - Input schema using Zod
+   - Implementation function
+3. Register the tool module in `src/index.ts` if it's new
 4. Update the README.md with tool documentation
 5. Rebuild with `npm run build`
+
+### Tool Module Structure
+
+Each tool module follows this pattern:
+
+```typescript
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z } from "zod";
+
+export function registerCategoryTools(server: McpServer) {
+  server.tool(
+    "tool-name",
+    "Tool description",
+    {
+      parameter: z.string().describe("Parameter description"),
+    },
+    async ({ parameter }) => {
+      // Tool implementation
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Result: ${result}`,
+          },
+        ],
+      };
+    }
+  );
+}
+```
 
 ## Contributing
 
