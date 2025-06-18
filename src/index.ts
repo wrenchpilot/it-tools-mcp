@@ -1939,25 +1939,70 @@ server.tool(
   },
   async ({ expression }) => {
     try {
-      // Basic math evaluator with safety checks
-      const sanitized = expression.replace(/[^0-9+\-*/().\s]/g, '');
+      // Enhanced math evaluator with mathematical functions
+      let processedExpression = expression.toLowerCase();
       
-      if (sanitized !== expression) {
-        throw new Error('Invalid characters in expression. Only numbers, +, -, *, /, (, ), and . are allowed.');
+      // Replace mathematical functions with Math object methods
+      const mathFunctions = {
+        'sqrt': 'Math.sqrt',
+        'sin': 'Math.sin',
+        'cos': 'Math.cos',
+        'tan': 'Math.tan',
+        'asin': 'Math.asin',
+        'acos': 'Math.acos',
+        'atan': 'Math.atan',
+        'log': 'Math.log',
+        'log10': 'Math.log10',
+        'exp': 'Math.exp',
+        'abs': 'Math.abs',
+        'ceil': 'Math.ceil',
+        'floor': 'Math.floor',
+        'round': 'Math.round',
+        'pow': 'Math.pow',
+        'min': 'Math.min',
+        'max': 'Math.max'
+      };
+      
+      // Replace mathematical constants
+      processedExpression = processedExpression.replace(/\bpi\b/g, 'Math.PI');
+      processedExpression = processedExpression.replace(/\be\b/g, 'Math.E');
+      
+      // Replace function names
+      for (const [func, mathFunc] of Object.entries(mathFunctions)) {
+        const regex = new RegExp(`\\b${func}\\b`, 'g');
+        processedExpression = processedExpression.replace(regex, mathFunc);
       }
       
-      // Basic evaluation using Function constructor (safer than eval)
-      const result = new Function(`return ${sanitized}`)();
+      // Replace ** with Math.pow for exponentiation (for compatibility)
+      processedExpression = processedExpression.replace(/(\d+(?:\.\d+)?)\s*\*\*\s*(\d+(?:\.\d+)?)/g, 'Math.pow($1, $2)');
+      
+      // Security check: only allow safe characters and Math functions
+      const allowedPattern = /^[0-9+\-*/().\s,MathPIEabcdefghijklmnopqrstuvwxyz]+$/;
+      if (!allowedPattern.test(processedExpression)) {
+        throw new Error('Expression contains invalid characters or functions');
+      }
+      
+      // Evaluate the expression
+      const result = new Function(`return ${processedExpression}`)();
       
       if (typeof result !== 'number' || !isFinite(result)) {
         throw new Error('Expression did not evaluate to a finite number');
       }
       
+      // Round to reasonable precision
+      const roundedResult = Math.round(result * 1000000) / 1000000;
+      
       return {
         content: [
           {
             type: "text",
-            text: `Expression: ${expression}\nResult: ${result}`,
+            text: `Expression: ${expression}\nResult: ${roundedResult}
+
+Supported functions:
+• Basic operators: +, -, *, /, **
+• Functions: sqrt, sin, cos, tan, asin, acos, atan, log, log10, exp, abs, ceil, floor, round, pow, min, max
+• Constants: pi, e
+• Example: sqrt(16) = 4, sin(pi/2) = 1, 2**3 = 8`,
           },
         ],
       };
@@ -2282,6 +2327,27 @@ server.tool(
             'C': ['▄▀█', '█▄▄', '▀▀▀'],
             'D': ['█▀▄', '█ █', '▀▀▀'],
             'E': ['█▀▀', '█▀▀', '▀▀▀'],
+            'F': ['█▀▀', '█▀▀', '█  '],
+            'G': ['▄▀█', '█▄█', '▀▀▀'],
+            'H': ['█ █', '███', '█ █'],
+            'I': ['███', ' █ ', '███'],
+            'J': ['  █', '  █', '▀▀▀'],
+            'K': ['█ █', '██ ', '█ █'],
+            'L': ['█  ', '█  ', '███'],
+            'M': ['█▀█', '███', '█ █'],
+            'N': ['█▀█', '███', '█▀█'],
+            'O': ['▄▀█', '█ █', '▀▀▀'],
+            'P': ['██▀', '██▀', '█  '],
+            'Q': ['▄▀█', '█▀█', '▀▀█'],
+            'R': ['██▀', '██▀', '█▀█'],
+            'S': ['▀██', ' ▀█', '██▀'],
+            'T': ['███', ' █ ', ' █ '],
+            'U': ['█ █', '█ █', '▀▀▀'],
+            'V': ['█ █', '█ █', ' ▀ '],
+            'W': ['█ █', '███', '█▀█'],
+            'X': ['█ █', ' ▀ ', '█ █'],
+            'Y': ['█ █', ' ▀ ', ' █ '],
+            'Z': ['███', ' ▀█', '███'],
             ' ': ['   ', '   ', '   ']
           }
         },
@@ -2293,6 +2359,27 @@ server.tool(
             'C': [' ██████', '██     ', '██     ', '██     ', ' ██████'],
             'D': ['██████ ', '██   ██', '██   ██', '██   ██', '██████ '],
             'E': ['███████', '██     ', '█████  ', '██     ', '███████'],
+            'F': ['███████', '██     ', '█████  ', '██     ', '██     '],
+            'G': [' ██████', '██     ', '██ ████', '██   ██', ' ██████'],
+            'H': ['██   ██', '██   ██', '███████', '██   ██', '██   ██'],
+            'I': ['███████', '   ██  ', '   ██  ', '   ██  ', '███████'],
+            'J': ['     ██', '     ██', '     ██', '██   ██', ' ██████'],
+            'K': ['██   ██', '██  ██ ', '█████  ', '██  ██ ', '██   ██'],
+            'L': ['██     ', '██     ', '██     ', '██     ', '███████'],
+            'M': ['███   ███', '████ ████', '██ ███ ██', '██  █  ██', '██     ██'],
+            'N': ['███   ██', '████  ██', '██ ██ ██', '██  ████', '██   ███'],
+            'O': [' ██████ ', '██    ██', '██    ██', '██    ██', ' ██████ '],
+            'P': ['██████ ', '██   ██', '██████ ', '██     ', '██     '],
+            'Q': [' ██████ ', '██    ██', '██ ██ ██', '██  ████', ' ███████'],
+            'R': ['██████ ', '██   ██', '██████ ', '██  ██ ', '██   ██'],
+            'S': [' ██████', '██     ', ' ██████', '     ██', '██████ '],
+            'T': ['███████', '   ██  ', '   ██  ', '   ██  ', '   ██  '],
+            'U': ['██   ██', '██   ██', '██   ██', '██   ██', ' ██████'],
+            'V': ['██   ██', '██   ██', '██   ██', ' ██ ██ ', '  ███  '],
+            'W': ['██     ██', '██  █  ██', '██ ███ ██', '████ ████', '███   ███'],
+            'X': ['██   ██', ' ██ ██ ', '  ███  ', ' ██ ██ ', '██   ██'],
+            'Y': ['██   ██', ' ██ ██ ', '  ███  ', '   ██  ', '   ██  '],
+            'Z': ['███████', '    ██ ', '   ██  ', '  ██   ', '███████'],
             ' ': ['       ', '       ', '       ', '       ', '       ']
           }
         },
@@ -2302,6 +2389,29 @@ server.tool(
             'A': ['  █████  ', ' ██   ██ ', ' ███████ ', ' ██   ██ ', ' ██   ██ ', '         ', '         '],
             'B': [' ██████  ', ' ██   ██ ', ' ██████  ', ' ██   ██ ', ' ██████  ', '         ', '         '],
             'C': ['  ██████ ', ' ██      ', ' ██      ', ' ██      ', '  ██████ ', '         ', '         '],
+            'D': [' ██████  ', ' ██   ██ ', ' ██   ██ ', ' ██   ██ ', ' ██████  ', '         ', '         '],
+            'E': [' ███████ ', ' ██      ', ' █████   ', ' ██      ', ' ███████ ', '         ', '         '],
+            'F': [' ███████ ', ' ██      ', ' █████   ', ' ██      ', ' ██      ', '         ', '         '],
+            'G': ['  ██████ ', ' ██      ', ' ██ ████ ', ' ██   ██ ', '  ██████ ', '         ', '         '],
+            'H': [' ██   ██ ', ' ██   ██ ', ' ███████ ', ' ██   ██ ', ' ██   ██ ', '         ', '         '],
+            'I': [' ███████ ', '    ██   ', '    ██   ', '    ██   ', ' ███████ ', '         ', '         '],
+            'J': ['      ██ ', '      ██ ', '      ██ ', ' ██   ██ ', '  ██████ ', '         ', '         '],
+            'K': [' ██   ██ ', ' ██  ██  ', ' █████   ', ' ██  ██  ', ' ██   ██ ', '         ', '         '],
+            'L': [' ██      ', ' ██      ', ' ██      ', ' ██      ', ' ███████ ', '         ', '         '],
+            'M': [' ███ ███ ', ' ███████ ', ' ██ █ ██ ', ' ██   ██ ', ' ██   ██ ', '         ', '         '],
+            'N': [' ███  ██ ', ' ████ ██ ', ' ██ ████ ', ' ██  ███ ', ' ██   ██ ', '         ', '         '],
+            'O': ['  ██████ ', ' ██    ██', ' ██    ██', ' ██    ██', '  ██████ ', '         ', '         '],
+            'P': [' ██████  ', ' ██   ██ ', ' ██████  ', ' ██      ', ' ██      ', '         ', '         '],
+            'Q': ['  ██████ ', ' ██    ██', ' ██ ██ ██', ' ██  ████', '  ███████', '         ', '         '],
+            'R': [' ██████  ', ' ██   ██ ', ' ██████  ', ' ██  ██  ', ' ██   ██ ', '         ', '         '],
+            'S': ['  ██████ ', ' ██      ', '  ██████ ', '      ██ ', ' ██████  ', '         ', '         '],
+            'T': [' ███████ ', '    ██   ', '    ██   ', '    ██   ', '    ██   ', '         ', '         '],
+            'U': [' ██   ██ ', ' ██   ██ ', ' ██   ██ ', ' ██   ██ ', '  ██████ ', '         ', '         '],
+            'V': [' ██   ██ ', ' ██   ██ ', ' ██   ██ ', '  ██ ██  ', '   ███   ', '         ', '         '],
+            'W': [' ██   ██ ', ' ██   ██ ', ' ██ █ ██ ', ' ███████ ', ' ███ ███ ', '         ', '         '],
+            'X': [' ██   ██ ', '  ██ ██  ', '   ███   ', '  ██ ██  ', ' ██   ██ ', '         ', '         '],
+            'Y': [' ██   ██ ', '  ██ ██  ', '   ███   ', '    ██   ', '    ██   ', '         ', '         '],
+            'Z': [' ███████ ', '     ██  ', '    ██   ', '   ██    ', ' ███████ ', '         ', '         '],
             ' ': ['         ', '         ', '         ', '         ', '         ', '         ', '         ']
           }
         }
