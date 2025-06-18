@@ -1,5 +1,13 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import * as YAML from "js-yaml";
+import formatXML from "xml-formatter";
+import { format as formatSQL } from "sql-formatter";
+import * as toml from "@iarna/toml";
+import { marked } from "marked";
+import { htmlToText } from "html-to-text";
+import { diffLines } from "diff";
+import Papa from "papaparse";
 
 export function registerDataFormatTools(server: McpServer) {
   // JSON formatting tool
@@ -78,57 +86,15 @@ export function registerDataFormatTools(server: McpServer) {
     async ({ json, delimiter = "," }) => {
       try {
         const data = JSON.parse(json);
-        
         if (!Array.isArray(data)) {
           throw new Error("JSON must be an array of objects");
         }
-        
-        if (data.length === 0) {
-          return {
-            content: [
-              {
-                type: "text",
-                text: "CSV: (empty)",
-              },
-            ],
-          };
-        }
-        
-        // Get all unique keys from all objects
-        const allKeys = [...new Set(data.flatMap(obj => Object.keys(obj)))];
-        
-        // Create header row
-        const header = allKeys.map(key => {
-          const stringValue = String(key);
-          if (stringValue.includes(delimiter) || stringValue.includes('"') || stringValue.includes('\n')) {
-            return `"${stringValue.replace(/"/g, '""')}"`;
-          }
-          return stringValue;
-        }).join(delimiter);
-        
-        // Create data rows
-        const rows = data.map(obj => allKeys.map(key => {
-          const value = obj[key] ?? '';
-          const stringValue = String(value);
-          if (stringValue.includes(delimiter) || stringValue.includes('"') || stringValue.includes('\n')) {
-            return `"${stringValue.replace(/"/g, '""')}"`;
-          }
-          return stringValue;
-        }).join(delimiter));
-        
-        const csv = [header, ...rows].join('\n');
-        
+        const csv = Papa.unparse(data, { delimiter });
         return {
           content: [
             {
               type: "text",
-              text: `CSV:
-${csv}
-
-Conversion Summary:
-Rows: ${data.length}
-Columns: ${allKeys.length}
-Delimiter: "${delimiter}"`,
+              text: `CSV:\n${csv}\n\nConversion Summary:\nRows: ${data.length}\nDelimiter: \"${delimiter}\"`,
             },
           ],
         };
@@ -155,34 +121,23 @@ Delimiter: "${delimiter}"`,
     },
     async ({ xml, indent = 2 }) => {
       try {
-        // Basic XML formatter (simplified implementation)
-        let formatted = xml.replace(/></g, '>\n<');
-        let indentLevel = 0;
-        const lines = formatted.split('\n');
-        const indentStr = ' '.repeat(indent);
-        
-        const result = lines.map(line => {
-          const trimmed = line.trim();
-          if (!trimmed) return '';
-          
-          if (trimmed.startsWith('</')) {
-            indentLevel--;
-          }
-          
-          const indentedLine = indentStr.repeat(Math.max(0, indentLevel)) + trimmed;
-          
-          if (trimmed.startsWith('<') && !trimmed.startsWith('</') && !trimmed.endsWith('/>')) {
-            indentLevel++;
-          }
-          
-          return indentedLine;
-        }).filter(line => line).join('\n');
-        
+        const formatted = formatXML(xml, {
+          indentation: ' '.repeat(indent),
+          filter: (node: any) => node.type !== 'Comment',
+          collapseContent: true,
+          lineSeparator: '\n'
+        });
+
         return {
           content: [
             {
               type: "text",
-              text: `Formatted XML:\n\n${result}`,
+              text: `Formatted XML:
+
+${formatted}
+
+✅ XML formatted successfully
+🎯 Features: ${indent}-space indentation, collapsed content, clean structure`,
             },
           ],
         };
@@ -191,7 +146,13 @@ Delimiter: "${delimiter}"`,
           content: [
             {
               type: "text",
-              text: `Error formatting XML: ${error instanceof Error ? error.message : 'Unknown error'}`,
+              text: `Error formatting XML: ${error instanceof Error ? error.message : 'Unknown error'}
+
+💡 Common XML issues:
+• Check that all tags are properly closed
+• Ensure proper nesting of elements
+• Validate attribute syntax (key="value")
+• Check for special character encoding`,
             },
           ],
         };
@@ -208,39 +169,37 @@ Delimiter: "${delimiter}"`,
     },
     async ({ yaml }) => {
       try {
-        // Simple YAML formatter - basic indentation and structure cleanup
-        const lines = yaml.split('\n');
-        let formatted = '';
-        let indentLevel = 0;
+        // Parse YAML to validate and then dump with proper formatting
+        const parsed = YAML.load(yaml);
         
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed) continue;
-          
-          if (trimmed.endsWith(':') && !trimmed.includes(': ')) {
-            formatted += '  '.repeat(indentLevel) + trimmed + '\n';
-            indentLevel++;
-          } else if (trimmed.startsWith('- ')) {
-            formatted += '  '.repeat(indentLevel) + trimmed + '\n';
-          } else {
-            if (trimmed.includes(': ')) {
-              formatted += '  '.repeat(indentLevel) + trimmed + '\n';
-            } else {
-              formatted += '  '.repeat(indentLevel) + trimmed + '\n';
-            }
-          }
-          
-          // Decrease indent for certain patterns
-          if (trimmed.endsWith(':') && lines[lines.indexOf(line) + 1]?.trim().startsWith('-')) {
-            // Don't change indent - list follows
-          }
-        }
+        // Format with proper indentation and options
+        const formatted = YAML.dump(parsed, {
+          indent: 2,
+          lineWidth: 80,
+          noRefs: false,
+          noCompatMode: false,
+          condenseFlow: false,
+          quotingType: '"',
+          forceQuotes: false,
+          sortKeys: false,
+          skipInvalid: false,
+        });
+
+        // Count lines and detect any issues
+        const inputLines = yaml.split('\n').length;
+        const outputLines = formatted.split('\n').length;
         
         return {
           content: [
             {
               type: "text",
-              text: `Formatted YAML:\n\n${formatted}`,
+              text: `Formatted YAML:
+
+${formatted.trim()}
+
+✅ YAML is valid and properly formatted
+📊 Input: ${inputLines} lines → Output: ${outputLines} lines
+🎯 Features: 2-space indentation, proper line width, preserved structure`,
             },
           ],
         };
@@ -249,7 +208,14 @@ Delimiter: "${delimiter}"`,
           content: [
             {
               type: "text",
-              text: `Error formatting YAML: ${error instanceof Error ? error.message : 'Unknown error'}`,
+              text: `Error formatting YAML: ${error instanceof Error ? error.message : 'Unknown error'}
+
+💡 Common YAML issues:
+• Check indentation (use spaces, not tabs)
+• Ensure proper key-value syntax (key: value)
+• Validate string quoting
+• Check list formatting (- item)
+• Verify nested structure alignment`,
             },
           ],
         };
@@ -266,29 +232,25 @@ Delimiter: "${delimiter}"`,
     },
     async ({ sql }) => {
       try {
-        // Basic SQL formatter
-        const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL JOIN', 'ON', 'GROUP BY', 'ORDER BY', 'HAVING', 'UNION', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'ALTER', 'DROP'];
-        
-        let formatted = sql
-          .replace(/\s+/g, ' ')
-          .trim();
-        
-        keywords.forEach(keyword => {
-          const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
-          formatted = formatted.replace(regex, `\n${keyword.toUpperCase()}`);
+        const formatted = formatSQL(sql, {
+          language: 'sql',
+          tabWidth: 2,
+          useTabs: false,
+          keywordCase: 'upper',
+          identifierCase: 'lower',
+          functionCase: 'upper'
         });
-        
-        formatted = formatted
-          .split('\n')
-          .map(line => line.trim())
-          .filter(line => line.length > 0)
-          .join('\n');
-        
+
         return {
           content: [
             {
               type: "text",
-              text: `Formatted SQL:\n\n${formatted}`,
+              text: `Formatted SQL:
+
+${formatted}
+
+✅ SQL formatted successfully
+🎯 Features: uppercase keywords, proper indentation, clean structure`,
             },
           ],
         };
@@ -297,7 +259,13 @@ Delimiter: "${delimiter}"`,
           content: [
             {
               type: "text",
-              text: `Error formatting SQL: ${error instanceof Error ? error.message : 'Unknown error'}`,
+              text: `Error formatting SQL: ${error instanceof Error ? error.message : 'Unknown error'}
+
+💡 Common SQL issues:
+• Check syntax for missing semicolons
+• Ensure proper table and column names
+• Validate string quoting (single quotes for strings)
+• Check for balanced parentheses in subqueries`,
             },
           ],
         };
@@ -312,47 +280,9 @@ Delimiter: "${delimiter}"`,
     {
       toml: z.string().describe("TOML string to convert"),
     },
-    async ({ toml }) => {
+    async ({ toml: tomlString }) => {
       try {
-        // Basic TOML parsing (simplified implementation)
-        const lines = toml.split('\n').filter(line => line.trim() && !line.trim().startsWith('#'));
-        const result: any = {};
-        let currentSection = result;
-        let currentSectionName = '';
-        
-        for (const line of lines) {
-          const trimmedLine = line.trim();
-          
-          // Section headers [section]
-          if (trimmedLine.startsWith('[') && trimmedLine.endsWith(']')) {
-            currentSectionName = trimmedLine.slice(1, -1);
-            result[currentSectionName] = {};
-            currentSection = result[currentSectionName];
-            continue;
-          }
-          
-          // Key-value pairs
-          const equalIndex = trimmedLine.indexOf('=');
-          if (equalIndex > 0) {
-            const key = trimmedLine.slice(0, equalIndex).trim();
-            let value = trimmedLine.slice(equalIndex + 1).trim();
-            
-            // Remove quotes
-            if ((value.startsWith('"') && value.endsWith('"')) || 
-                (value.startsWith("'") && value.endsWith("'"))) {
-              value = value.slice(1, -1);
-            }
-            
-            // Try to parse as number or boolean
-            let parsedValue: any = value;
-            if (value === 'true') parsedValue = true;
-            else if (value === 'false') parsedValue = false;
-            else if (!isNaN(Number(value))) parsedValue = Number(value);
-            
-            currentSection[key] = parsedValue;
-          }
-        }
-        
+        const result = toml.parse(tomlString);
         return {
           content: [
             {
@@ -384,38 +314,7 @@ Delimiter: "${delimiter}"`,
     async ({ json }) => {
       try {
         const data = JSON.parse(json);
-        
-        function jsonToToml(obj: any, prefix = ''): string {
-          let result = '';
-          
-          for (const [key, value] of Object.entries(obj)) {
-            const fullKey = prefix ? `${prefix}.${key}` : key;
-            
-            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-              if (Object.keys(value).length > 0) {
-                result += `\n[${fullKey}]\n`;
-                result += jsonToToml(value, '');
-              }
-            } else {
-              result += `${key} = ${formatValue(value)}\n`;
-            }
-          }
-          
-          return result;
-        }
-        
-        function formatValue(value: any): string {
-          if (typeof value === 'string') {
-            return `"${value}"`;
-          } else if (Array.isArray(value)) {
-            return `[${value.map(formatValue).join(', ')}]`;
-          } else {
-            return String(value);
-          }
-        }
-        
-        const tomlResult = jsonToToml(data);
-        
+        const tomlResult = toml.stringify(data);
         return {
           content: [
             {
@@ -437,7 +336,7 @@ Delimiter: "${delimiter}"`,
     }
   );
 
-  // Markdown to HTML converter
+  // Markdown to HTML converter (using marked library)
   server.tool(
     "markdown-to-html",
     "Convert Markdown to HTML",
@@ -446,24 +345,17 @@ Delimiter: "${delimiter}"`,
     },
     async ({ markdown }) => {
       try {
-        // Basic Markdown to HTML converter (simplified)
-        let html = markdown
-          // Headers
-          .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-          .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-          .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-          // Bold
-          .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-          .replace(/__(.*?)__/gim, '<strong>$1</strong>')
-          // Italic
-          .replace(/\*(.*?)\*/gim, '<em>$1</em>')
-          .replace(/_(.*?)_/gim, '<em>$1</em>')
-          // Code
-          .replace(/`(.*?)`/gim, '<code>$1</code>')
-          // Links
-          .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2">$1</a>')
-          // Line breaks
-          .replace(/\n/gim, '<br>');
+        const { marked } = require('marked');
+        
+        // Configure marked options for safety and consistency
+        marked.setOptions({
+          breaks: true,
+          gfm: true,
+          headerIds: false,
+          mangle: false
+        });
+        
+        const html = marked(markdown);
         
         return {
           content: [
@@ -486,7 +378,7 @@ Delimiter: "${delimiter}"`,
     }
   );
 
-  // HTML to Markdown converter
+  // HTML to Markdown converter (using turndown library)
   server.tool(
     "html-to-markdown",
     "Convert HTML to Markdown",
@@ -495,29 +387,18 @@ Delimiter: "${delimiter}"`,
     },
     async ({ html }) => {
       try {
-        // Basic HTML to Markdown converter (simplified)
-        let markdown = html
-          // Headers
-          .replace(/<h1[^>]*>(.*?)<\/h1>/gim, '# $1')
-          .replace(/<h2[^>]*>(.*?)<\/h2>/gim, '## $1')
-          .replace(/<h3[^>]*>(.*?)<\/h3>/gim, '### $1')
-          .replace(/<h4[^>]*>(.*?)<\/h4>/gim, '#### $1')
-          .replace(/<h5[^>]*>(.*?)<\/h5>/gim, '##### $1')
-          .replace(/<h6[^>]*>(.*?)<\/h6>/gim, '###### $1')
-          // Bold
-          .replace(/<strong[^>]*>(.*?)<\/strong>/gim, '**$1**')
-          .replace(/<b[^>]*>(.*?)<\/b>/gim, '**$1**')
-          // Italic
-          .replace(/<em[^>]*>(.*?)<\/em>/gim, '*$1*')
-          .replace(/<i[^>]*>(.*?)<\/i>/gim, '*$1*')
-          // Code
-          .replace(/<code[^>]*>(.*?)<\/code>/gim, '`$1`')
-          // Links
-          .replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gim, '[$2]($1)')
-          // Line breaks
-          .replace(/<br[^>]*>/gim, '\n')
-          // Remove remaining HTML tags
-          .replace(/<[^>]*>/gim, '');
+        const TurndownService = require('turndown');
+        
+        // Configure turndown for better output
+        const turndownService = new TurndownService({
+          headingStyle: 'atx',
+          codeBlockStyle: 'fenced',
+          bulletListMarker: '-',
+          emDelimiter: '*',
+          strongDelimiter: '**'
+        });
+        
+        const markdown = turndownService.turndown(html);
         
         return {
           content: [

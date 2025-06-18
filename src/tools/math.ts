@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { evaluate } from "mathjs";
 
 export function registerMathTools(server: McpServer) {
   // Math expression evaluator
@@ -11,32 +12,7 @@ export function registerMathTools(server: McpServer) {
     },
     async ({ expression }) => {
       try {
-        // Basic safety check - only allow numbers, operators, parentheses, spaces, commas, and common math functions
-        if (!/^[0-9+\-*/().,\s sqrt sin cos tan log ln pi e abs min max pow exp ceil floor round**]+$/i.test(expression)) {
-          throw new Error("Invalid characters in expression");
-        }
-        
-        // Replace common math constants and functions
-        let sanitized = expression
-          .replace(/\bpi\b/gi, Math.PI.toString())
-          .replace(/\be\b/gi, Math.E.toString())
-          .replace(/\bsqrt\(/gi, 'Math.sqrt(')
-          .replace(/\bsin\(/gi, 'Math.sin(')
-          .replace(/\bcos\(/gi, 'Math.cos(')
-          .replace(/\btan\(/gi, 'Math.tan(')
-          .replace(/\blog\(/gi, 'Math.log10(')
-          .replace(/\bln\(/gi, 'Math.log(')
-          .replace(/\babs\(/gi, 'Math.abs(')
-          .replace(/\bmin\(/gi, 'Math.min(')
-          .replace(/\bmax\(/gi, 'Math.max(')
-          .replace(/\bpow\(/gi, 'Math.pow(')
-          .replace(/\bexp\(/gi, 'Math.exp(')
-          .replace(/\bceil\(/gi, 'Math.ceil(')
-          .replace(/\bfloor\(/gi, 'Math.floor(')
-          .replace(/\bround\(/gi, 'Math.round(');
-        
-        const result = Function(`"use strict"; return (${sanitized})`)();
-        
+        const result = evaluate(expression);
         return {
           content: [
             {

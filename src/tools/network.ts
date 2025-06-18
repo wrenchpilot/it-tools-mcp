@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { parsePhoneNumber, isValidPhoneNumber, getCountryCallingCode } from "libphonenumber-js";
 
 export function registerNetworkTools(server: McpServer) {
   // IP address tools
@@ -504,57 +505,13 @@ ${prefix ? `Used prefix: ${prefix}` : 'Randomly generated'}`,
     },
     async ({ phoneNumber, countryCode }) => {
       try {
-        // Remove all non-digit characters
-        const digitsOnly = phoneNumber.replace(/\D/g, '');
-        
-        // Basic formatting for common patterns
-        let formatted = '';
-        let international = '';
-        let description = '';
-        
-        if (countryCode?.toUpperCase() === 'US' || (!countryCode && digitsOnly.length === 10)) {
-          // US format: (XXX) XXX-XXXX
-          if (digitsOnly.length === 10) {
-            formatted = `(${digitsOnly.slice(0, 3)}) ${digitsOnly.slice(3, 6)}-${digitsOnly.slice(6)}`;
-            international = `+1 ${formatted}`;
-            description = 'US/Canada format';
-          } else if (digitsOnly.length === 11 && digitsOnly.startsWith('1')) {
-            const number = digitsOnly.slice(1);
-            formatted = `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6)}`;
-            international = `+1 ${formatted}`;
-            description = 'US/Canada format with country code';
-          }
-        } else if (countryCode?.toUpperCase() === 'GB') {
-          // UK format: various patterns
-          if (digitsOnly.length === 11 && digitsOnly.startsWith('44')) {
-            const number = digitsOnly.slice(2);
-            formatted = `0${number.slice(0, 4)} ${number.slice(4, 7)} ${number.slice(7)}`;
-            international = `+44 ${number.slice(0, 4)} ${number.slice(4, 7)} ${number.slice(7)}`;
-            description = 'UK format';
-          } else if (digitsOnly.length === 10) {
-            formatted = `0${digitsOnly.slice(0, 3)} ${digitsOnly.slice(3, 6)} ${digitsOnly.slice(6)}`;
-            international = `+44 ${digitsOnly.slice(0, 3)} ${digitsOnly.slice(3, 6)} ${digitsOnly.slice(6)}`;
-            description = 'UK format';
-          }
-        } else {
-          // Generic international format
-          if (digitsOnly.length >= 7) {
-            const groups = [];
-            let remaining = digitsOnly;
-            while (remaining.length > 0) {
-              const groupSize = remaining.length > 4 ? 3 : remaining.length;
-              groups.push(remaining.slice(0, groupSize));
-              remaining = remaining.slice(groupSize);
-            }
-            formatted = groups.join(' ');
-            international = `+${formatted}`;
-            description = 'Generic international format';
-          }
+        // First check if it's a valid phone number
+        if (!isValidPhoneNumber(phoneNumber, countryCode as any)) {
+          throw new Error("Invalid phone number format");
         }
         
-        if (!formatted) {
-          throw new Error("Unable to format phone number - invalid format or insufficient digits");
-        }
+        // Parse the phone number
+        const parsedNumber = parsePhoneNumber(phoneNumber, countryCode as any);
         
         return {
           content: [
@@ -563,17 +520,19 @@ ${prefix ? `Used prefix: ${prefix}` : 'Randomly generated'}`,
               text: `Phone Number Formatting:
 
 Original: ${phoneNumber}
-Digits only: ${digitsOnly}
-Formatted: ${formatted}
-International: ${international}
+Country: ${parsedNumber.country || 'Unknown'}
+National: ${parsedNumber.formatNational()}
+International: ${parsedNumber.formatInternational()}
+E.164: ${parsedNumber.format('E.164')}
+URI: ${parsedNumber.getURI()}
 
 Details:
-Format: ${description}
-Digit count: ${digitsOnly.length}
-Country: ${countryCode || 'Auto-detected/Generic'}
+Type: ${parsedNumber.getType() || 'Unknown'}
+Country Code: +${parsedNumber.countryCallingCode}
+National Number: ${parsedNumber.nationalNumber}
+Valid: ${parsedNumber.isValid()}
 
-Note: This is a basic formatter. For production use,
-consider using a specialized phone number library.`,
+✅ Formatted using libphonenumber-js library for accuracy.`,
             },
           ],
         };
@@ -582,7 +541,13 @@ consider using a specialized phone number library.`,
           content: [
             {
               type: "text",
-              text: `Error formatting phone number: ${error instanceof Error ? error.message : 'Unknown error'}`,
+              text: `Error formatting phone number: ${error instanceof Error ? error.message : 'Unknown error'}
+
+💡 Tips:
+• Include country code (e.g., +1 555-123-4567)
+• Use standard formats (e.g., (555) 123-4567)
+• Specify country code parameter if needed
+• Examples: "+1-555-123-4567", "555-123-4567" with countryCode="US"`,
             },
           ],
         };
@@ -590,7 +555,7 @@ consider using a specialized phone number library.`,
     }
   );
 
-  // IBAN validator
+  // IBAN validator (using iban library)
   server.tool(
     "iban-validate",
     "Validate and parse IBAN (International Bank Account Number)",
@@ -599,86 +564,73 @@ consider using a specialized phone number library.`,
     },
     async ({ iban }) => {
       try {
-        // Remove spaces and convert to uppercase
+        const IBAN = require('iban');
+        
+        // Clean the input
         const cleanIban = iban.replace(/\s/g, '').toUpperCase();
         
-        // Basic format validation
-        if (!/^[A-Z]{2}[0-9]{2}[A-Z0-9]+$/.test(cleanIban)) {
-          throw new Error("Invalid IBAN format");
-        }
+        // Validate using the IBAN library
+        const isValid = IBAN.isValid(cleanIban);
         
-        if (cleanIban.length < 15 || cleanIban.length > 34) {
-          throw new Error("Invalid IBAN length");
-        }
-        
-        // Extract components
-        const countryCode = cleanIban.slice(0, 2);
-        const checkDigits = cleanIban.slice(2, 4);
-        const bban = cleanIban.slice(4); // Basic Bank Account Number
-        
-        // Known IBAN lengths by country
-        const ibanLengths: Record<string, number> = {
-          'AD': 24, 'AE': 23, 'AL': 28, 'AT': 20, 'AZ': 28, 'BA': 20, 'BE': 16,
-          'BG': 22, 'BH': 22, 'BR': 29, 'BY': 28, 'CH': 21, 'CR': 22, 'CY': 28,
-          'CZ': 24, 'DE': 22, 'DK': 18, 'DO': 28, 'EE': 20, 'EG': 29, 'ES': 24,
-          'FI': 18, 'FO': 18, 'FR': 27, 'GB': 22, 'GE': 22, 'GI': 23, 'GL': 18,
-          'GR': 27, 'GT': 28, 'HR': 21, 'HU': 28, 'IE': 22, 'IL': 23, 'IS': 26,
-          'IT': 27, 'JO': 30, 'KW': 30, 'KZ': 20, 'LB': 28, 'LC': 32, 'LI': 21,
-          'LT': 20, 'LU': 20, 'LV': 21, 'MC': 27, 'MD': 24, 'ME': 22, 'MK': 19,
-          'MR': 27, 'MT': 31, 'MU': 30, 'NL': 18, 'NO': 15, 'PK': 24, 'PL': 28,
-          'PS': 29, 'PT': 25, 'QA': 29, 'RO': 24, 'RS': 22, 'SA': 24, 'SE': 24,
-          'SI': 19, 'SK': 24, 'SM': 27, 'TN': 24, 'TR': 26, 'UA': 29, 'VG': 24,
-          'XK': 20
-        };
-        
-        const expectedLength = ibanLengths[countryCode];
-        const isValidLength = expectedLength ? cleanIban.length === expectedLength : true;
-        
-        // Simple checksum validation (simplified MOD-97)
-        // Move first 4 characters to end and convert letters to numbers
-        const rearranged = cleanIban.slice(4) + cleanIban.slice(0, 4);
-        const numericString = rearranged.replace(/[A-Z]/g, char => 
-          (char.charCodeAt(0) - 55).toString()
-        );
-        
-        // For very long numbers, we'll do a simplified check
-        let isValidChecksum = true;
-        try {
-          // This is a simplified validation - full MOD-97 requires big integer arithmetic
-          const checksum = parseInt(numericString.slice(0, 9)) % 97;
-          isValidChecksum = checksum === 1;
-        } catch {
-          isValidChecksum = false;
-        }
-        
-        const isValid = isValidLength && isValidChecksum;
-        
-        return {
-          content: [
-            {
-              type: "text",
-              text: `IBAN Validation Result:
+        if (isValid) {
+          // Extract components
+          const countryCode = cleanIban.slice(0, 2);
+          const checkDigits = cleanIban.slice(2, 4);
+          const bban = cleanIban.slice(4); // Basic Bank Account Number
+          
+          // Get country information if available
+          const countryName = IBAN.countries[countryCode]?.name || 'Unknown';
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: `IBAN Validation Result: ✅ VALID
+
+IBAN: ${iban}
+Formatted: ${IBAN.printFormat(cleanIban)}
+
+Components:
+Country Code: ${countryCode} (${countryName})
+Check Digits: ${checkDigits}
+BBAN: ${bban}
+Length: ${cleanIban.length} characters
+
+Validation:
+Format: ✅ Valid
+Length: ✅ Correct for ${countryCode}
+Checksum: ✅ Valid (MOD-97)
+
+Electronic Format: ${cleanIban}
+Print Format: ${IBAN.printFormat(cleanIban)}`,
+              },
+            ],
+          };
+        } else {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `IBAN Validation Result: ❌ INVALID
 
 IBAN: ${iban}
 Cleaned: ${cleanIban}
 
-Components:
-Country Code: ${countryCode}
-Check Digits: ${checkDigits}
-BBAN: ${bban}
+The provided IBAN is not valid. Please check:
+- Country code (first 2 characters)
+- Check digits (characters 3-4)
+- Bank account number format
+- Overall length for the country
 
-Validation:
-Format: ✅ Valid
-Length: ${isValidLength ? '✅' : '❌'} ${cleanIban.length} chars ${expectedLength ? `(expected ${expectedLength})` : '(unknown country)'}
-Checksum: ${isValidChecksum ? '✅' : '❌'} ${isValidChecksum ? 'Valid' : 'Invalid'}
-
-Overall: ${isValid ? '✅ VALID IBAN' : '❌ INVALID IBAN'}
-
-Note: This is a basic validation. For production use,
-consider using a specialized IBAN validation library.`,
-            },
-          ],
-        };
+Common issues:
+- Incorrect country code
+- Invalid check digits
+- Wrong length for the country
+- Invalid characters in BBAN`,
+              },
+            ],
+          };
+        }
       } catch (error) {
         return {
           content: [

@@ -3,21 +3,6 @@ import { z } from "zod";
 import { randomUUID } from "crypto";
 import QRCode from "qrcode";
 
-// Real QR Code generator using the qrcode library
-async function generateQRCodeASCII(text: string, size: number = 1): Promise<string> {
-  try {
-    // Generate QR code as a string (ASCII art)
-    const qrString = await QRCode.toString(text, { 
-      type: 'terminal',
-      small: size === 1,
-      width: size > 1 ? size * 20 : undefined
-    });
-    return qrString;
-  } catch (error) {
-    throw new Error(`Failed to generate QR code: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }
-}
-
 export function registerIdGeneratorTools(server: McpServer) {
   // UUID generation tool
   server.tool(
@@ -76,7 +61,7 @@ For production use, please use a proper ULID library.`,
     }
   );
 
-  // QR code generator (ASCII)
+  // QR code generator (Real implementation using qrcode library)
   server.tool(
     "qr-generate",
     "Generate ASCII QR code",
@@ -86,31 +71,55 @@ For production use, please use a proper ULID library.`,
     },
     async ({ text, size = 1 }) => {
       try {
-        // Generate real QR code using the qrcode library
-        const asciiQR = await generateQRCodeASCII(text, size);
+        // Generate QR code as base64 data URL
+        console.log(`[DEBUG] Generating QR code for: "${text}" with size: ${size}`);
+        const dataUrl = await QRCode.toDataURL(text, {
+          type: 'image/png',
+          errorCorrectionLevel: 'M',
+          width: Math.max(256, size * 128), // Minimum 256px, scales with size parameter
+          margin: 2,
+          color: {
+            dark: '#000000',  // Black
+            light: '#FFFFFF'  // White
+          }
+        });
+        console.log(`[DEBUG] QR code generated successfully`);
+
+        // Extract just the base64 data (remove the data:image/png;base64, prefix)
+        const base64Data = dataUrl.split(',')[1];
 
         return {
           content: [
             {
               type: "text",
-              text: `QR Code for: "${text}"
+              text: `📱 QR Code for: "${text}"
 
-${asciiQR}
+📊 Data encoded: "${text}" (${text.length} characters)
+🎯 Error correction: Medium (M)
+📐 Image size: ${Math.max(256, size * 128)}x${Math.max(256, size * 128)} pixels
 
-✅ This is a real, scannable QR code!
-📱 Scan it with any QR code reader app.
-
-Data: ${text.length} characters
-Generated using the 'qrcode' npm library.`,
+✅ This QR code can be scanned with any QR code reader app
+💡 Generated using the 'qrcode' npm library!`,
             },
+            {
+              type: "image",
+              data: base64Data,
+              mimeType: "image/png"
+            }
           ],
         };
       } catch (error) {
+        console.error(`[DEBUG] QR code generation failed:`, error);
         return {
           content: [
             {
               type: "text",
-              text: `Error generating QR code: ${error instanceof Error ? error.message : 'Unknown error'}`,
+              text: `Error generating QR code: ${error instanceof Error ? error.message : 'Unknown error'}
+
+Debug info:
+- Text: "${text}"
+- Size: ${size}
+- QRCode library available: ${typeof QRCode !== 'undefined' ? 'Yes' : 'No'}`,
             },
           ],
         };
@@ -133,28 +142,37 @@ Generated using the 'qrcode' npm library.`,
         // WiFi QR code format: WIFI:T:WPA;S:mynetwork;P:mypass;H:false;;
         const wifiString = `WIFI:T:${security};S:${ssid};P:${password};H:${hidden};;`;
         
-        // Generate real QR code for WiFi
-        const asciiQR = await generateQRCodeASCII(wifiString, 1);
+        // Generate QR code as base64 data URL
+        const dataUrl = await QRCode.toDataURL(wifiString, {
+          type: 'image/png',
+          errorCorrectionLevel: 'M',
+          width: 256,
+          margin: 2,
+          color: {
+            dark: '#000000',  // Black
+            light: '#FFFFFF'  // White
+          }
+        });
 
         return {
           content: [
             {
               type: "text",
-              text: `WiFi QR Code:
+              text: `🔗 WiFi QR Code Generated!
 
-${asciiQR}
+WiFi Connection Details:
+• Network Name (SSID): ${ssid}
+• Security Type: ${security}
+• Hidden Network: ${hidden}
+• WiFi Connection String: ${wifiString}
 
-WiFi Details:
-• Network: ${ssid}
-• Security: ${security}
-• Hidden: ${hidden}
-• WiFi String: ${wifiString}
-
-✅ This is a real, scannable WiFi QR code!
-📱 Scan with your phone's camera or WiFi settings to connect automatically.
-
-Generated using the 'qrcode' npm library.`,
+📱 Scan this QR code to connect to the WiFi network!`,
             },
+            {
+              type: "image",
+              data: dataUrl,
+              mimeType: "image/png"
+            }
           ],
         };
       } catch (error) {

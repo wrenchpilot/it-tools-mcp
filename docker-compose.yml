@@ -1,13 +1,16 @@
 networks:
   mcp-network:
     driver: bridge
+
 services:
   # MCP Server with IT Tools functionality
   it-tools-mcp:
     build: .
+
     container_name: it-tools-mcp-server
     environment:
       - NODE_ENV=production
+    image: it-tools-mcp
     networks:
       - mcp-network
     restart: unless-stopped
