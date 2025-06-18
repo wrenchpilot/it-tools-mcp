@@ -33,6 +33,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.3",
+    "@types/qrcode": "^1.5.5",
+    "qrcode": "^1.5.4",
     "zod": "^3.25.67"
   }
 }

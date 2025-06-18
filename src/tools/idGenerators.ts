@@ -1,6 +1,22 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { randomUUID } from "crypto";
+import QRCode from "qrcode";
+
+// Real QR Code generator using the qrcode library
+async function generateQRCodeASCII(text: string, size: number = 1): Promise<string> {
+  try {
+    // Generate QR code as a string (ASCII art)
+    const qrString = await QRCode.toString(text, { 
+      type: 'terminal',
+      small: size === 1,
+      width: size > 1 ? size * 20 : undefined
+    });
+    return qrString;
+  } catch (error) {
+    throw new Error(`Failed to generate QR code: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
 
 export function registerIdGeneratorTools(server: McpServer) {
   // UUID generation tool
@@ -70,35 +86,22 @@ For production use, please use a proper ULID library.`,
     },
     async ({ text, size = 1 }) => {
       try {
-        // Simplified QR code pattern (just a visual representation)
-        const qrSize = Math.max(21, Math.min(177, text.length + 21));
-        let qr = '';
-        
-        for (let i = 0; i < qrSize; i++) {
-          let line = '';
-          for (let j = 0; j < qrSize; j++) {
-            // Create a simple pattern based on position and text
-            const hash = (i * qrSize + j + text.charCodeAt(j % text.length)) % 2;
-            const char = hash === 0 ? '██' : '  ';
-            line += char.repeat(size);
-          }
-          for (let k = 0; k < size; k++) {
-            qr += line + '\n';
-          }
-        }
+        // Generate real QR code using the qrcode library
+        const asciiQR = await generateQRCodeASCII(text, size);
 
         return {
           content: [
             {
               type: "text",
-              text: `ASCII QR Code for: "${text}"
+              text: `QR Code for: "${text}"
 
-${qr}
+${asciiQR}
 
-Size: ${qrSize}x${qrSize} (scale ${size}x)
+✅ This is a real, scannable QR code!
+📱 Scan it with any QR code reader app.
 
-⚠️  Note: This is a visual representation only.
-For actual QR codes, use a proper QR code library.`,
+Data: ${text.length} characters
+Generated using the 'qrcode' npm library.`,
             },
           ],
         };
@@ -130,19 +133,8 @@ For actual QR codes, use a proper QR code library.`,
         // WiFi QR code format: WIFI:T:WPA;S:mynetwork;P:mypass;H:false;;
         const wifiString = `WIFI:T:${security};S:${ssid};P:${password};H:${hidden};;`;
         
-        // Simple QR representation
-        const qrSize = 25;
-        let qr = '';
-        
-        for (let i = 0; i < qrSize; i++) {
-          let line = '';
-          for (let j = 0; j < qrSize; j++) {
-            const hash = (i * qrSize + j + wifiString.charCodeAt(j % wifiString.length)) % 2;
-            const char = hash === 0 ? '██' : '  ';
-            line += char;
-          }
-          qr += line + '\n';
-        }
+        // Generate real QR code for WiFi
+        const asciiQR = await generateQRCodeASCII(wifiString, 1);
 
         return {
           content: [
@@ -150,18 +142,18 @@ For actual QR codes, use a proper QR code library.`,
               type: "text",
               text: `WiFi QR Code:
 
-${qr}
+${asciiQR}
 
 WiFi Details:
-Network: ${ssid}
-Security: ${security}
-Hidden: ${hidden}
+• Network: ${ssid}
+• Security: ${security}
+• Hidden: ${hidden}
+• WiFi String: ${wifiString}
 
-QR Code Data: ${wifiString}
+✅ This is a real, scannable WiFi QR code!
+📱 Scan with your phone's camera or WiFi settings to connect automatically.
 
-⚠️  Note: This is a visual representation only.
-For actual QR codes, use a proper QR code library.
-Scan with a QR code reader to connect to the WiFi network.`,
+Generated using the 'qrcode' npm library.`,
             },
           ],
         };
