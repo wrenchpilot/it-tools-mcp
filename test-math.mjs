@@ -55,7 +55,7 @@ async function testMathExpression(expression) {
     // Send the test requests
     const requests = [
       { jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2024-11-05', capabilities: { tools: {} }, clientInfo: { name: 'test-client', version: '1.0.0' } } },
-      { jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'math-eval', arguments: { expression } } }
+      { jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'math-evaluate', arguments: { expression } } }
     ];
 
     requests.forEach(req => {
