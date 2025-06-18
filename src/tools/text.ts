@@ -268,40 +268,7 @@ Lines in text 2: ${lines2.length}`,
     },
     async ({ text, font = "standard" }) => {
       try {
-        // Simple ASCII art fonts (simplified implementation)
-        const fonts = {
-          small: {
-            height: 1,
-            chars: (char: string) => char.toUpperCase()
-          },
-          standard: {
-            height: 5,
-            chars: (char: string) => {
-              const asciiChars: Record<string, string[]> = {
-                'A': ['  A  ', ' A A ', 'AAAAA', 'A   A', 'A   A'],
-                'B': ['BBBB ', 'B   B', 'BBBB ', 'B   B', 'BBBB '],
-                'C': [' CCC ', 'C   C', 'C    ', 'C   C', ' CCC '],
-                'D': ['DDDD ', 'D   D', 'D   D', 'D   D', 'DDDD '],
-                'E': ['EEEEE', 'E    ', 'EEEE ', 'E    ', 'EEEEE'],
-                ' ': ['     ', '     ', '     ', '     ', '     ']
-              };
-              return asciiChars[char.toUpperCase()] || asciiChars[' '];
-            }
-          },
-          big: {
-            height: 7,
-            chars: (char: string) => {
-              const asciiChars: Record<string, string[]> = {
-                'A': ['   AAA   ', '  A   A  ', ' A     A ', 'AAAAAAAAA', 'A       A', 'A       A', 'A       A'],
-                'B': ['BBBBBBB  ', 'B      B ', 'B      B ', 'BBBBBBB  ', 'B      B ', 'B      B ', 'BBBBBBB  '],
-                ' ': ['         ', '         ', '         ', '         ', '         ', '         ', '         ']
-              };
-              return asciiChars[char.toUpperCase()] || asciiChars[' '];
-            }
-          }
-        };
-
-        if (font === 'small') {
+        if (font === "small") {
           return {
             content: [
               {
@@ -312,23 +279,85 @@ Lines in text 2: ${lines2.length}`,
           };
         }
 
-        const selectedFont = fonts[font];
-        const result = [];
+        // Standard ASCII art font
+        const standardChars: Record<string, string[]> = {
+          'A': ['  A  ', ' A A ', 'AAAAA', 'A   A', 'A   A'],
+          'B': ['BBBB ', 'B   B', 'BBBB ', 'B   B', 'BBBB '],
+          'C': [' CCC ', 'C   C', 'C    ', 'C   C', ' CCC '],
+          'D': ['DDDD ', 'D   D', 'D   D', 'D   D', 'DDDD '],
+          'E': ['EEEEE', 'E    ', 'EEEE ', 'E    ', 'EEEEE'],
+          'F': ['FFFFF', 'F    ', 'FFFF ', 'F    ', 'F    '],
+          'G': [' GGG ', 'G   G', 'G GGG', 'G   G', ' GGG '],
+          'H': ['H   H', 'H   H', 'HHHHH', 'H   H', 'H   H'],
+          'I': ['IIIII', '  I  ', '  I  ', '  I  ', 'IIIII'],
+          'J': ['JJJJJ', '    J', '    J', 'J   J', ' JJJ '],
+          'K': ['K   K', 'K  K ', 'KKK  ', 'K  K ', 'K   K'],
+          'L': ['L    ', 'L    ', 'L    ', 'L    ', 'LLLLL'],
+          'M': ['M   M', 'MM MM', 'M M M', 'M   M', 'M   M'],
+          'N': ['N   N', 'NN  N', 'N N N', 'N  NN', 'N   N'],
+          'O': [' OOO ', 'O   O', 'O   O', 'O   O', ' OOO '],
+          'P': ['PPPP ', 'P   P', 'PPPP ', 'P    ', 'P    '],
+          'Q': [' QQQ ', 'Q   Q', 'Q Q Q', 'Q  QQ', ' QQQQ'],
+          'R': ['RRRR ', 'R   R', 'RRRR ', 'R  R ', 'R   R'],
+          'S': [' SSS ', 'S   S', ' SSS ', '    S', 'SSSS '],
+          'T': ['TTTTT', '  T  ', '  T  ', '  T  ', '  T  '],
+          'U': ['U   U', 'U   U', 'U   U', 'U   U', ' UUU '],
+          'V': ['V   V', 'V   V', 'V   V', ' V V ', '  V  '],
+          'W': ['W   W', 'W   W', 'W W W', 'WW WW', 'W   W'],
+          'X': ['X   X', ' X X ', '  X  ', ' X X ', 'X   X'],
+          'Y': ['Y   Y', ' Y Y ', '  Y  ', '  Y  ', '  Y  '],
+          'Z': ['ZZZZZ', '   Z ', '  Z  ', ' Z   ', 'ZZZZZ'],
+          '0': [' 000 ', '0   0', '0   0', '0   0', ' 000 '],
+          '1': ['  1  ', ' 11  ', '  1  ', '  1  ', '11111'],
+          '2': [' 222 ', '2   2', '   2 ', '  2  ', '22222'],
+          '3': [' 333 ', '3   3', '  33 ', '3   3', ' 333 '],
+          '4': ['4   4', '4   4', '44444', '    4', '    4'],
+          '5': ['55555', '5    ', '5555 ', '    5', '5555 '],
+          '6': [' 666 ', '6    ', '6666 ', '6   6', ' 666 '],
+          '7': ['77777', '    7', '   7 ', '  7  ', ' 7   '],
+          '8': [' 888 ', '8   8', ' 888 ', '8   8', ' 888 '],
+          '9': [' 999 ', '9   9', ' 9999', '    9', ' 999 '],
+          ' ': ['     ', '     ', '     ', '     ', '     '],
+          '!': ['  !  ', '  !  ', '  !  ', '     ', '  !  '],
+          '?': [' ??? ', '?   ?', '   ? ', '  ?  ', '  ?  '],
+          '.': ['     ', '     ', '     ', '     ', '  .  '],
+          ',': ['     ', '     ', '     ', '  ,  ', ' ,   '],
+          ':': ['     ', '  :  ', '     ', '  :  ', '     '],
+          ';': ['     ', '  ;  ', '     ', '  ;  ', ' ;   '],
+          '-': ['     ', '     ', '-----', '     ', '     ']
+        };
+
+        const bigChars: Record<string, string[]> = {
+          'A': ['   AAA   ', '  A   A  ', ' AAAAAAA ', 'A       A', 'A       A', 'A       A', 'A       A'],
+          'B': ['BBBBBBB  ', 'B      B ', 'B      B ', 'BBBBBBB  ', 'B      B ', 'B      B ', 'BBBBBBB  '],
+          'C': ['  CCCCC  ', ' C       ', 'C        ', 'C        ', 'C        ', ' C       ', '  CCCCC  '],
+          ' ': ['         ', '         ', '         ', '         ', '         ', '         ', '         ']
+        };
+
+        const chars = font === "big" ? bigChars : standardChars;
+        const height = font === "big" ? 7 : 5;
         
-        for (let row = 0; row < selectedFont.height; row++) {
+        // Convert text to uppercase and filter out unsupported characters
+        const cleanText = text.toUpperCase().split('').map(char => 
+          chars[char] ? char : (char === ' ' ? ' ' : '?')
+        ).join('');
+
+        // Build ASCII art line by line
+        const lines: string[] = [];
+        for (let i = 0; i < height; i++) {
           let line = '';
-          for (const char of text) {
-            const charLines = selectedFont.chars(char);
-            line += charLines[row] + ' ';
+          for (const char of cleanText) {
+            const charLines = chars[char] || chars['?'] || chars[' '];
+            line += charLines[i] + ' ';
           }
-          result.push(line);
+          lines.push(line);
         }
 
         return {
           content: [
             {
               type: "text",
-              text: `ASCII Art (${font}):\n\n${result.join('\n')}`,
+              text: `ASCII Art (${font}):\n\n${lines.join('\n')}`,
             },
           ],
         };
@@ -491,6 +520,87 @@ Settings:
     }
   );
 
+  // Lorem Ipsum generator
+  server.tool(
+    "lorem-ipsum-generator",
+    "Generate Lorem Ipsum placeholder text",
+    {
+      count: z.number().min(1).max(100).default(5).describe("Number of items to generate"),
+      type: z.enum(["words", "sentences", "paragraphs"]).default("sentences").describe("Type of content to generate"),
+    },
+    async ({ count = 5, type = "sentences" }) => {
+      try {
+        const words = [
+          "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
+          "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore",
+          "magna", "aliqua", "enim", "ad", "minim", "veniam", "quis", "nostrud",
+          "exercitation", "ullamco", "laboris", "nisi", "aliquip", "ex", "ea", "commodo",
+          "consequat", "duis", "aute", "irure", "in", "reprehenderit", "voluptate",
+          "velit", "esse", "cillum", "fugiat", "nulla", "pariatur", "excepteur", "sint",
+          "occaecat", "cupidatat", "non", "proident", "sunt", "culpa", "qui", "officia",
+          "deserunt", "mollit", "anim", "id", "est", "laborum"
+        ];
+
+        let result = "";
+
+        if (type === "words") {
+          const selectedWords = [];
+          for (let i = 0; i < count; i++) {
+            selectedWords.push(words[Math.floor(Math.random() * words.length)]);
+          }
+          result = selectedWords.join(" ");
+        } else if (type === "sentences") {
+          const sentences = [];
+          for (let i = 0; i < count; i++) {
+            const sentenceLength = Math.floor(Math.random() * 10) + 5;
+            const sentenceWords = [];
+            for (let j = 0; j < sentenceLength; j++) {
+              sentenceWords.push(words[Math.floor(Math.random() * words.length)]);
+            }
+            sentenceWords[0] = sentenceWords[0].charAt(0).toUpperCase() + sentenceWords[0].slice(1);
+            sentences.push(sentenceWords.join(" ") + ".");
+          }
+          result = sentences.join(" ");
+        } else if (type === "paragraphs") {
+          const paragraphs = [];
+          for (let i = 0; i < count; i++) {
+            const sentenceCount = Math.floor(Math.random() * 5) + 3;
+            const sentences = [];
+            for (let j = 0; j < sentenceCount; j++) {
+              const sentenceLength = Math.floor(Math.random() * 10) + 5;
+              const sentenceWords = [];
+              for (let k = 0; k < sentenceLength; k++) {
+                sentenceWords.push(words[Math.floor(Math.random() * words.length)]);
+              }
+              sentenceWords[0] = sentenceWords[0].charAt(0).toUpperCase() + sentenceWords[0].slice(1);
+              sentences.push(sentenceWords.join(" ") + ".");
+            }
+            paragraphs.push(sentences.join(" "));
+          }
+          result = paragraphs.join("\n\n");
+        }
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Lorem Ipsum (${count} ${type}):\n\n${result}`,
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error generating Lorem Ipsum: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+          ],
+        };
+      }
+    }
+  );
+
   // Numeronym generator
   server.tool(
     "numeronym-generator",
@@ -503,29 +613,19 @@ Settings:
         const words = text.trim().split(/\s+/);
         const numeronyms = words.map(word => {
           if (word.length <= 3) {
-            return word; // Too short for numeronym
+            return word;
           }
-          
-          const first = word[0];
-          const last = word[word.length - 1];
-          const middle = word.length - 2;
-          
-          return `${first}${middle}${last}`;
+          const firstChar = word[0];
+          const lastChar = word[word.length - 1];
+          const middleCount = word.length - 2;
+          return `${firstChar}${middleCount}${lastChar}`;
         });
 
         return {
           content: [
             {
               type: "text",
-              text: `Numeronym Generation:
-
-Original: ${text}
-Numeronym: ${numeronyms.join(' ')}
-
-Examples:
-- internationalization → i18n
-- localization → l10n
-- accessibility → a11y`,
+              text: `Original: ${text}\nNumeronym: ${numeronyms.join(' ')}\n\nExamples:\n- internationalization → i18n\n- localization → l10n\n- accessibility → a11y`,
             },
           ],
         };
@@ -542,77 +642,57 @@ Examples:
     }
   );
 
-  // Lorem Ipsum generator
+  // Text to Unicode converter
   server.tool(
-    "lorem-ipsum",
-    "Generate Lorem Ipsum placeholder text",
+    "text-to-unicode",
+    "Convert text to Unicode code points and vice versa",
     {
-      type: z.enum(["words", "sentences", "paragraphs"]).default("sentences").describe("Type of content to generate"),
-      count: z.number().min(1).max(100).default(5).describe("Number of items to generate"),
+      input: z.string().describe("Text to convert to Unicode or Unicode to convert to text"),
+      operation: z.enum(["encode", "decode"]).describe("Operation: encode text to Unicode or decode Unicode to text"),
     },
-    async ({ type = "sentences", count = 5 }) => {
-      const loremWords = [
-        'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
-        'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
-        'magna', 'aliqua', 'enim', 'ad', 'minim', 'veniam', 'quis', 'nostrud',
-        'exercitation', 'ullamco', 'laboris', 'nisi', 'aliquip', 'ex', 'ea', 'commodo',
-        'consequat', 'duis', 'aute', 'irure', 'in', 'reprehenderit', 'voluptate',
-        'velit', 'esse', 'cillum', 'fugiat', 'nulla', 'pariatur', 'excepteur', 'sint',
-        'occaecat', 'cupidatat', 'non', 'proident', 'sunt', 'culpa', 'qui', 'officia',
-        'deserunt', 'mollit', 'anim', 'id', 'est', 'laborum'
-      ];
-
-      let result = '';
-
-      if (type === 'words') {
-        const words = [];
-        for (let i = 0; i < count; i++) {
-          words.push(loremWords[Math.floor(Math.random() * loremWords.length)]);
+    async ({ input, operation }) => {
+      try {
+        if (operation === "encode") {
+          const unicode = input
+            .split('')
+            .map(char => `U+${char.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}`)
+            .join(' ');
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Text: ${input}\nUnicode: ${unicode}`,
+              },
+            ],
+          };
+        } else {
+          // Decode Unicode to text
+          const unicodePattern = /U\+([0-9A-Fa-f]{4,6})/g;
+          const text = input.replace(unicodePattern, (match, hex) => {
+            const decimal = parseInt(hex, 16);
+            return String.fromCharCode(decimal);
+          });
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Unicode: ${input}\nText: ${text}`,
+              },
+            ],
+          };
         }
-        result = words.join(' ');
-      } else if (type === 'sentences') {
-        const sentences = [];
-        for (let i = 0; i < count; i++) {
-          const sentenceLength = Math.floor(Math.random() * 10) + 5;
-          const words = [];
-          for (let j = 0; j < sentenceLength; j++) {
-            words.push(loremWords[Math.floor(Math.random() * loremWords.length)]);
-          }
-          let sentence = words.join(' ');
-          sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1) + '.';
-          sentences.push(sentence);
-        }
-        result = sentences.join(' ');
-      } else { // paragraphs
-        const paragraphs = [];
-        for (let i = 0; i < count; i++) {
-          const sentenceCount = Math.floor(Math.random() * 5) + 3;
-          const sentences = [];
-          for (let j = 0; j < sentenceCount; j++) {
-            const sentenceLength = Math.floor(Math.random() * 10) + 5;
-            const words = [];
-            for (let k = 0; k < sentenceLength; k++) {
-              words.push(loremWords[Math.floor(Math.random() * loremWords.length)]);
-            }
-            let sentence = words.join(' ');
-            sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1) + '.';
-            sentences.push(sentence);
-          }
-          paragraphs.push(sentences.join(' '));
-        }
-        result = paragraphs.join('\n\n');
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error converting text/Unicode: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+          ],
+        };
       }
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Lorem Ipsum (${count} ${type}):
-
-${result}`,
-          },
-        ],
-      };
     }
   );
 
