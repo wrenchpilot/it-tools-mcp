@@ -1,18 +1,17 @@
+networks:
+  mcp-network:
+    driver: bridge
 services:
   # MCP Server with IT Tools functionality
   it-tools-mcp:
     build: .
     container_name: it-tools-mcp-server
-    stdin_open: true
-    tty: true
-    restart: unless-stopped
     environment:
       - NODE_ENV=production
-    volumes:
-      - /tmp:/tmp
     networks:
       - mcp-network
-
-networks:
-  mcp-network:
-    driver: bridge
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    volumes:
+      - /tmp:/tmp

@@ -2,8 +2,8 @@
   "servers": {
     "it-tools-mcp": {
       "type": "stdio",
-      "command": "node",
-      "args": ["../build/index.js"]
+      "command": "docker",
+      "args": ["compose", "-f", "/Volumes/Source/it-tools-mcp/docker-compose.yml", "run", "--rm", "-T", "it-tools-mcp"]
     }
   }
 }

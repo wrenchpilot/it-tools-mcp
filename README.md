@@ -140,6 +140,66 @@ npm run docker:run
 
 For detailed Docker usage instructions, see [DOCKER-USAGE.md](DOCKER-USAGE.md).
 
+## Docker Setup for VS Code MCP Integration
+
+The IT Tools MCP Server is now configured to run inside a Docker container for VS Code integration. This provides better isolation and consistency across different environments.
+
+### Configuration Files
+
+#### `.vscode/mcp.json`
+```json
+{
+  "servers": {
+    "it-tools-mcp": {
+      "type": "stdio",
+      "command": "/Volumes/Source/it-tools-mcp/mcp-docker-wrapper.sh"
+    }
+  }
+}
+```
+
+#### `docker-compose.yml`
+```yaml
+services:
+  it-tools-mcp:
+    build: .
+    container_name: it-tools-mcp-server
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - /tmp:/tmp
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
+```
+
+### Docker Scripts
+
+- **`mcp-docker-wrapper.sh`** - Main wrapper script for VS Code MCP integration
+- **`start-mcp-docker.sh`** - Manual startup script with status checks
+- **`stop-mcp-docker.sh`** - Clean shutdown script
+- **`test-docker-mcp.sh`** - Comprehensive testing script
+
+### Usage
+
+1. **Automatic (VS Code)**: The MCP configuration will automatically start the container when VS Code connects
+2. **Manual**: Use `./start-mcp-docker.sh` to start the container manually
+3. **Testing**: Use `./test-docker-mcp.sh` to verify functionality
+
+### Benefits of Docker Setup
+
+- **Isolation**: Server runs in its own container environment
+- **Consistency**: Same environment across different machines
+- **Easy Deployment**: Single command deployment
+- **Resource Management**: Containerized resource usage
+- **Security**: Isolated from host system
+
 ## Usage with Claude Desktop
 
 To use this MCP server with Claude Desktop, add the following configuration to your `claude_desktop_config.json`:
