@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  it-tools-mcp:
+    build: .
+    container_name: it-tools-mcp-server
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    volumes:
+      # Optional: mount a volume if you need to persist any data
+      - ./data:/app/data
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
+
+# Optional: Add a volume for data persistence
+volumes:
+  mcp-data:
+    driver: local

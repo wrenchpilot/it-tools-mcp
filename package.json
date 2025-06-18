@@ -1,0 +1,38 @@
+{
+  "name": "it-tools-mcp",
+  "version": "1.0.0",
+  "description": "MCP server providing access to various IT tools and utilities for developers",
+  "type": "module",
+  "main": "./build/index.js",
+  "bin": {
+    "it-tools-mcp": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod +x build/index.js",
+    "start": "node build/index.js",
+    "dev": "tsc && node build/index.js",
+    "test": "node test-server.mjs",
+    "docker:build": "docker build -t it-tools-mcp .",
+    "docker:run": "docker run -i --rm it-tools-mcp"
+  },
+  "files": [
+    "build"
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "it-tools",
+    "developer-tools",
+    "utilities"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.15.32",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.3",
+    "zod": "^3.25.67"
+  }
+}
