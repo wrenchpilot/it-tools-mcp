@@ -1,37 +1,84 @@
 # IT Tools MCP Server
 
-A Model Context Protocol (MCP) server that provides access to various IT tools and utilities commonly used by developers. This server exposes a comprehensive set of tools for encoding/decoding, text manipulation, hashing, and other common development tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to 72+ IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 ## Features
 
-### 🔧 Encoding & Decoding Tools
+### 🔧 Encoding & Decoding Tools (8 tools)
 - **Base64**: Encode and decode Base64 strings
-- **URL**: URL encoding and decoding
-- **HTML**: HTML entity encoding and decoding
+- **URL**: URL encoding and decoding  
+- **HTML**: HTML entity encoding and decoding (basic and extended)
+- **Text to Binary**: Convert text to binary and vice versa
 
-### 📝 JSON Tools
-- **Format**: Pretty-print JSON with customizable indentation
-- **Minify**: Remove whitespace from JSON
-- **Validate**: Parse and validate JSON syntax
+### 📝 Data Format Tools (10 tools)
+- **JSON**: Format, minify, validate, and convert JSON to CSV
+- **XML**: Format and prettify XML
+- **YAML**: Format and prettify YAML
+- **SQL**: Format and prettify SQL queries
+- **TOML**: Convert between TOML and JSON formats
+- **Markdown ↔ HTML**: Convert between Markdown and HTML formats
 
-### 🔐 Security Tools
+### 🔐 Security & Crypto Tools (11 tools)
 - **Hashing**: Generate MD5, SHA1, SHA256, SHA512 hashes
-- **UUID**: Generate random UUID v4
-- **Password**: Generate secure passwords with customizable options
+- **HMAC**: Generate Hash-based Message Authentication Codes
+- **Bcrypt**: Generate bcrypt hashes and verify passwords
+- **JWT**: Decode JWT tokens (header and payload)
+- **Basic Auth**: Generate HTTP Basic Authentication headers
+- **BIP39**: Generate Bitcoin mnemonic phrases
+- **Password Generator**: Create secure passwords with customizable options
+- **Token Generator**: Generate secure random tokens
+- **OTP Generator**: Generate Time-based One-Time Password codes
 
-### ✨ Text Manipulation
-- **Case Conversion**: 
-  - UPPERCASE
-  - lowercase
-  - camelCase
-  - PascalCase
-  - kebab-case
-  - snake_case
-  - Capitalize Words
+### ✨ Text Processing Tools (13 tools)
+- **Case Conversion**: UPPERCASE, lowercase, camelCase, PascalCase, kebab-case, snake_case, Capitalize
 - **Text Statistics**: Analyze character count, word count, lines, paragraphs
+- **Text Comparison**: Compare two texts and show differences
+- **ASCII Art**: Generate ASCII art text in multiple font styles
+- **NATO Alphabet**: Convert text to NATO phonetic alphabet
+- **String Obfuscation**: Obfuscate text using HTML entities, Unicode, or Base64
+- **Slugify**: Convert text to URL-friendly slug format
+- **Numeronym Generator**: Generate numeronyms (e.g., "i18n" for "internationalization")
+- **Lorem Ipsum**: Generate placeholder text (words, sentences, paragraphs)
+- **Emoji Search**: Search for emojis by name or category
 
-### ⏰ Time Tools
-- **Timestamp Conversion**: Convert between Unix timestamps and human-readable dates
+### 🌐 Network & Web Tools (8 tools)
+- **IPv4 Subnet Calculator**: Calculate subnet information and network details
+- **IPv6 ULA Generator**: Generate IPv6 Unique Local Address prefixes
+- **URL Parser**: Parse URLs into components (protocol, host, path, etc.)
+- **Random Port Generator**: Generate random available port numbers
+- **MAC Address Generator**: Generate random MAC addresses with custom prefixes
+- **Phone Number Formatter**: Parse and format phone numbers for different countries
+- **IBAN Validator**: Validate and parse International Bank Account Numbers
+
+### 🔢 Math & Calculation Tools (6 tools)
+- **Math Evaluator**: Evaluate mathematical expressions safely
+- **Base Converter**: Convert numbers between different bases (2-36)
+- **Roman Numerals**: Convert between decimal and Roman numerals
+- **Temperature Converter**: Convert between Celsius, Fahrenheit, and Kelvin
+- **Percentage Calculator**: Calculate percentages and percentage changes
+
+### 🆔 ID & Code Generators (6 tools)
+- **UUID**: Generate random UUID v4
+- **ULID**: Generate Universally Unique Lexicographically Sortable Identifiers
+- **QR Code**: Generate ASCII QR codes for text
+- **WiFi QR Code**: Generate QR code data for WiFi network connection
+- **SVG Placeholder**: Generate SVG placeholder images with custom dimensions
+
+### 🔧 Development Tools (8 tools)
+- **Regex Tester**: Test regular expressions against text with flags support
+- **Crontab Generator**: Generate cron expressions with human-readable descriptions
+- **JSON Diff**: Compare two JSON objects and highlight differences
+- **List Converter**: Convert between different list formats (CSV, JSON, etc.)
+- **MIME Types**: Look up MIME types for file extensions and vice versa
+- **HTTP Status Codes**: Reference lookup for HTTP status codes
+- **Device Information**: Get basic system/environment information
+
+### 🎨 Utility Tools (2 tools)
+- **Color Conversion**: Convert between HEX and RGB color formats
+- **Email Normalizer**: Normalize email addresses (remove dots, aliases, etc.)
+
+### 🔐 JWT Tools
+- **JWT Decoder**: Decode JWT tokens (header and payload display only)
 
 ## Installation
 
@@ -150,6 +197,7 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 | `hash-sha256` | Generate SHA256 hash | `text: string` |
 | `hash-sha512` | Generate SHA512 hash | `text: string` |
 | `uuid-generate` | Generate UUID v4 | None |
+| `ulid-generate` | Generate ULID | None |
 | `password-generate` | Generate secure password | `length?: number`, `includeUppercase?: boolean`, `includeLowercase?: boolean`, `includeNumbers?: boolean`, `includeSymbols?: boolean` |
 | `text-uppercase` | Convert to uppercase | `text: string` |
 | `text-lowercase` | Convert to lowercase | `text: string` |
@@ -160,6 +208,121 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 | `text-snakecase` | Convert to snake_case | `text: string` |
 | `timestamp-convert` | Convert timestamps | `input: string` |
 | `text-stats` | Get text statistics | `text: string` |
+| `qr-generate` | Generate ASCII QR code | `text: string`, `size?: number` |
+| `color-hex-to-rgb` | Convert HEX to RGB | `hex: string` |
+| `color-rgb-to-hex` | Convert RGB to HEX | `r: number`, `g: number`, `b: number` |
+| `ip-subnet-calculator` | Calculate IPv4 subnet info | `ip: string`, `cidr: number` |
+| `number-base-convert` | Convert number bases | `number: string`, `fromBase: number`, `toBase: number` |
+| `lorem-ipsum` | Generate Lorem Ipsum text | `type?: 'words'|'sentences'|'paragraphs'`, `count?: number` |
+| `mac-address-generate` | Generate MAC address | `prefix?: string`, `separator?: ':'|'-'` |
+| `jwt-decode` | Decode JWT token | `token: string` |
+
+## Complete Tool Reference
+
+### All 72 Available Tools:
+
+**Encoding & Decoding (8 tools):**
+- `base64-encode` - Encode text to Base64
+- `base64-decode` - Decode Base64 text
+- `url-encode` - URL encode text
+- `url-decode` - URL decode text
+- `html-encode` - Encode HTML entities
+- `html-decode` - Decode HTML entities
+- `html-entities-extended` - Extended HTML entity encoding/decoding
+- `text-to-binary` - Convert text to binary and vice versa
+
+**Data Format Conversion (10 tools):**
+- `json-format` - Format and validate JSON
+- `json-minify` - Minify JSON by removing whitespace
+- `json-to-csv` - Convert JSON to CSV format
+- `json-to-toml` - Convert JSON to TOML format
+- `json-diff` - Compare two JSON objects and show differences
+- `xml-format` - Format and prettify XML
+- `yaml-format` - Format and prettify YAML
+- `sql-format` - Format and prettify SQL queries
+- `toml-to-json` - Convert TOML to JSON format
+- `markdown-to-html` - Convert Markdown to HTML
+- `html-to-markdown` - Convert HTML to Markdown
+
+**Security & Crypto (11 tools):**
+- `hash-md5` - Generate MD5 hash
+- `hash-sha1` - Generate SHA1 hash
+- `hash-sha256` - Generate SHA256 hash
+- `hash-sha512` - Generate SHA512 hash
+- `hmac-generator` - Generate HMAC codes
+- `bcrypt-hash` - Generate bcrypt hashes and verify passwords
+- `jwt-decode` - Decode JWT tokens
+- `basic-auth-generator` - Generate HTTP Basic Auth headers
+- `bip39-generate` - Generate Bitcoin mnemonic phrases
+- `password-generate` - Generate secure passwords
+- `token-generator` - Generate secure random tokens
+- `otp-code-generator` - Generate TOTP codes
+
+**Text Processing (13 tools):**
+- `text-uppercase` - Convert text to UPPERCASE
+- `text-lowercase` - Convert text to lowercase
+- `text-capitalize` - Capitalize first letter of each word
+- `text-camelcase` - Convert text to camelCase
+- `text-pascalcase` - Convert text to PascalCase
+- `text-kebabcase` - Convert text to kebab-case
+- `text-snakecase` - Convert text to snake_case
+- `text-stats` - Get text statistics
+- `text-diff` - Compare two texts and show differences
+- `ascii-art-text` - Generate ASCII art text
+- `text-to-nato-alphabet` - Convert text to NATO phonetic alphabet
+- `string-obfuscator` - Obfuscate text using various methods
+- `slugify-string` - Convert text to URL-friendly slugs
+- `numeronym-generator` - Generate numeronyms (e.g., i18n)
+- `lorem-ipsum` - Generate Lorem Ipsum placeholder text
+- `emoji-search` - Search for emojis by name or category
+
+**Network & Web (8 tools):**
+- `ip-subnet-calculator` - Calculate IPv4 subnet information
+- `ipv4-subnet-calc` - Enhanced IPv4 subnet calculator
+- `ipv6-ula-generator` - Generate IPv6 ULA prefixes
+- `url-parse` - Parse URLs into components
+- `random-port` - Generate random port numbers
+- `mac-address-generate` - Generate random MAC addresses
+- `phone-format` - Parse and format phone numbers
+- `iban-validate` - Validate and parse IBAN numbers
+
+**Math & Calculations (6 tools):**
+- `math-eval` - Evaluate mathematical expressions
+- `number-base-convert` - Convert numbers between bases
+- `roman-numeral-convert` - Convert between decimal and Roman numerals
+- `temperature-convert` - Convert between temperature units
+- `percentage-calc` - Calculate percentages and changes
+
+**ID & Code Generators (6 tools):**
+- `uuid-generate` - Generate random UUID v4
+- `ulid-generate` - Generate ULID identifiers
+- `qr-generate` - Generate ASCII QR codes
+- `wifi-qr-code-generator` - Generate WiFi QR code data
+- `svg-placeholder-generator` - Generate SVG placeholder images
+
+**Development Tools (8 tools):**
+- `regex-tester` - Test regular expressions
+- `crontab-generate` - Generate cron expressions
+- `list-converter` - Convert between list formats
+- `mime-types` - Look up MIME types
+- `http-status-codes` - HTTP status code reference
+- `device-info` - Get system information
+
+**Utility Tools (2 tools):**
+- `color-hex-to-rgb` - Convert HEX to RGB colors
+- `color-rgb-to-hex` - Convert RGB to HEX colors
+- `email-normalizer` - Normalize email addresses
+
+## Architecture
+
+This MCP server is built with:
+- **TypeScript** for type safety and better development experience
+- **Zod** for robust input validation and schema definition
+- **Node.js built-in modules** (crypto, Buffer, etc.) for maximum compatibility
+- **MCP SDK** for proper Model Context Protocol implementation
+- **Docker support** for easy deployment and containerization
+
+The server implements 72 distinct tools across 8 major categories, providing comprehensive IT utility functionality that matches and extends the popular IT Tools web application.
 
 ## Examples
 
@@ -173,6 +336,13 @@ Once configured, you can ask Claude to use these tools:
 - "Convert 'hello world' to camelCase"
 - "Generate a 16-character password with symbols"
 - "What's the timestamp 1640995200 in human readable format?"
+- "Convert the HEX color #FF5733 to RGB"
+- "Calculate subnet info for 192.168.1.0/24"
+- "Convert the number FF from hexadecimal to decimal"
+- "Generate a random MAC address with prefix 00:1B:44"
+- "Generate 3 paragraphs of Lorem Ipsum text"
+- "Create an ASCII QR code for 'https://example.com'"
+- "Decode this JWT token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
 
 ## Development
 
