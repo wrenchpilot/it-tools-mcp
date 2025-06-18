@@ -1,9 +1,12 @@
 {
-  "servers": {
-    "it-tools-mcp": {
-      "type": "stdio",
-      "command": "docker",
-      "args": ["compose", "-f", "/Volumes/Source/it-tools-mcp/docker-compose.yml", "run", "--rm", "-T", "it-tools-mcp"]
+    "servers": {
+        "it-tools-mcp": {
+            "type": "stdio",
+            "command": "bash",
+            "args": [
+                "-c",
+                "cd \"${workspaceFolder}\" && docker compose run --rm -T it-tools-mcp"
+            ]
+        }
     }
-  }
 }
