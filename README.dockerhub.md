@@ -104,6 +104,15 @@ Ask Claude to use these tools:
 
 Built with **TypeScript**, **Zod** validation, and **MCP SDK** for robust, type-safe operation.
 
+### 🤖 AI-Assisted Development
+
+This project was developed using **VS Code**, **Copilot Chat Agent**, **Playwright MCP**, and the **Claude Sonnet 4 Model**, showcasing modern AI-assisted software development:
+
+- 🔧 **All 76 tools** designed and implemented with AI assistance
+- 📦 **Complete Docker setup** with GitHub Actions CI/CD pipeline
+- 🔍 **Schema optimization** with systematic validation cleanup
+- 📚 **Comprehensive documentation** and tool catalogs
+
 ### Project Structure
 
 ```text
