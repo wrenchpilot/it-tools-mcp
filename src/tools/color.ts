@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
 import Color from "color";
+import { z } from "zod";
 
 export function registerColorTools(server: McpServer) {
   // Color conversion tools

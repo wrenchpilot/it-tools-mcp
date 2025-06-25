@@ -17,7 +17,7 @@ export function registerDevelopmentTools(server: McpServer) {
         const matches = text.match(regex);
         const globalMatches = flags?.includes('g') ? [...text.matchAll(new RegExp(pattern, flags))] : null;
         const isMatch = regex.test(text);
-        
+
         let result = `Regex Test Results:
 
 Pattern: ${pattern}
@@ -93,10 +93,10 @@ Common regex flags:
     async ({ minute = "*", hour = "*", dayOfMonth = "*", month = "*", dayOfWeek = "*" }) => {
       try {
         const cronExpression = `${minute} ${hour} ${dayOfMonth} ${month} ${dayOfWeek}`;
-        
+
         // Generate human readable description
         let description = "Runs ";
-        
+
         // Minute description
         if (minute === "*") {
           description += "every minute";
@@ -107,7 +107,7 @@ Common regex flags:
         } else {
           description += `at minute ${minute}`;
         }
-        
+
         // Hour description
         if (hour !== "*") {
           if (hour.startsWith("*/")) {
@@ -118,7 +118,7 @@ Common regex flags:
             description += ` at ${hour}:00`;
           }
         }
-        
+
         // Day of month description
         if (dayOfMonth !== "*") {
           if (dayOfMonth.startsWith("*/")) {
@@ -127,11 +127,11 @@ Common regex flags:
             description += ` on day ${dayOfMonth} of the month`;
           }
         }
-        
+
         // Month description
         if (month !== "*") {
           const monthNames = ["", "January", "February", "March", "April", "May", "June",
-                             "July", "August", "September", "October", "November", "December"];
+            "July", "August", "September", "October", "November", "December"];
           if (month.includes(",")) {
             const months = month.split(",").map(m => monthNames[parseInt(m)] || m).join(", ");
             description += ` in ${months}`;
@@ -139,7 +139,7 @@ Common regex flags:
             description += ` in ${monthNames[parseInt(month)] || month}`;
           }
         }
-        
+
         // Day of week description
         if (dayOfWeek !== "*") {
           const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -154,7 +154,7 @@ Common regex flags:
         // Generate next few run times (simplified calculation)
         const nextRuns = [];
         const now = new Date();
-        
+
         // This is a simplified calculation - a real cron parser would be more accurate
         for (let i = 0; i < 5; i++) {
           const nextRun = new Date(now.getTime() + (i + 1) * 60 * 1000); // Simplified: add minutes
@@ -235,14 +235,14 @@ Note: Use 'crontab -e' to edit your crontab file.`,
         // Parse input list
         const inputSeparator = separators[inputFormat];
         let items = list.split(inputSeparator);
-        
+
         if (trim) {
           items = items.map(item => item.trim()).filter(item => item.length > 0);
         }
 
         // Convert to output format
         let result = '';
-        
+
         switch (outputFormat) {
           case 'json':
             result = JSON.stringify(items, null, 2);

@@ -1,13 +1,10 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
-import * as YAML from "js-yaml";
-import formatXML from "xml-formatter";
-import { format as formatSQL } from "sql-formatter";
 import * as toml from "@iarna/toml";
-import { marked } from "marked";
-import { htmlToText } from "html-to-text";
-import { diffLines } from "diff";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import * as YAML from "js-yaml";
 import Papa from "papaparse";
+import { format as formatSQL } from "sql-formatter";
+import formatXML from "xml-formatter";
+import { z } from "zod";
 
 export function registerDataFormatTools(server: McpServer) {
   // JSON formatting tool
@@ -181,7 +178,7 @@ ${formatted}
       try {
         // Parse YAML to validate and then dump with proper formatting
         const parsed = YAML.load(yaml);
-        
+
         // Format with proper indentation and options
         const formatted = YAML.dump(parsed, {
           indent: 2,
@@ -198,7 +195,7 @@ ${formatted}
         // Count lines and detect any issues
         const inputLines = yaml.split('\n').length;
         const outputLines = formatted.split('\n').length;
-        
+
         return {
           content: [
             {
@@ -356,7 +353,7 @@ ${formatted}
     async ({ markdown }) => {
       try {
         const { marked } = require('marked');
-        
+
         // Configure marked options for safety and consistency
         marked.setOptions({
           breaks: true,
@@ -364,9 +361,9 @@ ${formatted}
           headerIds: false,
           mangle: false
         });
-        
+
         const html = marked(markdown);
-        
+
         return {
           content: [
             {
@@ -398,7 +395,7 @@ ${formatted}
     async ({ html }) => {
       try {
         const TurndownService = require('turndown');
-        
+
         // Configure turndown for better output
         const turndownService = new TurndownService({
           headingStyle: 'atx',
@@ -407,9 +404,9 @@ ${formatted}
           emDelimiter: '*',
           strongDelimiter: '**'
         });
-        
+
         const markdown = turndownService.turndown(html);
-        
+
         return {
           content: [
             {
@@ -443,27 +440,27 @@ ${formatted}
       try {
         const obj1 = JSON.parse(json1);
         const obj2 = JSON.parse(json2);
-        
+
         function deepCompare(a: any, b: any, path = ""): string[] {
           const differences: string[] = [];
-          
+
           if (typeof a !== typeof b) {
             differences.push(`${path}: Type difference - ${typeof a} vs ${typeof b}`);
             return differences;
           }
-          
+
           if (a === null || b === null) {
             if (a !== b) {
               differences.push(`${path}: ${a} vs ${b}`);
             }
             return differences;
           }
-          
+
           if (typeof a === 'object' && !Array.isArray(a)) {
             const keysA = Object.keys(a);
             const keysB = Object.keys(b);
             const allKeys = new Set([...keysA, ...keysB]);
-            
+
             for (const key of allKeys) {
               const newPath = path ? `${path}.${key}` : key;
               if (!(key in a)) {
@@ -489,12 +486,12 @@ ${formatted}
           } else if (a !== b) {
             differences.push(`${path}: ${JSON.stringify(a)} vs ${JSON.stringify(b)}`);
           }
-          
+
           return differences;
         }
-        
+
         const differences = deepCompare(obj1, obj2);
-        
+
         if (differences.length === 0) {
           return {
             content: [

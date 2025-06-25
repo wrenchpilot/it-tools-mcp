@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
 import { randomUUID } from "crypto";
 import QRCode from "qrcode";
+import { z } from "zod";
 
 export function registerIdGeneratorTools(server: McpServer) {
   // UUID generation tool
@@ -33,7 +33,7 @@ export function registerIdGeneratorTools(server: McpServer) {
         const timestamp = Date.now();
         const randomPart = Math.random().toString(36).substring(2, 18);
         const ulid = timestamp.toString(36).toUpperCase() + randomPart.toUpperCase();
-        
+
         return {
           content: [
             {
@@ -151,7 +151,7 @@ Debug info:
       try {
         // WiFi QR code format: WIFI:T:WPA;S:mynetwork;P:mypass;H:false;;
         const wifiString = `WIFI:T:${security};S:${ssid};P:${password};H:${hidden};;`;
-        
+
         // Generate QR code as base64 data URL
         const dataUrl = await QRCode.toDataURL(wifiString, {
           type: 'image/png',
@@ -223,7 +223,7 @@ WiFi Connection Details:
         }
         const displayText = text || `${width}×${height}`;
         const fontSize = Math.min(width, height) / 8;
-        
+
         const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
   <rect width="100%" height="100%" fill="${backgroundColor}"/>
   <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="${fontSize}" fill="${textColor}" text-anchor="middle" dy=".3em">${displayText}</text>

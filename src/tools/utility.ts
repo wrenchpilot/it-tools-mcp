@@ -107,7 +107,7 @@ that would be delivered to the same inbox.`,
           'csv': 'text/csv',
           'md': 'text/markdown',
           'rtf': 'application/rtf',
-          
+
           // Images
           'jpg': 'image/jpeg',
           'jpeg': 'image/jpeg',
@@ -119,7 +119,7 @@ that would be delivered to the same inbox.`,
           'ico': 'image/x-icon',
           'tiff': 'image/tiff',
           'tif': 'image/tiff',
-          
+
           // Audio
           'mp3': 'audio/mpeg',
           'wav': 'audio/wav',
@@ -127,7 +127,7 @@ that would be delivered to the same inbox.`,
           'flac': 'audio/flac',
           'aac': 'audio/aac',
           'm4a': 'audio/mp4',
-          
+
           // Video
           'mp4': 'video/mp4',
           'avi': 'video/x-msvideo',
@@ -136,7 +136,7 @@ that would be delivered to the same inbox.`,
           'flv': 'video/x-flv',
           'webm': 'video/webm',
           'mkv': 'video/x-matroska',
-          
+
           // Documents
           'pdf': 'application/pdf',
           'doc': 'application/msword',
@@ -147,7 +147,7 @@ that would be delivered to the same inbox.`,
           'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
           'odt': 'application/vnd.oasis.opendocument.text',
           'ods': 'application/vnd.oasis.opendocument.spreadsheet',
-          
+
           // Archives
           'zip': 'application/zip',
           'rar': 'application/vnd.rar',
@@ -155,14 +155,14 @@ that would be delivered to the same inbox.`,
           'tar': 'application/x-tar',
           'gz': 'application/gzip',
           'bz2': 'application/x-bzip2',
-          
+
           // Fonts
           'ttf': 'font/ttf',
           'otf': 'font/otf',
           'woff': 'font/woff',
           'woff2': 'font/woff2',
           'eot': 'application/vnd.ms-fontobject',
-          
+
           // Programming
           'py': 'text/x-python',
           'java': 'text/x-java-source',
@@ -186,7 +186,7 @@ that would be delivered to the same inbox.`,
         if (lookupType === "extension-to-mime") {
           const ext = input.toLowerCase().replace(/^\./, ''); // Remove leading dot if present
           const mimeType = mimeTypes[ext];
-          
+
           if (!mimeType) {
             return {
               content: [
@@ -289,7 +289,7 @@ Description: ${getMimeDescription(mimeType)}`,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           language: 'en-US' // Default for server environment
         };
-        
+
         return {
           content: [
             {
@@ -336,14 +336,14 @@ For detailed client device info, use a browser-based tool.`,
           100: "Continue",
           101: "Switching Protocols",
           102: "Processing",
-          
+
           // 2xx Success
           200: "OK",
           201: "Created",
           202: "Accepted",
           204: "No Content",
           206: "Partial Content",
-          
+
           // 3xx Redirection
           300: "Multiple Choices",
           301: "Moved Permanently",
@@ -351,7 +351,7 @@ For detailed client device info, use a browser-based tool.`,
           304: "Not Modified",
           307: "Temporary Redirect",
           308: "Permanent Redirect",
-          
+
           // 4xx Client Error
           400: "Bad Request",
           401: "Unauthorized",
@@ -362,7 +362,7 @@ For detailed client device info, use a browser-based tool.`,
           410: "Gone",
           422: "Unprocessable Entity",
           429: "Too Many Requests",
-          
+
           // 5xx Server Error
           500: "Internal Server Error",
           501: "Not Implemented",
@@ -376,20 +376,20 @@ For detailed client device info, use a browser-based tool.`,
           100: "The server has received the request headers and the client should proceed to send the request body.",
           101: "The requester has asked the server to switch protocols and the server has agreed to do so.",
           102: "The server has received and is processing the request, but no response is available yet.",
-          
+
           200: "The request has succeeded.",
           201: "The request has been fulfilled and resulted in a new resource being created.",
           202: "The request has been accepted for processing, but the processing has not been completed.",
           204: "The server successfully processed the request and is not returning any content.",
           206: "The server is delivering only part of the resource due to a range header sent by the client.",
-          
+
           300: "The request has more than one possible response.",
           301: "The URL of the requested resource has been changed permanently.",
           302: "The resource is temporarily located at a different URL.",
           304: "The response has not been modified since the last request.",
           307: "The request should be repeated with another URI, but future requests should still use the original URI.",
           308: "The request and all future requests should be repeated using another URI.",
-          
+
           400: "The server could not understand the request due to invalid syntax.",
           401: "The client must authenticate itself to get the requested response.",
           403: "The client does not have access rights to the content.",
@@ -399,7 +399,7 @@ For detailed client device info, use a browser-based tool.`,
           410: "The content has been permanently deleted from server.",
           422: "The request was well-formed but was unable to be followed due to semantic errors.",
           429: "The user has sent too many requests in a given amount of time.",
-          
+
           500: "The server has encountered a situation it doesn't know how to handle.",
           501: "The request method is not supported by the server and cannot be handled.",
           502: "The server got an invalid response while working as a gateway.",
@@ -411,7 +411,7 @@ For detailed client device info, use a browser-based tool.`,
         if (code !== undefined) {
           const message = statusCodes[code];
           const description = descriptions[code];
-          
+
           if (!message) {
             return {
               content: [
@@ -429,7 +429,7 @@ ${Object.entries(statusCodes).slice(0, 10).map(([c, m]) => `• ${c}: ${m}`).joi
           }
 
           const category = getStatusCategory(code);
-          
+
           return {
             content: [
               {
@@ -456,7 +456,7 @@ Usage: This status code indicates ${getUsageHint(code)}.`,
           };
 
           let result = 'HTTP Status Codes Reference:\n\n';
-          
+
           for (const [category, codes] of Object.entries(byCategory)) {
             result += `${category}:\n`;
             for (const [code, message] of codes) {
@@ -513,7 +513,7 @@ function getMimeDescription(mimeType: string): string {
     'audio/mpeg': 'MP3 audio file',
     'video/mp4': 'MP4 video file'
   };
-  
+
   return descriptions[mimeType] || 'No description available';
 }
 

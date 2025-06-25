@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
 import { z } from "zod";
-import { parsePhoneNumber, isValidPhoneNumber, getCountryCallingCode } from "libphonenumber-js";
 
 export function registerNetworkTools(server: McpServer) {
   // IP address tools
@@ -126,11 +126,11 @@ CIDR: /${cidr}`,
       try {
         const [ip, prefixLength] = cidr.split('/');
         const prefix = parseInt(prefixLength);
-        
+
         if (isNaN(prefix) || prefix < 0 || prefix > 32) {
           throw new Error("Invalid CIDR prefix length");
         }
-        
+
         const ipParts = ip.split('.').map(part => {
           const num = parseInt(part);
           if (isNaN(num) || num < 0 || num > 255) {
@@ -146,14 +146,14 @@ CIDR: /${cidr}`,
         // Calculate all subnet information
         const mask = (0xFFFFFFFF << (32 - prefix)) >>> 0;
         const inverseMask = (0xFFFFFFFF >>> prefix);
-        
+
         const maskOctets = [
           (mask >>> 24) & 0xFF,
           (mask >>> 16) & 0xFF,
           (mask >>> 8) & 0xFF,
           mask & 0xFF
         ];
-        
+
         const wildcardOctets = [
           inverseMask >>> 24,
           (inverseMask >>> 16) & 0xFF,
@@ -193,8 +193,8 @@ CIDR: /${cidr}`,
 
         // Check if private
         const isPrivate = (firstOctet === 10) ||
-                         (firstOctet === 172 && networkOctets[1] >= 16 && networkOctets[1] <= 31) ||
-                         (firstOctet === 192 && networkOctets[1] === 168);
+          (firstOctet === 172 && networkOctets[1] >= 16 && networkOctets[1] <= 31) ||
+          (firstOctet === 192 && networkOctets[1] === 168);
 
         return {
           content: [
@@ -256,16 +256,16 @@ CIDR Prefix: /${prefix}`,
           }
           gid = randomBytes.join('');
         }
-        
+
         // Validate Global ID
         if (!/^[0-9a-fA-F]{10}$/.test(gid)) {
           throw new Error("Global ID must be exactly 10 hexadecimal characters (40 bits)");
         }
-        
+
         // Format the ULA prefix
         const prefix = `fd${gid.substring(0, 2)}:${gid.substring(2, 6)}:${gid.substring(6, 10)}`;
         const fullPrefix = `${prefix}::/48`;
-        
+
         // Generate some example subnets
         const subnets = [];
         for (let i = 0; i < 5; i++) {
@@ -320,7 +320,7 @@ They are not expected to be routable on the global Internet.`,
     async ({ url }) => {
       try {
         const urlObj = new URL(url);
-        
+
         // Parse query parameters
         const params: Record<string, string> = {};
         urlObj.searchParams.forEach((value, key) => {
@@ -345,9 +345,9 @@ Hash: ${urlObj.hash}
 Origin: ${urlObj.origin}
 
 Query Parameters:
-${Object.keys(params).length > 0 
-  ? Object.entries(params).map(([key, value]) => `  ${key}: ${value}`).join('\n')
-  : '  (none)'}
+${Object.keys(params).length > 0
+                  ? Object.entries(params).map(([key, value]) => `  ${key}: ${value}`).join('\n')
+                  : '  (none)'}
 
 Path Segments:
 ${urlObj.pathname.split('/').filter(segment => segment).map((segment, i) => `  ${i + 1}. ${segment}`).join('\n') || '  (none)'}`,
@@ -381,11 +381,11 @@ ${urlObj.pathname.split('/').filter(segment => segment).map((segment, i) => `  $
       try {
         const ports: number[] = [];
         const excludeSet = new Set(exclude);
-        
+
         // Well-known ports to avoid by default
         const wellKnownPorts = [22, 23, 25, 53, 80, 110, 143, 443, 993, 995];
         wellKnownPorts.forEach(port => excludeSet.add(port));
-        
+
         for (let i = 0; i < count; i++) {
           let port;
           let attempts = 0;
@@ -396,7 +396,7 @@ ${urlObj.pathname.split('/').filter(segment => segment).map((segment, i) => `  $
               throw new Error("Could not generate unique port after 1000 attempts");
             }
           } while (excludeSet.has(port) || ports.includes(port));
-          
+
           ports.push(port);
         }
 
@@ -438,14 +438,14 @@ ${exclude.length > 0 ? `Custom excluded: ${exclude.join(', ')}` : ''}`,
     async ({ prefix, separator = ":" }) => {
       try {
         let macParts = [];
-        
+
         if (prefix) {
           // Validate and use provided prefix
           const prefixParts = prefix.split(/[:-]/);
           if (prefixParts.length > 6) {
             throw new Error("Prefix cannot have more than 6 parts");
           }
-          
+
           for (const part of prefixParts) {
             if (!/^[0-9A-Fa-f]{2}$/.test(part)) {
               throw new Error(`Invalid MAC address part: ${part}`);
@@ -453,27 +453,27 @@ ${exclude.length > 0 ? `Custom excluded: ${exclude.join(', ')}` : ''}`,
             macParts.push(part.toUpperCase());
           }
         }
-        
+
         // Generate remaining parts
         while (macParts.length < 6) {
           const randomByte = Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase();
           macParts.push(randomByte);
         }
-        
+
         // Ensure first octet indicates locally administered unicast
         if (!prefix) {
           const firstOctet = parseInt(macParts[0], 16);
           // Set locally administered bit (bit 1) and clear multicast bit (bit 0)
           macParts[0] = ((firstOctet | 0x02) & 0xFE).toString(16).padStart(2, '0').toUpperCase();
         }
-        
+
         const macAddress = macParts.join(separator);
-        
+
         // Analyze the MAC address
         const firstOctet = parseInt(macParts[0], 16);
         const isMulticast = (firstOctet & 0x01) !== 0;
         const isLocallyAdministered = (firstOctet & 0x02) !== 0;
-        
+
         return {
           content: [
             {
@@ -519,10 +519,10 @@ ${prefix ? `Used prefix: ${prefix}` : 'Randomly generated'}`,
         if (!isValidPhoneNumber(phoneNumber, countryCode as any)) {
           throw new Error("Invalid phone number format");
         }
-        
+
         // Parse the phone number
         const parsedNumber = parsePhoneNumber(phoneNumber, countryCode as any);
-        
+
         return {
           content: [
             {
@@ -575,22 +575,22 @@ Valid: ${parsedNumber.isValid()}
     async ({ iban }) => {
       try {
         const IBAN = require('iban');
-        
+
         // Clean the input
         const cleanIban = iban.replace(/\s/g, '').toUpperCase();
-        
+
         // Validate using the IBAN library
         const isValid = IBAN.isValid(cleanIban);
-        
+
         if (isValid) {
           // Extract components
           const countryCode = cleanIban.slice(0, 2);
           const checkDigits = cleanIban.slice(2, 4);
           const bban = cleanIban.slice(4); // Basic Bank Account Number
-          
+
           // Get country information if available
           const countryName = IBAN.countries[countryCode]?.name || 'Unknown';
-          
+
           return {
             content: [
               {
