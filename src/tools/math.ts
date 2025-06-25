@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
 import { evaluate } from "mathjs";
+import { z } from "zod";
 
 export function registerMathTools(server: McpServer) {
   // Math expression evaluator
@@ -40,21 +40,31 @@ export function registerMathTools(server: McpServer) {
     "Convert numbers between different bases (binary, octal, decimal, hexadecimal)",
     {
       number: z.string().describe("Number to convert"),
-      fromBase: z.number().min(2).max(36).describe("Source base (2-36)"),
-      toBase: z.number().min(2).max(36).describe("Target base (2-36)")
+      fromBase: z.number().describe("Source base (2-36)"),
+      toBase: z.number().describe("Target base (2-36)")
     },
     async ({ number, fromBase, toBase }) => {
-      try {        
+      try {
+        if (fromBase < 2 || fromBase > 36 || toBase < 2 || toBase > 36) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Base must be between 2 and 36.",
+              },
+            ],
+          };
+        }
         // Parse number from source base to decimal
         const decimal = parseInt(number, fromBase);
-        
+
         if (isNaN(decimal)) {
           throw new Error("Invalid number for the specified base");
         }
-        
+
         // Convert decimal to target base
         const result = decimal.toString(toBase);
-        
+
         return {
           content: [
             {
@@ -87,27 +97,27 @@ export function registerMathTools(server: McpServer) {
       try {
         // Auto-detect if input is a number or Roman numeral
         const isNumber = /^\d+$/.test(input.trim());
-        
+
         if (isNumber) {
           // Convert number to Roman numeral
           const num = parseInt(input);
           if (isNaN(num) || num < 1 || num > 3999) {
             throw new Error("Number must be between 1 and 3999");
           }
-          
+
           const values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
           const symbols = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
-          
+
           let result = "";
           let remaining = num;
-          
+
           for (let i = 0; i < values.length; i++) {
             while (remaining >= values[i]) {
               result += symbols[i];
               remaining -= values[i];
             }
           }
-          
+
           return {
             content: [
               {
@@ -122,16 +132,16 @@ export function registerMathTools(server: McpServer) {
           const romanMap: { [key: string]: number } = {
             I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000
           };
-          
+
           let result = 0;
           let prev = 0;
-          
+
           for (let i = roman.length - 1; i >= 0; i--) {
             const current = romanMap[roman[i]];
             if (!current) {
               throw new Error(`Invalid Roman numeral character: ${roman[i]}`);
             }
-            
+
             if (current < prev) {
               result -= current;
             } else {
@@ -139,7 +149,7 @@ export function registerMathTools(server: McpServer) {
             }
             prev = current;
           }
-          
+
           return {
             content: [
               {
@@ -172,7 +182,7 @@ export function registerMathTools(server: McpServer) {
       to: z.enum(["celsius", "fahrenheit", "kelvin"]).describe("Target temperature unit")
     },
     async ({ temperature, from, to }) => {
-      try {        
+      try {
         // Convert to Celsius first
         let celsius: number;
         switch (from) {
@@ -180,7 +190,7 @@ export function registerMathTools(server: McpServer) {
             celsius = temperature;
             break;
           case "fahrenheit":
-            celsius = (temperature - 32) * 5/9;
+            celsius = (temperature - 32) * 5 / 9;
             break;
           case "kelvin":
             celsius = temperature - 273.15;
@@ -188,7 +198,7 @@ export function registerMathTools(server: McpServer) {
           default:
             throw new Error("Invalid source unit");
         }
-        
+
         // Convert from Celsius to target unit
         let result: number;
         switch (to) {
@@ -196,7 +206,7 @@ export function registerMathTools(server: McpServer) {
             result = celsius;
             break;
           case "fahrenheit":
-            result = celsius * 9/5 + 32;
+            result = celsius * 9 / 5 + 32;
             break;
           case "kelvin":
             result = celsius + 273.15;
@@ -204,7 +214,7 @@ export function registerMathTools(server: McpServer) {
           default:
             throw new Error("Invalid target unit");
         }
-        
+
         return {
           content: [
             {
@@ -236,10 +246,10 @@ export function registerMathTools(server: McpServer) {
       value2: z.number().describe("Second value")
     },
     async ({ operation, value1, value2 }) => {
-      try {        
+      try {
         let result: number;
         let explanation: string;
-        
+
         switch (operation) {
           case "percentage-of":
             // value1% of value2
@@ -259,7 +269,7 @@ export function registerMathTools(server: McpServer) {
           default:
             throw new Error("Invalid operation");
         }
-        
+
         return {
           content: [
             {
@@ -292,18 +302,18 @@ export function registerMathTools(server: McpServer) {
       try {
         // Auto-detect if input is a timestamp or date string
         const isTimestamp = /^\d+$/.test(input.trim());
-        
+
         if (isTimestamp) {
           // Convert timestamp to date
           const timestamp = parseInt(input);
           if (isNaN(timestamp)) {
             throw new Error("Invalid timestamp");
           }
-          
+
           const date = new Date(timestamp * 1000);
           const iso = date.toISOString();
           const local = date.toLocaleString();
-          
+
           return {
             content: [
               {
@@ -318,9 +328,9 @@ export function registerMathTools(server: McpServer) {
           if (isNaN(date.getTime())) {
             throw new Error("Invalid date string");
           }
-          
+
           const timestamp = Math.floor(date.getTime() / 1000);
-          
+
           return {
             content: [
               {

@@ -196,14 +196,14 @@ Speaking time: ~${Math.ceil(words.length / 150)} minutes (150 WPM)`,
         const lines1 = text1.split('\n');
         const lines2 = text2.split('\n');
         const maxLines = Math.max(lines1.length, lines2.length);
-        
+
         let differences = [];
         let same = true;
-        
+
         for (let i = 0; i < maxLines; i++) {
           const line1 = lines1[i] || '';
           const line2 = lines2[i] || '';
-          
+
           if (line1 !== line2) {
             same = false;
             if (line1 && line2) {
@@ -219,7 +219,7 @@ Speaking time: ~${Math.ceil(words.length / 150)} minutes (150 WPM)`,
             }
           }
         }
-        
+
         if (same) {
           return {
             content: [
@@ -264,7 +264,7 @@ Lines in text 2: ${lines2.length}`,
     "Generate ASCII art text",
     {
       text: z.string().describe("Text to convert to ASCII art"),
-      font: z.enum(["small", "standard", "big"]).default("standard").describe("ASCII art font style"),
+      font: z.enum(["small", "standard", "big"]).describe("ASCII art font style").optional(),
     },
     async ({ text, font = "standard" }) => {
       try {
@@ -336,9 +336,9 @@ Lines in text 2: ${lines2.length}`,
 
         const chars = font === "big" ? bigChars : standardChars;
         const height = font === "big" ? 7 : 5;
-        
+
         // Convert text to uppercase and filter out unsupported characters
-        const cleanText = text.toUpperCase().split('').map(char => 
+        const cleanText = text.toUpperCase().split('').map(char =>
           chars[char] ? char : (char === ' ' ? ' ' : '?')
         ).join('');
 
@@ -421,12 +421,12 @@ NATO: ${result}`,
     "Obfuscate text by replacing characters with their HTML entities or other representations",
     {
       text: z.string().describe("Text to obfuscate"),
-      method: z.enum(["html-entities", "unicode", "base64"]).default("html-entities").describe("Obfuscation method"),
+      method: z.enum(["html-entities", "unicode", "base64"]).describe("Obfuscation method").optional(),
     },
     async ({ text, method = "html-entities" }) => {
       try {
         let result = '';
-        
+
         switch (method) {
           case 'html-entities':
             result = text
@@ -434,14 +434,14 @@ NATO: ${result}`,
               .map(char => `&#${char.charCodeAt(0)};`)
               .join('');
             break;
-            
+
           case 'unicode':
             result = text
               .split('')
               .map(char => `\\u${char.charCodeAt(0).toString(16).padStart(4, '0')}`)
               .join('');
             break;
-            
+
           case 'base64':
             result = Buffer.from(text, 'utf-8').toString('base64');
             break;
@@ -477,8 +477,8 @@ Obfuscated: ${result}`,
     "Convert text to URL-friendly slug format",
     {
       text: z.string().describe("Text to convert to slug"),
-      separator: z.string().default("-").describe("Character to use as separator"),
-      lowercase: z.boolean().default(true).describe("Convert to lowercase"),
+      separator: z.string().describe("Character to use as separator").optional(),
+      lowercase: z.boolean().describe("Convert to lowercase").optional(),
     },
     async ({ text, separator = "-", lowercase = true }) => {
       try {
@@ -489,11 +489,11 @@ Obfuscated: ${result}`,
           .trim()
           .replace(/\s+/g, separator) // Replace spaces with separator
           .replace(new RegExp(`${separator}+`, 'g'), separator); // Remove duplicate separators
-        
+
         if (lowercase) {
           slug = slug.toLowerCase();
         }
-        
+
         return {
           content: [
             {
@@ -525,11 +525,21 @@ Settings:
     "lorem-ipsum-generator",
     "Generate Lorem Ipsum placeholder text",
     {
-      count: z.number().min(1).max(100).default(5).describe("Number of items to generate"),
-      type: z.enum(["words", "sentences", "paragraphs"]).default("sentences").describe("Type of content to generate"),
+      count: z.number().describe("Number of items to generate").optional(),
+      type: z.enum(["words", "sentences", "paragraphs"]).describe("Type of content to generate").optional(),
     },
     async ({ count = 5, type = "sentences" }) => {
       try {
+        if (count < 1 || count > 100) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Count must be between 1 and 100.",
+              },
+            ],
+          };
+        }
         const words = [
           "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
           "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore",
@@ -657,7 +667,7 @@ Settings:
             .split('')
             .map(char => `U+${char.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}`)
             .join(' ');
-          
+
           return {
             content: [
               {
@@ -673,7 +683,7 @@ Settings:
             const decimal = parseInt(hex, 16);
             return String.fromCharCode(decimal);
           });
-          
+
           return {
             content: [
               {
@@ -712,20 +722,20 @@ Settings:
           "sad": ["😢", "😭", "😔", "☹️", "🙁", "😞", "😟"],
           "love": ["😍", "🥰", "😘", "💕", "💖", "💗", "❤️"],
           "angry": ["😠", "😡", "🤬", "👿", "💢"],
-          
+
           // Animals
           "cat": ["🐱", "🐈", "🙀", "😸", "😹", "😻", "😼"],
           "dog": ["🐶", "🐕", "🦮", "🐕‍🦺"],
           "animal": ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻"],
-          
+
           // Food
           "food": ["🍕", "🍔", "🍟", "🌭", "🥪", "🌮", "🍝", "🍜"],
           "fruit": ["🍎", "🍊", "🍋", "🍌", "🍇", "🍓", "🫐", "🍈"],
-          
+
           // Objects
           "tech": ["💻", "📱", "⌚", "📺", "📷", "🎮", "💾", "💿"],
           "tools": ["🔧", "🔨", "⚒️", "🛠️", "⛏️", "🪓", "🔩"],
-          
+
           // Symbols
           "check": ["✅", "☑️", "✔️"],
           "cross": ["❌", "❎", "✖️"],
@@ -735,16 +745,16 @@ Settings:
 
         const searchTerm = query.toLowerCase();
         let results: string[] = [];
-        
+
         for (const [category, emojiList] of Object.entries(emojis)) {
           if (category.includes(searchTerm)) {
             results.push(...emojiList);
           }
         }
-        
+
         // Remove duplicates
         results = [...new Set(results)];
-        
+
         if (results.length === 0) {
           return {
             content: [

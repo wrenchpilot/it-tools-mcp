@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
 import { createHash, createHmac } from "crypto";
+import { z } from "zod";
 
 export function registerCryptoTools(server: McpServer) {
   // Hash generation tools
@@ -36,14 +36,14 @@ export function registerCryptoTools(server: McpServer) {
     {
       message: z.string().describe("Message to authenticate"),
       key: z.string().describe("Secret key for HMAC"),
-      algorithm: z.enum(["sha1", "sha256", "sha512"]).default("sha256").describe("Hash algorithm"),
+      algorithm: z.enum(["sha1", "sha256", "sha512"]).describe("Hash algorithm").optional(),
     },
     async ({ message, key, algorithm = "sha256" }) => {
       try {
         const hmac = createHmac(algorithm, key);
         hmac.update(message);
         const result = hmac.digest('hex');
-        
+
         return {
           content: [
             {
@@ -128,7 +128,7 @@ Note: Signature verification is not performed. Do not trust this token without p
         const credentials = `${username}:${password}`;
         const encoded = Buffer.from(credentials, 'utf-8').toString('base64');
         const authHeader = `Basic ${encoded}`;
-        
+
         return {
           content: [
             {
@@ -170,17 +170,27 @@ fetch('https://api.example.com', {
     "Generate bcrypt hash or verify password against hash",
     {
       password: z.string().describe("Password to hash or verify"),
-      rounds: z.number().min(4).max(12).default(10).describe("Number of salt rounds (4-12, default 10)"),
+      rounds: z.number().describe("Number of salt rounds (4-12, default 10)").optional(),
       hash: z.string().optional().describe("Existing hash to verify against (for verification)"),
     },
     async ({ password, rounds = 10, hash }) => {
       try {
+        if (rounds < 4 || rounds > 12) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Rounds must be between 4 and 12.",
+              },
+            ],
+          };
+        }
         // Note: This is a simplified implementation
         // In a real scenario, you'd use a proper bcrypt library
         const crypto = await import('crypto');
         const salt = crypto.randomBytes(16).toString('hex');
         const generatedHash = crypto.createHash('sha256').update(password + salt).digest('hex');
-        
+
         if (hash) {
           // Verification mode (simplified)
           const isValid = hash.includes(generatedHash.substring(0, 10));
@@ -231,7 +241,7 @@ For production use, please use a proper bcrypt library.`,
     "bip39-generate",
     "Generate BIP39 mnemonic phrases",
     {
-      wordCount: z.enum(["12", "15", "18", "21", "24"]).default("12").describe("Number of words in the mnemonic"),
+      wordCount: z.enum(["12", "15", "18", "21", "24"]).describe("Number of words in the mnemonic").optional(),
     },
     async ({ wordCount = "12" }) => {
       try {
@@ -251,7 +261,7 @@ For production use, please use a proper bcrypt library.`,
 
         const count = parseInt(wordCount);
         const words = [];
-        
+
         for (let i = 0; i < count; i++) {
           const randomIndex = Math.floor(Math.random() * wordList.length);
           words.push(wordList[randomIndex]);
@@ -293,19 +303,29 @@ Words: ${words.join(', ')}
     "password-generate",
     "Generate a secure password",
     {
-      length: z.number().min(4).max(128).default(16).describe("Password length"),
-      includeUppercase: z.boolean().default(true).describe("Include uppercase letters"),
-      includeLowercase: z.boolean().default(true).describe("Include lowercase letters"),
-      includeNumbers: z.boolean().default(true).describe("Include numbers"),
-      includeSymbols: z.boolean().default(true).describe("Include symbols"),
+      length: z.number().describe("Password length").optional(),
+      includeUppercase: z.boolean().describe("Include uppercase letters").optional(),
+      includeLowercase: z.boolean().describe("Include lowercase letters").optional(),
+      includeNumbers: z.boolean().describe("Include numbers").optional(),
+      includeSymbols: z.boolean().describe("Include symbols").optional(),
     },
     async ({ length = 16, includeUppercase = true, includeLowercase = true, includeNumbers = true, includeSymbols = true }) => {
+      if (length < 4 || length > 128) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "Length must be between 4 and 128.",
+            },
+          ],
+        };
+      }
       let charset = '';
       if (includeUppercase) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       if (includeLowercase) charset += 'abcdefghijklmnopqrstuvwxyz';
       if (includeNumbers) charset += '0123456789';
       if (includeSymbols) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
-      
+
       if (charset === '') {
         return {
           content: [
@@ -316,12 +336,12 @@ Words: ${words.join(', ')}
           ],
         };
       }
-      
+
       let password = '';
       for (let i = 0; i < length; i++) {
         password += charset.charAt(Math.floor(Math.random() * charset.length));
       }
-      
+
       return {
         content: [
           {
@@ -338,14 +358,24 @@ Words: ${words.join(', ')}
     "token-generator",
     "Generate secure random tokens",
     {
-      length: z.number().min(8).max(256).default(32).describe("Token length"),
-      charset: z.enum(["alphanumeric", "hex", "base64", "custom"]).default("alphanumeric").describe("Character set to use"),
+      length: z.number().describe("Token length").optional(),
+      charset: z.enum(["alphanumeric", "hex", "base64", "custom"]).describe("Character set to use").optional(),
       customChars: z.string().optional().describe("Custom characters (required if charset is 'custom')"),
     },
     async ({ length = 32, charset = "alphanumeric", customChars }) => {
       try {
+        if (length < 8 || length > 256) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Length must be between 8 and 256.",
+              },
+            ],
+          };
+        }
         let chars = '';
-        
+
         switch (charset) {
           case 'alphanumeric':
             chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -408,19 +438,29 @@ ${charset === 'custom' ? `Custom chars: ${customChars}` : ''}`,
     "Generate Time-based One-Time Password (TOTP) codes",
     {
       secret: z.string().describe("Base32 encoded secret key"),
-      digits: z.number().min(4).max(10).default(6).describe("Number of digits in the code"),
-      period: z.number().default(30).describe("Time period in seconds"),
+      digits: z.number().describe("Number of digits in the code").optional(),
+      period: z.number().describe("Time period in seconds").optional(),
     },
     async ({ secret, digits = 6, period = 30 }) => {
       try {
+        if (digits < 4 || digits > 10) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Digits must be between 4 and 10.",
+              },
+            ],
+          };
+        }
         // Simplified TOTP implementation - Note: This is a demo implementation
         // For production, use a proper library like 'speakeasy'
         const time = Math.floor(Date.now() / 1000 / period);
-        
+
         // Simple base32 decode (simplified for demo)
         const cleanSecret = secret.replace(/\s/g, '').toUpperCase();
         const secretBuffer = Buffer.from(cleanSecret, 'hex'); // Using hex instead of base32 for simplicity
-        
+
         const hmac = createHmac('sha1', secretBuffer);
         const timeBuffer = Buffer.alloc(8);
         timeBuffer.writeUInt32BE(Math.floor(time), 4);
@@ -428,9 +468,9 @@ ${charset === 'custom' ? `Custom chars: ${customChars}` : ''}`,
         const hash = hmac.digest();
         const offset = hash[hash.length - 1] & 0xf;
         const code = ((hash[offset] & 0x7f) << 24 |
-                     (hash[offset + 1] & 0xff) << 16 |
-                     (hash[offset + 2] & 0xff) << 8 |
-                     (hash[offset + 3] & 0xff)) % Math.pow(10, digits);
+          (hash[offset + 1] & 0xff) << 16 |
+          (hash[offset + 2] & 0xff) << 8 |
+          (hash[offset + 3] & 0xff)) % Math.pow(10, digits);
 
         return {
           content: [

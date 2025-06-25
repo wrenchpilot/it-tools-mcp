@@ -84,11 +84,11 @@ Common regex flags:
     "crontab-generate",
     "Generate crontab expressions",
     {
-      minute: z.string().optional().default("*").describe("Minute (0-59, *, */n, n-m)"),
-      hour: z.string().optional().default("*").describe("Hour (0-23, *, */n, n-m)"),
-      dayOfMonth: z.string().optional().default("*").describe("Day of month (1-31, *, */n, n-m)"),
-      month: z.string().optional().default("*").describe("Month (1-12, *, */n, n-m)"),
-      dayOfWeek: z.string().optional().default("*").describe("Day of week (0-7, *, */n, n-m)"),
+      minute: z.string().describe("Minute (0-59, *, */n, n-m)").optional(),
+      hour: z.string().describe("Hour (0-23, *, */n, n-m)").optional(),
+      dayOfMonth: z.string().describe("Day of month (1-31, *, */n, n-m)").optional(),
+      month: z.string().describe("Month (1-12, *, */n, n-m)").optional(),
+      dayOfWeek: z.string().describe("Day of week (0-7, *, */n, n-m)").optional(),
     },
     async ({ minute = "*", hour = "*", dayOfMonth = "*", month = "*", dayOfWeek = "*" }) => {
       try {
@@ -220,7 +220,7 @@ Note: Use 'crontab -e' to edit your crontab file.`,
       list: z.string().describe("Input list to convert"),
       inputFormat: z.enum(["comma", "semicolon", "newline", "space", "pipe"]).describe("Input format"),
       outputFormat: z.enum(["comma", "semicolon", "newline", "space", "pipe", "json", "quoted"]).describe("Output format"),
-      trim: z.boolean().default(true).describe("Trim whitespace from items"),
+      trim: z.boolean().describe("Trim whitespace from items").optional(),
     },
     async ({ list, inputFormat, outputFormat, trim = true }) => {
       try {

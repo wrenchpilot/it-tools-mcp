@@ -38,12 +38,22 @@ export function registerColorTools(server: McpServer) {
     "color-rgb-to-hex",
     "Convert RGB color to HEX",
     {
-      r: z.number().min(0).max(255).describe("Red value (0-255)"),
-      g: z.number().min(0).max(255).describe("Green value (0-255)"),
-      b: z.number().min(0).max(255).describe("Blue value (0-255)"),
+      r: z.number().describe("Red value (0-255)"),
+      g: z.number().describe("Green value (0-255)"),
+      b: z.number().describe("Blue value (0-255)"),
     },
     async ({ r, g, b }) => {
       try {
+        if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "RGB values must be between 0 and 255.",
+              },
+            ],
+          };
+        }
         const hex = Color({ r, g, b }).hex().toUpperCase();
         return {
           content: [

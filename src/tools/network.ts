@@ -9,10 +9,20 @@ export function registerNetworkTools(server: McpServer) {
     "Calculate subnet information for IPv4",
     {
       ip: z.string().describe("IPv4 address (e.g., 192.168.1.1)"),
-      cidr: z.number().min(1).max(32).describe("CIDR notation (e.g., 24)"),
+      cidr: z.number().describe("CIDR notation (e.g., 24)"),
     },
     async ({ ip, cidr }) => {
       try {
+        if (cidr < 1 || cidr > 32) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "CIDR must be between 1 and 32.",
+              },
+            ],
+          };
+        }
         const ipParts = ip.split('.').map(part => {
           const num = parseInt(part);
           if (isNaN(num) || num < 0 || num > 255) {
@@ -362,9 +372,9 @@ ${urlObj.pathname.split('/').filter(segment => segment).map((segment, i) => `  $
     "random-port",
     "Generate random port numbers",
     {
-      count: z.number().optional().default(1).describe("Number of ports to generate"),
-      min: z.number().optional().default(1024).describe("Minimum port number"),
-      max: z.number().optional().default(65535).describe("Maximum port number"),
+      count: z.number().describe("Number of ports to generate").optional(),
+      min: z.number().describe("Minimum port number").optional(),
+      max: z.number().describe("Maximum port number").optional(),
       exclude: z.array(z.number()).optional().describe("Ports to exclude"),
     },
     async ({ count = 1, min = 1024, max = 65535, exclude = [] }) => {
@@ -423,7 +433,7 @@ ${exclude.length > 0 ? `Custom excluded: ${exclude.join(', ')}` : ''}`,
     "Generate random MAC address",
     {
       prefix: z.string().optional().describe("MAC address prefix (e.g., '00:1B:44')"),
-      separator: z.enum([":", "-"]).default(":").describe("Separator character"),
+      separator: z.enum([":", "-"]).describe("Separator character").optional(),
     },
     async ({ prefix, separator = ":" }) => {
       try {

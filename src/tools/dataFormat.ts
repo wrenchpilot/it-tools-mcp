@@ -16,10 +16,20 @@ export function registerDataFormatTools(server: McpServer) {
     "Format and validate JSON",
     {
       json: z.string().describe("JSON string to format"),
-      indent: z.number().min(0).max(10).default(2).describe("Number of spaces for indentation"),
+      indent: z.number().describe("Number of spaces for indentation").optional(),
     },
     async ({ json, indent = 2 }) => {
       try {
+        if (indent < 0 || indent > 10) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Indent must be between 0 and 10.",
+              },
+            ],
+          };
+        }
         const parsed = JSON.parse(json);
         const formatted = JSON.stringify(parsed, null, indent);
         return {
@@ -81,7 +91,7 @@ export function registerDataFormatTools(server: McpServer) {
     "Convert JSON to CSV format",
     {
       json: z.string().describe("JSON string to convert to CSV"),
-      delimiter: z.string().optional().default(",").describe("CSV delimiter"),
+      delimiter: z.string().describe("CSV delimiter").optional(),
     },
     async ({ json, delimiter = "," }) => {
       try {
@@ -117,7 +127,7 @@ export function registerDataFormatTools(server: McpServer) {
     "Format and prettify XML",
     {
       xml: z.string().describe("XML string to format"),
-      indent: z.number().default(2).describe("Number of spaces for indentation"),
+      indent: z.number().describe("Number of spaces for indentation").optional(),
     },
     async ({ xml, indent = 2 }) => {
       try {

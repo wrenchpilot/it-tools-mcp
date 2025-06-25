@@ -90,7 +90,7 @@ that would be delivered to the same inbox.`,
     "Look up MIME types for file extensions",
     {
       input: z.string().describe("File extension (e.g., 'txt') or MIME type (e.g., 'text/plain')"),
-      lookupType: z.enum(["extension-to-mime", "mime-to-extension"]).default("extension-to-mime").describe("Lookup direction"),
+      lookupType: z.enum(["extension-to-mime", "mime-to-extension"]).describe("Lookup direction").optional(),
     },
     async ({ input, lookupType = "extension-to-mime" }) => {
       try {

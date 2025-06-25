@@ -67,10 +67,20 @@ For production use, please use a proper ULID library.`,
     "Generate ASCII QR code",
     {
       text: z.string().describe("Text to encode in QR code"),
-      size: z.number().min(1).max(3).default(1).describe("Size multiplier (1-3)"),
+      size: z.number().describe("Size multiplier (1-3)").optional(),
     },
     async ({ text, size = 1 }) => {
       try {
+        if (size < 1 || size > 3) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Size must be between 1 and 3.",
+              },
+            ],
+          };
+        }
         // Generate QR code as base64 data URL
         console.log(`[DEBUG] Generating QR code for: "${text}" with size: ${size}`);
         const dataUrl = await QRCode.toDataURL(text, {
@@ -134,8 +144,8 @@ Debug info:
     {
       ssid: z.string().describe("WiFi network name (SSID)"),
       password: z.string().describe("WiFi password"),
-      security: z.enum(["WPA", "WEP", "nopass"]).default("WPA").describe("Security type"),
-      hidden: z.boolean().default(false).describe("Is the network hidden?"),
+      security: z.enum(["WPA", "WEP", "nopass"]).describe("Security type").optional(),
+      hidden: z.boolean().describe("Is the network hidden?").optional(),
     },
     async ({ ssid, password, security = "WPA", hidden = false }) => {
       try {
@@ -193,14 +203,24 @@ WiFi Connection Details:
     "svg-placeholder-generator",
     "Generate SVG placeholder images",
     {
-      width: z.number().min(1).max(2000).default(300).describe("Width in pixels"),
-      height: z.number().min(1).max(2000).default(200).describe("Height in pixels"),
-      backgroundColor: z.string().default("#cccccc").describe("Background color (hex)"),
-      textColor: z.string().default("#666666").describe("Text color (hex)"),
+      width: z.number().describe("Width in pixels").optional(),
+      height: z.number().describe("Height in pixels").optional(),
+      backgroundColor: z.string().describe("Background color (hex)").optional(),
+      textColor: z.string().describe("Text color (hex)").optional(),
       text: z.string().optional().describe("Custom text (default: dimensions)"),
     },
     async ({ width = 300, height = 200, backgroundColor = "#cccccc", textColor = "#666666", text }) => {
       try {
+        if (width < 1 || width > 2000 || height < 1 || height > 2000) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: "Width and height must be between 1 and 2000 pixels.",
+              },
+            ],
+          };
+        }
         const displayText = text || `${width}×${height}`;
         const fontSize = Math.min(width, height) / 8;
         
