@@ -1,5 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createHash, createHmac } from "crypto";
+import bcryptjs from "bcryptjs";
+import * as bip39 from "bip39";
+import speakeasy from "speakeasy";
 import { z } from "zod";
 
 export function registerCryptoTools(server: McpServer) {
@@ -185,40 +188,38 @@ fetch('https://api.example.com', {
             ],
           };
         }
-        // Note: This is a simplified implementation
-        // In a real scenario, you'd use a proper bcrypt library
-        const crypto = await import('crypto');
-        const salt = crypto.randomBytes(16).toString('hex');
-        const generatedHash = crypto.createHash('sha256').update(password + salt).digest('hex');
 
         if (hash) {
-          // Verification mode (simplified)
-          const isValid = hash.includes(generatedHash.substring(0, 10));
+          // Verification mode
+          const isValid = await bcryptjs.compare(password, hash);
           return {
             content: [
               {
                 type: "text",
                 text: `Password Verification: ${isValid ? 'VALID' : 'INVALID'}
 
-Note: This is a simplified bcrypt implementation for demonstration.
-For production use, please use a proper bcrypt library.`,
+Password: ${password}
+Hash: ${hash}`,
               },
             ],
           };
         } else {
           // Hash generation mode
+          const salt = await bcryptjs.genSalt(rounds);
+          const hashedPassword = await bcryptjs.hash(password, salt);
+          
           return {
             content: [
               {
                 type: "text",
                 text: `Bcrypt Hash Generated:
-Hash: $2b$${rounds.toString().padStart(2, '0')}$${salt}${generatedHash}
+Hash: ${hashedPassword}
 
+Password: ${password}
 Rounds: ${rounds}
-Salt: ${salt}
+Algorithm: bcrypt
 
-Note: This is a simplified bcrypt implementation for demonstration.
-For production use, please use a proper bcrypt library.`,
+This hash can be safely stored in databases and used for password verification.`,
               },
             ],
           };
@@ -245,43 +246,41 @@ For production use, please use a proper bcrypt library.`,
     },
     async ({ wordCount = "12" }) => {
       try {
-        // Simplified BIP39 word list (first 100 words)
-        const wordList = [
-          "abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse",
-          "access", "accident", "account", "accuse", "achieve", "acid", "acoustic", "acquire", "across", "act",
-          "action", "actor", "actress", "actual", "adapt", "add", "addict", "address", "adjust", "admit",
-          "adult", "advance", "advice", "aerobic", "affair", "afford", "afraid", "again", "age", "agent",
-          "agree", "ahead", "aim", "air", "airport", "aisle", "alarm", "album", "alcohol", "alert",
-          "alien", "all", "alley", "allow", "almost", "alone", "alpha", "already", "also", "alter",
-          "always", "amateur", "amazing", "among", "amount", "amused", "analyst", "anchor", "ancient", "anger",
-          "angle", "angry", "animal", "ankle", "announce", "annual", "another", "answer", "antenna", "antique",
-          "anxiety", "any", "apart", "apology", "appear", "apple", "approve", "april", "arch", "arctic",
-          "area", "arena", "argue", "arm", "armed", "armor", "army", "around", "arrange", "arrest"
-        ];
-
         const count = parseInt(wordCount);
-        const words = [];
-
-        for (let i = 0; i < count; i++) {
-          const randomIndex = Math.floor(Math.random() * wordList.length);
-          words.push(wordList[randomIndex]);
-        }
-
+        
+        // Generate entropy based on word count
+        // 12 words = 128 bits, 15 words = 160 bits, 18 words = 192 bits, 21 words = 224 bits, 24 words = 256 bits
+        const entropyBits = Math.floor((count * 11) / 33) * 32;
+        const entropyBytes = entropyBits / 8;
+        
+        // Generate cryptographically secure random entropy
+        const { randomBytes } = await import('crypto');
+        const entropy = randomBytes(entropyBytes);
+        
+        // Generate mnemonic using proper BIP39 library
+        const mnemonic = bip39.entropyToMnemonic(entropy);
+        const words = mnemonic.split(' ');
+        
+        // Validate the generated mnemonic
+        const isValid = bip39.validateMnemonic(mnemonic);
+        
         return {
           content: [
             {
               type: "text",
-              text: `BIP39 Mnemonic Phrase (${wordCount} words):
+              text: `BIP39 Mnemonic Phrase (${words.length} words):
 
-${words.join(' ')}
+${mnemonic}
 
-Words: ${words.join(', ')}
+Entropy: ${entropy.toString('hex')}
+Valid: ${isValid ? 'Yes ✅' : 'No ❌'}
+Entropy Bits: ${entropyBits}
 
 ⚠️  SECURITY WARNING:
-- This is for demonstration purposes only
-- Do NOT use this for real cryptocurrency wallets
-- Use proper entropy sources for production mnemonics
-- Store mnemonics securely and never share them`,
+- This uses cryptographically secure random generation
+- Store this mnemonic securely and never share it
+- This can be used to generate cryptocurrency wallet seeds
+- Anyone with this mnemonic can access associated wallets`,
             },
           ],
         };
@@ -338,8 +337,11 @@ Words: ${words.join(', ')}
       }
 
       let password = '';
+      const { randomBytes } = await import('crypto');
+      const randomValues = randomBytes(length);
+      
       for (let i = 0; i < length; i++) {
-        password += charset.charAt(Math.floor(Math.random() * charset.length));
+        password += charset.charAt(randomValues[i] % charset.length);
       }
 
       return {
@@ -402,8 +404,11 @@ Words: ${words.join(', ')}
         }
 
         let token = '';
+        const { randomBytes } = await import('crypto');
+        const randomValues = randomBytes(length);
+        
         for (let i = 0; i < length; i++) {
-          token += chars.charAt(Math.floor(Math.random() * chars.length));
+          token += chars.charAt(randomValues[i] % chars.length);
         }
 
         return {
@@ -453,37 +458,42 @@ ${charset === 'custom' ? `Custom chars: ${customChars}` : ''}`,
             ],
           };
         }
-        // Simplified TOTP implementation - Note: This is a demo implementation
-        // For production, use a proper library like 'speakeasy'
-        const time = Math.floor(Date.now() / 1000 / period);
 
-        // Simple base32 decode (simplified for demo)
-        const cleanSecret = secret.replace(/\s/g, '').toUpperCase();
-        const secretBuffer = Buffer.from(cleanSecret, 'hex'); // Using hex instead of base32 for simplicity
+        // Generate TOTP code using proper speakeasy library
+        const token = speakeasy.totp({
+          secret: secret,
+          encoding: 'base32',
+          digits: digits,
+          step: period
+        });
 
-        const hmac = createHmac('sha1', secretBuffer);
-        const timeBuffer = Buffer.alloc(8);
-        timeBuffer.writeUInt32BE(Math.floor(time), 4);
-        hmac.update(timeBuffer);
-        const hash = hmac.digest();
-        const offset = hash[hash.length - 1] & 0xf;
-        const code = ((hash[offset] & 0x7f) << 24 |
-          (hash[offset + 1] & 0xff) << 16 |
-          (hash[offset + 2] & 0xff) << 8 |
-          (hash[offset + 3] & 0xff)) % Math.pow(10, digits);
+        // Calculate remaining time for this token
+        const now = Math.floor(Date.now() / 1000);
+        const timeRemaining = period - (now % period);
+
+        // Verify the token is valid (for demonstration)
+        const verified = speakeasy.totp.verify({
+          secret: secret,
+          encoding: 'base32',
+          token: token,
+          step: period,
+          window: 1
+        });
 
         return {
           content: [
             {
               type: "text",
-              text: `TOTP Code: ${code.toString().padStart(digits, '0')}
+              text: `TOTP Code: ${token}
 
-Valid for: ~${period - (Math.floor(Date.now() / 1000) % period)} seconds
+Valid for: ${timeRemaining} seconds
 Digits: ${digits}
 Period: ${period} seconds
+Secret: ${secret}
+Verified: ${verified ? 'Yes ✅' : 'No ❌'}
 
-Note: This is a simplified TOTP implementation.
-For production use, please use a proper TOTP library.`,
+This code can be used for two-factor authentication.
+The token changes every ${period} seconds.`,
             },
           ],
         };
