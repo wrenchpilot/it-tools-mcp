@@ -64,4 +64,4 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: wrenchpilot/it-tools-mcp
-          readme-filepath: ./README.md
+          readme-filepath: ./README.dockerhub.md
