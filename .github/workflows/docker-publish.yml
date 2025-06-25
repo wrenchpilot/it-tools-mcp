@@ -46,11 +46,14 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
             type=raw,value=latest,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=IT Tools MCP Server
+            org.opencontainers.image.description=MCP server providing access to various IT tools and utilities
+            org.opencontainers.image.vendor=wrenchpilot
       - name: Build and push Docker image
         id: build
         uses: docker/build-push-action@v5
