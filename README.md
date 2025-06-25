@@ -69,14 +69,39 @@ This MCP server provides **76 tools** across **8 categories**:
 Add to your `claude_desktop_config.json`:
 
 ```json
-{
   "mcpServers": {
     "it-tools": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "wrenchpilot/it-tools-mcp:latest"]
+      "args": [
+          "run",
+          "-i",
+          "--rm",
+          "--name",
+          "it-tools-mcp",
+          "wrenchpilot/it-tools-mcp:latest"
+      ]
     }
   }
-}
+```
+
+### Using with VS Code
+
+```json
+"mcp": {
+  "servers": {
+      "it-tools": {
+        "command": "docker",
+        "args": [
+          "run",
+          "-i",
+          "--rm",
+          "--name",
+          "it-tools-mcp",
+          "wrenchpilot/it-tools-mcp:latest"
+        ]
+      }
+    }
+  }
 ```
 
 ### Local Development

@@ -30,10 +30,11 @@ dist/
 coverage/
 .nyc_output
 
-# Documentation (keep README.md)
+# Documentation (not needed in runtime image)
 *.md
-!README.md
 docs/
+LICENSE
+internal/
 
 # Test files
 tests/

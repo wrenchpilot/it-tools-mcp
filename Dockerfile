@@ -3,14 +3,14 @@ FROM node:lts-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy only necessary files for build (in order of change frequency)
 COPY package*.json ./
+COPY tsconfig.json ./
 
-# Install all dependencies (including devDependencies for build)
+# Install dependencies (this layer will be cached unless package.json changes)
 RUN npm ci
 
-# Copy source code
-COPY tsconfig.json ./
+# Copy source code (this layer will be cached unless source changes)
 COPY src/ ./src/
 
 # Build the application
