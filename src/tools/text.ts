@@ -273,8 +273,8 @@ Lines in text 2: ${lines2.length}`,
                           font === "big" ? "Big" : "Standard";
 
         // Generate ASCII art using figlet
-        const figlet = require('figlet');
-        const asciiArt = figlet.textSync(text, {
+        const figlet = await import('figlet');
+        const asciiArt = figlet.default.textSync(text, {
           font: figletFont,
           horizontalLayout: 'default',
           verticalLayout: 'default'
