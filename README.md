@@ -86,23 +86,22 @@ Add to your `claude_desktop_config.json`:
 
 ### Using with VS Code
 
+Add to your VS Code `settings.json`:
+
 ```json
-"mcp": {
-  "servers": {
+{
+  "mcp": {
+    "servers": {
       "it-tools": {
         "command": "docker",
-        "args": [
-          "run",
-          "-i",
-          "--rm",
-          "--name",
-          "it-tools-mcp",
-          "wrenchpilot/it-tools-mcp:latest"
-        ]
+        "args": ["run", "-i", "--rm", "wrenchpilot/it-tools-mcp:latest"]
       }
     }
   }
+}
 ```
+
+Then restart VS Code and the IT Tools will be available in Copilot Chat with `#[tool-name]` prefix.
 
 ### Local Development
 
