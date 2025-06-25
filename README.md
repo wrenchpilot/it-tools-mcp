@@ -1,260 +1,102 @@
 # IT Tools MCP Server
 
+[![Docker Pulls](https://img.shields.io/docker/pulls/wrenchpilot/it-tools-mcp)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
+[![Docker Image Size](https://img.shields.io/docker/image-size/wrenchpilot/it-tools-mcp)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
+[![Build Status](https://github.com/wrenchpilot/it-tools-mcp/workflows/Build%20and%20Push%20to%20Docker%20Hub/badge.svg)](https://github.com/wrenchpilot/it-tools-mcp/actions)
+
 A comprehensive Model Context Protocol (MCP) server that provides access to 70+ IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
-## Features
+## 🚀 Quick Start
 
-### 🔧 Encoding & Decoding Tools (9 tools)
-
-- **Base64**: Encode and decode Base64 strings
-- **URL**: URL encoding and decoding  
-- **HTML**: HTML entity encoding and decoding (basic and extended)
-- **Text to Binary**: Convert text to binary and vice versa
-- **Text to Unicode**: Convert text to Unicode and vice versa
-
-### 📝 Data Format Tools (11 tools)
-
-- **JSON**: Format, minify, validate, convert to CSV/TOML, and compare differences
-- **XML**: Format and prettify XML
-- **YAML**: Format and prettify YAML
-- **SQL**: Format and prettify SQL queries
-- **TOML**: Convert TOML to JSON format
-- **Markdown ↔ HTML**: Convert between Markdown and HTML formats
-
-### 🔐 Security & Crypto Tools (12 tools)
-
-- **Hashing**: Generate MD5, SHA1, SHA256, SHA512 hashes
-- **HMAC**: Generate Hash-based Message Authentication Codes
-- **Bcrypt**: Generate bcrypt hashes and verify passwords
-- **JWT**: Decode JWT tokens (header and payload)
-- **Basic Auth**: Generate HTTP Basic Authentication headers
-- **BIP39**: Generate Bitcoin mnemonic phrases
-- **Password Generator**: Create secure passwords with customizable options
-- **Token Generator**: Generate secure random tokens
-- **OTP Generator**: Generate Time-based One-Time Password codes
-
-### ✨ Text Processing Tools (16 tools)
-
-- **Case Conversion**: UPPERCASE, lowercase, camelCase, PascalCase, kebab-case, snake_case, Capitalize
-- **Text Statistics**: Analyze character count, word count, lines, paragraphs
-- **Text Comparison**: Compare two texts and show differences
-- **ASCII Art**: Generate ASCII art text in multiple font styles
-- **NATO Alphabet**: Convert text to NATO phonetic alphabet
-- **String Obfuscation**: Obfuscate text using HTML entities, Unicode, or Base64
-- **Slugify**: Convert text to URL-friendly slug format
-- **Numeronym Generator**: Generate numeronyms (e.g., "i18n" for "internationalization")
-- **Lorem Ipsum**: Generate placeholder text (words, sentences, paragraphs)
-- **Emoji Search**: Search for emojis by name or category
-
-### 🌐 Network & Web Tools (8 tools)
-
-- **IPv4 Subnet Calculator**: Calculate subnet information and network details
-- **IPv6 ULA Generator**: Generate IPv6 Unique Local Address prefixes
-- **URL Parser**: Parse URLs into components (protocol, host, path, etc.)
-- **Random Port Generator**: Generate random available port numbers
-- **MAC Address Generator**: Generate random MAC addresses with custom prefixes
-- **Phone Number Formatter**: Parse and format phone numbers for different countries
-- **IBAN Validator**: Validate and parse International Bank Account Numbers
-
-### 🔢 Math & Calculation Tools (6 tools)
-
-- **Math Evaluator**: Evaluate mathematical expressions safely
-- **Base Converter**: Convert numbers between different bases (2-36)
-- **Roman Numerals**: Convert between decimal and Roman numerals
-- **Temperature Converter**: Convert between Celsius, Fahrenheit, and Kelvin
-- **Percentage Calculator**: Calculate percentages and percentage changes
-
-### 🆔 ID & Code Generators (5 tools)
-
-- **UUID**: Generate random UUID v4
-- **ULID**: Generate Universally Unique Lexicographically Sortable Identifiers
-- **QR Code**: Generate ASCII QR codes for text (with image output)
-- **WiFi QR Code**: Generate QR code data for WiFi network connection
-- **SVG Placeholder**: Generate SVG placeholder images with custom dimensions
-
-### 🔧 Development Tools (6 tools)
-
-- **Regex Tester**: Test regular expressions against text with flags support
-- **Crontab Generator**: Generate cron expressions with human-readable descriptions
-- **List Converter**: Convert between different list formats (CSV, JSON, etc.)
-- **JSON Diff**: Compare two JSON objects and highlight differences
-
-### 🎨 Utility Tools (6 tools)
-
-- **Color Conversion**: Convert between HEX and RGB color formats
-- **Email Normalizer**: Normalize email addresses (remove dots, aliases, etc.)
-- **MIME Types**: Look up MIME types for file extensions and vice versa
-- **HTTP Status Codes**: Reference lookup for HTTP status codes
-- **Device Information**: Get basic system/environment information
-
-## Installation
-
-### Prerequisites
-
-- Node.js 16+
-- npm or yarn
-
-### Build from Source
-
-1. Clone or download this repository
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Build the project:
-
-   ```bash
-   npm run build
-   ```
-
-4. Run the server:
-
-   ```bash
-   npm start
-   ```
-
-## Docker Support
-
-The IT Tools MCP Server supports Docker for easy deployment and consistent environments.
-
-### Quick Start with Docker
+### Using Docker (Recommended)
 
 ```bash
-# Build the Docker image
-docker build -t it-tools-mcp .
+# Pull and run the latest version
+docker run -it --rm wrenchpilot/it-tools-mcp:latest
 
-# Run the container
-docker run -i --rm it-tools-mcp
+# Or use docker-compose
+curl -O https://raw.githubusercontent.com/wrenchpilot/it-tools-mcp/main/docker-compose.yml
+docker-compose up
 ```
 
-### Docker Compose
+### Using Docker with Persistent Data
 
 ```bash
-# Build and run with docker-compose
-docker-compose up --build
-
-# Run with input
-echo '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {"roots": {"listChanged": true}, "sampling": {}}, "clientInfo": {"name": "test", "version": "1.0.0"}}}' | docker-compose run --rm -T it-tools-mcp
+docker run -it --rm \
+  -v $(pwd)/data:/app/data \
+  wrenchpilot/it-tools-mcp:latest
 ```
 
-### NPM Scripts for Docker
+### Usage Examples
 
+#### Interactive Mode
 ```bash
-# Build Docker image
-npm run docker:build
-
-# Run Docker container
-npm run docker:run
+docker run -it --rm wrenchpilot/it-tools-mcp:latest
 ```
 
-For detailed Docker usage instructions, see [DOCKER-USAGE.md](DOCKER-USAGE.md).
+#### Programmatic Usage
+```bash
+# Generate a UUID
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"uuid-generate","arguments":{}}}' | \
+  docker run -i --rm wrenchpilot/it-tools-mcp:latest
 
-## Docker Setup for VS Code MCP Integration
-
-The IT Tools MCP Server is configured to run inside a Docker container for VS Code integration. This provides better isolation and consistency across different environments.
-
-### Configuration Files
-
-#### `.vscode/mcp.json`
-
-```json
-{
-    "servers": {
-        "it-tools-mcp": {
-            "type": "stdio",
-            "command": "bash",
-            "args": [
-                "-c",
-                "cd \"${workspaceFolder}\" && docker compose run --rm -T it-tools-mcp"
-            ]
-        }
-    }
-}
+# Encode text to Base64
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"base64-encode","arguments":{"text":"Hello World"}}}' | \
+  docker run -i --rm wrenchpilot/it-tools-mcp:latest
 ```
 
-#### `docker-compose.yml`
+## 🛠️ Tool Categories
 
-```yaml
-services:
-  it-tools-mcp:
-    build: .
-    container_name: it-tools-mcp-server
-    stdin_open: true
-    tty: true
-    restart: unless-stopped
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - /tmp:/tmp
-    networks:
-      - mcp-network
+This MCP server provides **76 tools** across **8 categories**:
 
-networks:
-  mcp-network:
-    driver: bridge
-```
+- **🔧 Encoding & Decoding** (9 tools): Base64, URL, HTML entities, text-to-binary, Unicode
+- **📝 Data Format** (11 tools): JSON, XML, YAML, SQL, TOML, Markdown ↔ HTML conversion
+- **🔐 Security & Crypto** (12 tools): Hashing (MD5, SHA1-512), HMAC, JWT, bcrypt, passwords, tokens
+- **✨ Text Processing** (16 tools): Case conversion, stats, diff, ASCII art, NATO alphabet, slugify
+- **🌐 Network & Web** (8 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, phone formatting
+- **🔢 Math & Calculations** (6 tools): Expression evaluation, base conversion, temperature, percentages
+- **🆔 ID & Code Generators** (5 tools): UUID, ULID, QR codes, WiFi QR, SVG placeholders
+- **🔧 Development & Utilities** (9 tools): Regex testing, cron expressions, color conversion, MIME types
 
-### Usage
+## 📦 Installation & Setup
 
-The MCP configuration will automatically start the container when VS Code connects to the MCP server. The setup uses Docker Compose to build and run the server in an isolated container environment.
+### Using with Claude Desktop
 
-### Benefits of Docker Setup
-
-- **Isolation**: Server runs in its own container environment
-- **Consistency**: Same environment across different machines
-- **Easy Deployment**: Single command deployment
-- **Resource Management**: Containerized resource usage
-- **Security**: Isolated from host system
-
-## Usage with Claude Desktop
-
-To use this MCP server with Claude Desktop, add the following configuration to your `claude_desktop_config.json`:
-
-### For Direct Node.js Execution
-
-#### macOS/Linux
+Add to your `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
     "it-tools": {
-      "command": "node",
-      "args": ["/absolute/path/to/it-tools-mcp/build/index.js"]
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "wrenchpilot/it-tools-mcp:latest"]
     }
   }
 }
 ```
 
-#### Windows
+### Local Development
 
-```json
-{
-  "mcpServers": {
-    "it-tools": {
-      "command": "node",
-      "args": ["C:\\absolute\\path\\to\\it-tools-mcp\\build\\index.js"]
-    }
-  }
-}
+```bash
+git clone https://github.com/wrenchpilot/it-tools-mcp.git
+cd it-tools-mcp
+npm install
+npm run build
+npm start
 ```
 
-### For Docker Execution
+## 💡 Usage Examples
 
-```json
-{
-  "mcpServers": {
-    "it-tools": {
-      "command": "bash",
-      "args": [
-        "-c", 
-        "cd /absolute/path/to/it-tools-mcp && docker compose run --rm -T it-tools-mcp"
-      ]
-    }
-  }
-}
-```
+Ask Claude to use these tools:
+
+- **Encoding**: "Base64 encode 'Hello World'" → `SGVsbG8gV29ybGQ=`
+- **Hashing**: "Generate SHA256 hash for 'password123'"
+- **Formatting**: "Format this JSON: {'name':'John','age':30}"
+- **Text**: "Convert 'hello world' to camelCase" → `helloWorld`
+- **Security**: "Generate a 16-character password with symbols"
+- **Network**: "Calculate subnet info for 192.168.1.0/24"
+- **Colors**: "Convert HEX color #FF5733 to RGB" → `rgb(255, 87, 51)`
+- **IDs**: "Generate a UUID" → `550e8400-e29b-41d4-a716-446655440000`
 
 ## Available Tools
 
@@ -346,237 +188,53 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 | `device-info`               | Get system information                 | None                                                                                                                                  |
 | `http-status-codes`         | HTTP status reference                  | `code?: number`                                                                                                                       |
 
-## Complete Tool Reference
+## 🏗️ Architecture & Development
 
-### All Available Tools
-
-**Encoding & Decoding (9 tools):**
-
-- `base64-encode` - Encode text to Base64
-- `base64-decode` - Decode Base64 text
-- `url-encode` - URL encode text
-- `url-decode` - URL decode text
-- `html-encode` - Encode HTML entities
-- `html-decode` - Decode HTML entities
-- `html-entities-extended` - Extended HTML entity encoding/decoding
-- `text-to-binary` - Convert text to binary and vice versa
-- `text-to-unicode` - Convert text to Unicode and vice versa
-
-**Data Format Conversion (11 tools):**
-- `json-format` - Format and validate JSON
-- `json-minify` - Minify JSON by removing whitespace
-- `json-to-csv` - Convert JSON to CSV format
-- `json-to-toml` - Convert JSON to TOML format
-- `json-diff` - Compare two JSON objects and show differences
-- `xml-format` - Format and prettify XML
-- `yaml-format` - Format and prettify YAML
-- `sql-format` - Format and prettify SQL queries
-- `toml-to-json` - Convert TOML to JSON format
-- `markdown-to-html` - Convert Markdown to HTML
-- `html-to-markdown` - Convert HTML to Markdown
-
-**Security & Crypto (12 tools):**
-
-- `hash-md5` - Generate MD5 hash
-- `hash-sha1` - Generate SHA1 hash
-- `hash-sha256` - Generate SHA256 hash
-- `hash-sha512` - Generate SHA512 hash
-- `hmac-generator` - Generate HMAC codes
-- `bcrypt-hash` - Generate bcrypt hashes and verify passwords
-- `jwt-decode` - Decode JWT tokens
-- `basic-auth-generator` - Generate HTTP Basic Auth headers
-- `bip39-generate` - Generate Bitcoin mnemonic phrases
-- `password-generate` - Generate secure passwords
-- `token-generator` - Generate secure random tokens
-- `otp-code-generator` - Generate TOTP codes
-
-**Text Processing (16 tools):**
-
-- `text-uppercase` - Convert text to UPPERCASE
-- `text-lowercase` - Convert text to lowercase
-- `text-capitalize` - Capitalize first letter of each word
-- `text-camelcase` - Convert text to camelCase
-- `text-pascalcase` - Convert text to PascalCase
-- `text-kebabcase` - Convert text to kebab-case
-- `text-snakecase` - Convert text to snake_case
-- `text-stats` - Get text statistics
-- `text-diff` - Compare two texts and show differences
-- `ascii-art-text` - Generate ASCII art text
-- `text-to-nato-alphabet` - Convert text to NATO phonetic alphabet
-- `string-obfuscator` - Obfuscate text using various methods
-- `slugify-string` - Convert text to URL-friendly slugs
-- `numeronym-generator` - Generate numeronyms (e.g., i18n)
-- `lorem-ipsum-generator` - Generate Lorem Ipsum placeholder text
-- `emoji-search` - Search for emojis by name or category
-
-**Network & Web (8 tools):**
-- `ip-subnet-calculator` - Calculate IPv4 subnet information
-- `ipv4-subnet-calc` - Enhanced IPv4 subnet calculator
-- `ipv6-ula-generator` - Generate IPv6 ULA prefixes
-- `url-parse` - Parse URLs into components
-- `random-port` - Generate random port numbers
-- `mac-address-generate` - Generate random MAC addresses
-- `phone-format` - Parse and format phone numbers
-- `iban-validate` - Validate and parse IBAN numbers
-
-**Math & Calculations (6 tools):**
-- `math-evaluate` - Evaluate mathematical expressions
-- `number-base-converter` - Convert numbers between bases
-- `roman-numeral-converter` - Convert between decimal and Roman numerals
-- `temperature-converter` - Convert between temperature units
-- `percentage-calculator` - Calculate percentages and changes
-- `unix-timestamp-converter` - Convert Unix timestamps to dates
-
-**ID & Code Generators (5 tools):**
-
-- `uuid-generate` - Generate random UUID v4
-- `ulid-generate` - Generate ULID identifiers
-- `qr-generate` - Generate ASCII QR codes
-- `wifi-qr-code-generator` - Generate WiFi QR code data
-- `svg-placeholder-generator` - Generate SVG placeholder images
-
-**Development Tools (3 tools):**
-
-- `regex-tester` - Test regular expressions
-- `crontab-generate` - Generate cron expressions
-- `list-converter` - Convert between list formats
-
-**Utility Tools (6 tools):**
-
-- `color-hex-to-rgb` - Convert HEX to RGB colors
-- `color-rgb-to-hex` - Convert RGB to HEX colors
-- `email-normalizer` - Normalize email addresses
-- `mime-types` - Look up MIME types
-- `http-status-codes` - HTTP status code reference  
-- `device-info` - Get system information
-
-## Architecture
-
-This MCP server is built with:
-
-- **TypeScript** for type safety and better development experience
-- **Zod** for robust input validation and schema definition
-- **Node.js built-in modules** (crypto, Buffer, etc.) for maximum compatibility
-- **MCP SDK** for proper Model Context Protocol implementation
-- **Docker support** for easy deployment and containerization
-
-The server implements 76 distinct tools across 8 major categories, organized in a modular architecture:
-
-- **Modular Design**: Each tool category is organized into separate TypeScript modules
-- **Type Safety**: Full TypeScript coverage with strict type checking
-- **Input Validation**: All tool inputs validated using Zod schemas
-- **Error Handling**: Comprehensive error handling with user-friendly messages
-- **Extensible**: Easy to add new tools by creating new tool functions in the appropriate module
-
-## Examples
-
-### Using with Claude Desktop
-
-Once configured, you can ask Claude to use these tools:
-
-- "Can you base64 encode the text 'Hello World'?"
-- "Generate a SHA256 hash for 'password123'"
-- "Format this JSON: {'name':'John','age':30}"
-- "Convert 'hello world' to camelCase"
-- "Generate a 16-character password with symbols"
-- "What's the timestamp 1640995200 in human readable format?"
-- "Convert the HEX color #FF5733 to RGB"
-- "Calculate subnet info for 192.168.1.0/24"
-- "Convert the number FF from hexadecimal to decimal"
-- "Generate a random MAC address with prefix 00:1B:44"
-- "Generate 3 paragraphs of Lorem Ipsum text"
-- "Create an ASCII QR code for a URL like 'example.com'"
-- "Decode this JWT token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
-
-## Development
-
-### Project Structure
-
-```text
-it-tools-mcp/
-├── src/
-│   ├── index.ts              # Main MCP server implementation
-│   └── tools/                # Tool modules organized by category
-│       ├── color.ts          # Color conversion tools
-│       ├── crypto.ts         # Cryptographic and security tools
-│       ├── dataFormat.ts     # Data format conversion tools
-│       ├── development.ts    # Development utilities
-│       ├── encoding.ts       # Encoding/decoding tools
-│       ├── idGenerators.ts   # ID and code generators
-│       ├── math.ts           # Mathematical calculation tools
-│       ├── network.ts        # Network and web utilities
-│       ├── text.ts           # Text processing tools
-│       └── utility.ts        # General utility tools
-├── build/                    # Compiled JavaScript output
-├── tests/                    # Test files
-├── .vscode/
-│   ├── mcp.json             # MCP server configuration
-│   └── tasks.json           # VS Code tasks
-├── Dockerfile               # Docker configuration
-├── docker-compose.yml       # Docker Compose setup
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
-### Scripts
-
-- `npm run build` - Build the TypeScript project
-- `npm run start` - Start the server
-- `npm run dev` - Build and start in development mode
+Built with **TypeScript**, **Zod** validation, and **MCP SDK** for robust, type-safe operation.
 
 ### Adding New Tools
 
-To add a new tool:
+1. Choose/create a tool module in `src/tools/`
+2. Define tool with input schema using Zod
+3. Register in `src/index.ts`
+4. Rebuild with `npm run build`
 
-1. Choose the appropriate tool module in `src/tools/` (or create a new one)
-2. Add the tool definition using `server.tool()` with:
-   - Tool name (kebab-case)
-   - Description
-   - Input schema using Zod
-   - Implementation function
-3. Register the tool module in `src/index.ts` if it's new
-4. Update the README.md with tool documentation
-5. Rebuild with `npm run build`
+### Project Structure
 
-### Tool Module Structure
-
-Each tool module follows this pattern:
-
-```typescript
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
-
-export function registerCategoryTools(server: McpServer) {
-  server.tool(
-    "tool-name",
-    "Tool description",
-    {
-      parameter: z.string().describe("Parameter description"),
-    },
-    async ({ parameter }) => {
-      // Tool implementation
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Result: ${result}`,
-          },
-        ],
-      };
-    }
-  );
-}
+```
+src/
+├── index.ts              # Main MCP server
+└── tools/                # Tool modules by category
+    ├── encoding.ts       # Base64, URL, HTML encoding
+    ├── crypto.ts         # Hashing, JWT, passwords
+    ├── dataFormat.ts     # JSON, XML, YAML processing
+    ├── text.ts           # Text manipulation tools
+    ├── network.ts        # Network utilities
+    ├── math.ts           # Mathematical operations
+    ├── idGenerators.ts   # UUID, ULID, QR codes
+    └── utility.ts        # Color, MIME, HTTP tools
+```text
+src/
+├── index.ts              # Main MCP server
+└── tools/                # Tool modules by category
+    ├── encoding.ts       # Base64, URL, HTML encoding
+    ├── crypto.ts         # Hashing, JWT, passwords
+    ├── dataFormat.ts     # JSON, XML, YAML processing
+    ├── text.ts           # Text manipulation tools
+    ├── network.ts        # Network utilities
+    ├── math.ts           # Mathematical operations
+    ├── idGenerators.ts   # UUID, ULID, QR codes
+    └── utility.ts        # Color, MIME, HTTP tools
 ```
 
-## Contributing
+## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions welcome! Please submit a Pull Request.
 
-## License
+## 📄 License
 
-MIT License
+MIT License - see [LICENSE](LICENSE) for details.
 
-## Related Projects
+## 🔗 Related
 
-This MCP server is inspired by [IT Tools](https://github.com/CorentinTh/it-tools) - a collection of handy online tools for developers.
+Inspired by [IT Tools](https://github.com/CorentinTh/it-tools) - online tools for developers.

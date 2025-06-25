@@ -1,38 +1,19 @@
-networks:
-  mcp-network:
-    driver: bridge
+version: '3.8'
 services:
-  # MCP Server with IT Tools functionality
   it-tools-mcp:
-    build: .
-    container_name: it-tools-mcp-server
-    environment:
-      - NODE_ENV=production
-    image: it-tools-mcp
-    networks:
-      - mcp-network
+    image: wrenchpilot/it-tools-mcp:latest
+    container_name: it-tools-mcp
     restart: unless-stopped
     stdin_open: true
     tty: true
-    volumes:
-      - /tmp:/tmp
-    # Uncomment for debugging
-    # ports:
-    #   - "9229:9229"
-  # Development service with hot reload
-  it-tools-mcp-dev:
-    build:
-      context: .
-      target: builder
-    container_name: it-tools-mcp-dev
     environment:
-      - NODE_ENV=development
-    volumes:
-      - .:/app
-      - /app/node_modules
-    working_dir: /app
-    command: ["npm", "run", "dev"]
-    stdin_open: true
-    tty: true
-    networks:
-      - mcp-network
+      - NODE_ENV=production
+    # Uncomment if you need to persist data
+    # volumes:
+    #   - ./data:/app/data
+    # Uncomment if you need to expose ports
+    # ports:
+    #   - "3000:3000"
+networks:
+  default:
+    driver: bridge

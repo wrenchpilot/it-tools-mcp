@@ -28,10 +28,23 @@
     "model-context-protocol",
     "it-tools",
     "developer-tools",
-    "utilities"
+    "utilities",
+    "docker",
+    "encoding",
+    "hashing",
+    "text-processing",
+    "network-tools"
   ],
-  "author": "",
+  "author": "wrenchpilot",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wrenchpilot/it-tools-mcp.git"
+  },
+  "homepage": "https://github.com/wrenchpilot/it-tools-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/wrenchpilot/it-tools-mcp/issues"
+  },
   "devDependencies": {
     "@types/html-to-text": "^9.0.4",
     "@types/marked": "^5.0.2",

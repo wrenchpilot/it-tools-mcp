@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  it-tools-mcp-dev:
+    build:
+      context: .
+      target: builder
+    container_name: it-tools-mcp-dev
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    working_dir: /app
+    command: ["npm", "run", "dev"]
+    stdin_open: true
+    tty: true
+networks:
+  default:
+    driver: bridge
