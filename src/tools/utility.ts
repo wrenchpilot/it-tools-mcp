@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import mimeTypes from 'mime-types';
 
 export function registerUtilityTools(server: McpServer) {
   // Email normalizer
@@ -94,98 +95,10 @@ that would be delivered to the same inbox.`,
     },
     async ({ input, lookupType = "extension-to-mime" }) => {
       try {
-        // Common MIME types database
-        const mimeTypes: Record<string, string> = {
-          // Text
-          'txt': 'text/plain',
-          'html': 'text/html',
-          'htm': 'text/html',
-          'css': 'text/css',
-          'js': 'text/javascript',
-          'json': 'application/json',
-          'xml': 'text/xml',
-          'csv': 'text/csv',
-          'md': 'text/markdown',
-          'rtf': 'application/rtf',
-
-          // Images
-          'jpg': 'image/jpeg',
-          'jpeg': 'image/jpeg',
-          'png': 'image/png',
-          'gif': 'image/gif',
-          'bmp': 'image/bmp',
-          'webp': 'image/webp',
-          'svg': 'image/svg+xml',
-          'ico': 'image/x-icon',
-          'tiff': 'image/tiff',
-          'tif': 'image/tiff',
-
-          // Audio
-          'mp3': 'audio/mpeg',
-          'wav': 'audio/wav',
-          'ogg': 'audio/ogg',
-          'flac': 'audio/flac',
-          'aac': 'audio/aac',
-          'm4a': 'audio/mp4',
-
-          // Video
-          'mp4': 'video/mp4',
-          'avi': 'video/x-msvideo',
-          'mov': 'video/quicktime',
-          'wmv': 'video/x-ms-wmv',
-          'flv': 'video/x-flv',
-          'webm': 'video/webm',
-          'mkv': 'video/x-matroska',
-
-          // Documents
-          'pdf': 'application/pdf',
-          'doc': 'application/msword',
-          'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'xls': 'application/vnd.ms-excel',
-          'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          'ppt': 'application/vnd.ms-powerpoint',
-          'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-          'odt': 'application/vnd.oasis.opendocument.text',
-          'ods': 'application/vnd.oasis.opendocument.spreadsheet',
-
-          // Archives
-          'zip': 'application/zip',
-          'rar': 'application/vnd.rar',
-          '7z': 'application/x-7z-compressed',
-          'tar': 'application/x-tar',
-          'gz': 'application/gzip',
-          'bz2': 'application/x-bzip2',
-
-          // Fonts
-          'ttf': 'font/ttf',
-          'otf': 'font/otf',
-          'woff': 'font/woff',
-          'woff2': 'font/woff2',
-          'eot': 'application/vnd.ms-fontobject',
-
-          // Programming
-          'py': 'text/x-python',
-          'java': 'text/x-java-source',
-          'cpp': 'text/x-c++src',
-          'c': 'text/x-csrc',
-          'h': 'text/x-chdr',
-          'php': 'text/x-php',
-          'rb': 'text/x-ruby',
-          'go': 'text/x-go',
-          'rs': 'text/x-rust',
-          'ts': 'text/typescript',
-          'jsx': 'text/jsx',
-          'tsx': 'text/tsx',
-          'vue': 'text/x-vue',
-          'sql': 'application/sql',
-          'sh': 'application/x-sh',
-          'bat': 'application/x-bat',
-          'ps1': 'application/x-powershell'
-        };
 
         if (lookupType === "extension-to-mime") {
           const ext = input.toLowerCase().replace(/^\./, ''); // Remove leading dot if present
-          const mimeType = mimeTypes[ext];
+          const mimeType = mimeTypes.lookup(ext);
 
           if (!mimeType) {
             return {
@@ -197,9 +110,7 @@ that would be delivered to the same inbox.`,
 Extension: .${ext}
 Result: Not found
 
-Common extensions:
-${Object.keys(mimeTypes).slice(0, 10).map(e => `• .${e} → ${mimeTypes[e]}`).join('\n')}
-... and ${Object.keys(mimeTypes).length - 10} more`,
+Note: This extension is not recognized in the MIME types database.`,
                 },
               ],
             };
@@ -222,11 +133,9 @@ Description: ${getMimeDescription(mimeType)}`,
         } else {
           // mime-to-extension
           const mimeType = input.toLowerCase();
-          const extensions = Object.entries(mimeTypes)
-            .filter(([_, mime]) => mime === mimeType)
-            .map(([ext, _]) => ext);
+          const extension = mimeTypes.extension(mimeType);
 
-          if (extensions.length === 0) {
+          if (!extension) {
             return {
               content: [
                 {
@@ -236,9 +145,7 @@ Description: ${getMimeDescription(mimeType)}`,
 MIME Type: ${input}
 Result: Not found
 
-Common MIME types:
-${Object.values(mimeTypes).slice(0, 10).map(m => `• ${m}`).join('\n')}
-... and ${new Set(Object.values(mimeTypes)).size - 10} more`,
+Note: This MIME type is not recognized or has no standard extension.`,
                 },
               ],
             };
@@ -251,8 +158,8 @@ ${Object.values(mimeTypes).slice(0, 10).map(m => `• ${m}`).join('\n')}
                 text: `Extension Lookup:
 
 MIME Type: ${mimeType}
-Extensions: ${extensions.map(ext => `.${ext}`).join(', ')}
-Primary: .${extensions[0]}
+Extension: .${extension}
+Primary: .${extension}
 
 Category: ${getMimeCategory(mimeType)}
 Description: ${getMimeDescription(mimeType)}`,
