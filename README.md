@@ -1,7 +1,7 @@
 # IT Tools MCP Server
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/wrenchpilot/it-tools-mcp)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
-[![Docker Image Size](https://img.shields.io/docker/image-size/wrenchpilot/it-tools-mcp)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
+[![Docker Pulls](https://img.shields.io/docker/pulls/wrenchpilot/it-tools-mcp?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
+[![Docker Image Size](https://img.shields.io/docker/image-size/wrenchpilot/it-tools-mcp/latest?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
 [![Build Status](https://github.com/wrenchpilot/it-tools-mcp/workflows/Build%20and%20Push%20to%20Docker%20Hub/badge.svg)](https://github.com/wrenchpilot/it-tools-mcp/actions)
 
 A comprehensive Model Context Protocol (MCP) server that provides access to 70+ IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
