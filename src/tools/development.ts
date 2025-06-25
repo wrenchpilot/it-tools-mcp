@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { CronExpressionParser } from 'cron-parser';
 
 export function registerDevelopmentTools(server: McpServer) {
   // Regex tester
@@ -151,14 +152,22 @@ Common regex flags:
           }
         }
 
-        // Generate next few run times (simplified calculation)
+        // Generate next few run times using proper cron parser
         const nextRuns = [];
-        const now = new Date();
-
-        // This is a simplified calculation - a real cron parser would be more accurate
-        for (let i = 0; i < 5; i++) {
-          const nextRun = new Date(now.getTime() + (i + 1) * 60 * 1000); // Simplified: add minutes
-          nextRuns.push(nextRun.toISOString().replace('T', ' ').slice(0, 19));
+        
+        try {
+          const interval = CronExpressionParser.parse(cronExpression);
+          for (let i = 0; i < 5; i++) {
+            const nextRun = interval.next();
+            nextRuns.push(nextRun.toDate().toISOString().replace('T', ' ').slice(0, 19));
+          }
+        } catch (cronError) {
+          // Fall back to basic time intervals if cron parsing fails
+          const now = new Date();
+          for (let i = 0; i < 5; i++) {
+            const nextRun = new Date(now.getTime() + (i + 1) * 60 * 1000);
+            nextRuns.push(nextRun.toISOString().replace('T', ' ').slice(0, 19));
+          }
         }
 
         return {
