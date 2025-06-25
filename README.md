@@ -59,7 +59,7 @@ This MCP server provides **76 tools** across **8 categories**:
 - **✨ Text Processing** (16 tools): Case conversion, stats, diff, ASCII art, NATO alphabet, slugify
 - **🌐 Network & Web** (8 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, phone formatting
 - **🔢 Math & Calculations** (6 tools): Expression evaluation, base conversion, temperature, percentages
-- **🆔 ID & Code Generators** (5 tools): UUID, ULID, QR codes, WiFi QR, SVG placeholders
+- **🆔 ID & Code Generators** (5 tools: UUID, ULID, QR codes, WiFi QR, SVG placeholders
 - **🔧 Development & Utilities** (9 tools): Regex testing, cron expressions, color conversion, MIME types
 
 ## 📦 Installation & Setup
@@ -125,6 +125,14 @@ Ask Claude to use these tools:
 - **Network**: "Calculate subnet info for 192.168.1.0/24"
 - **Colors**: "Convert HEX color #FF5733 to RGB" → `rgb(255, 87, 51)`
 - **IDs**: "Generate a UUID" → `550e8400-e29b-41d4-a716-446655440000`
+
+## 📸 Screenshot Examples
+
+### Password Hash Generation Example
+
+![Password Hash Example](screenshots/password-hash-example.png)
+
+*Example of using the IT Tools MCP server to generate secure password hashes with VS Code Copilot Chat*
 
 ## Available Tools
 

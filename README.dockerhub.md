@@ -104,6 +104,14 @@ Ask Claude to use these tools:
 - **Colors**: "Convert HEX color #FF5733 to RGB" → `rgb(255, 87, 51)`
 - **IDs**: "Generate a UUID" → `550e8400-e29b-41d4-a716-446655440000`
 
+## 📸 Screenshot Example
+
+### Password Hash Generation
+
+![Password Hash Example](https://raw.githubusercontent.com/wrenchpilot/it-tools-mcp/main/screenshots/password-hash-example.png)
+
+Example of using the IT Tools MCP server to generate secure password hashes with VS Code Copilot Chat
+
 ## 🔧 Sample Tools
 
 | Category     | Tool                   | Description              |
