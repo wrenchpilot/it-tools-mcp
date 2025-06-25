@@ -54,6 +54,16 @@ const testMessages = [
       name: "uuid-generate",
       arguments: {}
     }
+  },
+  // Test ASCII Art
+  {
+    jsonrpc: "2.0",
+    id: 6,
+    method: "tools/call",
+    params: {
+      name: "ascii-art-text",
+      arguments: { text: "HELLO", font: "standard" }
+    }
   }
 ];
 
