@@ -1,5 +1,5 @@
 # Multi-stage build for smaller production image
-FROM node:18-alpine AS builder
+FROM node:lts-alpine AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ COPY src/ ./src/
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine AS production
+FROM node:lts-alpine AS production
 
 WORKDIR /app
 
