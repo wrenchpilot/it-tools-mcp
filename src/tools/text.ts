@@ -1,6 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import * as figlet from "figlet";
 
 export function registerTextTools(server: McpServer) {
   // Text case conversion tools
@@ -274,6 +273,7 @@ Lines in text 2: ${lines2.length}`,
                           font === "big" ? "Big" : "Standard";
 
         // Generate ASCII art using figlet
+        const figlet = require('figlet');
         const asciiArt = figlet.textSync(text, {
           font: figletFont,
           horizontalLayout: 'default',
