@@ -49,7 +49,8 @@ echo
 echo "4️⃣  Testing UUID generation tool..."
 UUID_OUTPUT=$(echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"uuid-generate","arguments":{}}}' | docker run -i --rm wrenchpilot/it-tools-mcp:test 2>/dev/null || echo "FAILED")
 
-if [[ "$UUID_OUTPUT" == *"uuid"* ]]; then
+# Check for UUID pattern (8-4-4-4-12 hex digits)
+if [[ "$UUID_OUTPUT" =~ [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12} ]]; then
     echo -e "${GREEN}✅ UUID generation works${NC}"
 else
     echo -e "${RED}❌ UUID generation failed${NC}"
