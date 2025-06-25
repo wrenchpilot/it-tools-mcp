@@ -1,12 +1,10 @@
 networks:
   mcp-network:
     driver: bridge
-
 services:
   # MCP Server with IT Tools functionality
   it-tools-mcp:
     build: .
-
     container_name: it-tools-mcp-server
     environment:
       - NODE_ENV=production
@@ -18,3 +16,23 @@ services:
     tty: true
     volumes:
       - /tmp:/tmp
+    # Uncomment for debugging
+    # ports:
+    #   - "9229:9229"
+  # Development service with hot reload
+  it-tools-mcp-dev:
+    build:
+      context: .
+      target: builder
+    container_name: it-tools-mcp-dev
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    working_dir: /app
+    command: ["npm", "run", "dev"]
+    stdin_open: true
+    tty: true
+    networks:
+      - mcp-network

@@ -1,0 +1,26 @@
+{
+    "name": "IT Tools MCP Server",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "it-tools-mcp",
+    "workspaceFolder": "/app",
+    "shutdownAction": "stopCompose",
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "18"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.vscode-typescript-next",
+                "bradlc.vscode-tailwindcss",
+                "ms-vscode.vscode-json"
+            ],
+            "settings": {
+                "typescript.preferences.includePackageJsonAutoImports": "auto"
+            }
+        }
+    },
+    "postCreateCommand": "npm install && npm run build",
+    "remoteUser": "nodejs"
+}

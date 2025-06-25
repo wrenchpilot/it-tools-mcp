@@ -1,0 +1,17 @@
+{
+    "typescript.preferences.includePackageJsonAutoImports": "auto",
+    "typescript.suggest.autoImports": true,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    "files.associations": {
+        "*.mjs": "javascript"
+    },
+    "docker.promptForRegistryWhenPushingImages": false,
+    "mcp.servers": {
+        "it-tools-mcp": {
+            "enabled": true
+        }
+    }
+}

@@ -14,6 +14,54 @@
 			"problemMatcher": [
 				"$tsc"
 			]
+		},
+		{
+			"label": "Build TypeScript",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"build"
+			],
+			"group": "build",
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Docker Build",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"build",
+				"-t",
+				"it-tools-mcp",
+				"."
+			],
+			"group": "build"
+		},
+		{
+			"label": "Docker Run",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"--rm",
+				"it-tools-mcp"
+			],
+			"group": "test",
+			"dependsOn": "Docker Build"
+		},
+		{
+			"label": "Test Server",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"test"
+			],
+			"group": "test",
+			"dependsOn": "Build TypeScript"
 		}
 	]
 }

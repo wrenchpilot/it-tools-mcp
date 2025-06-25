@@ -11,9 +11,14 @@
     "build": "tsc && chmod +x build/index.js",
     "start": "node build/index.js",
     "dev": "tsc && node build/index.js",
-    "test": "node test-server.mjs",
+    "test": "node tests/test-server.mjs",
     "docker:build": "docker build -t it-tools-mcp .",
-    "docker:run": "docker run -i --rm it-tools-mcp"
+    "docker:run": "docker run -i --rm it-tools-mcp",
+    "docker:dev": "docker-compose up --build it-tools-mcp-dev",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
+    "docker:stop": "docker-compose -f docker-compose.prod.yml down",
+    "deploy:build": "npm run build && docker build -t it-tools-mcp:latest .",
+    "deploy:prod": "npm run deploy:build && docker-compose -f docker-compose.prod.yml up -d"
   },
   "files": [
     "build"

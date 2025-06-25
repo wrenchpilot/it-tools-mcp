@@ -258,93 +258,93 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 
 ## Available Tools
 
-| Tool | Description | Parameters |
-|------|-------------|------------|
-| **Encoding & Decoding** | | |
-| `base64-encode` | Encode text to Base64 | `text: string` |
-| `base64-decode` | Decode Base64 text | `text: string` |
-| `url-encode` | URL encode text | `text: string` |
-| `url-decode` | URL decode text | `text: string` |
-| `html-encode` | Encode HTML entities | `text: string` |
-| `html-decode` | Decode HTML entities | `text: string` |
-| `html-entities-extended` | Extended HTML entity encoding/decoding | `text: string`, `operation: 'encode'|'decode'` |
-| `text-to-binary` | Convert text to binary and vice versa | `input: string`, `operation: 'encode'|'decode'` |
-| `text-to-unicode` | Convert text to Unicode and vice versa | `input: string`, `operation: 'encode'|'decode'` |
-| **Data Format** | | |
-| `json-format` | Format and validate JSON | `json: string`, `indent?: number` |
-| `json-minify` | Minify JSON | `json: string` |
-| `json-to-csv` | Convert JSON to CSV | `json: string`, `delimiter?: string` |
-| `json-to-toml` | Convert JSON to TOML | `json: string` |
-| `json-diff` | Compare JSON objects | `json1: string`, `json2: string` |
-| `xml-format` | Format XML | `xml: string`, `indent?: number` |
-| `yaml-format` | Format YAML | `yaml: string` |
-| `sql-format` | Format SQL | `sql: string` |
-| `toml-to-json` | Convert TOML to JSON | `toml: string` |
-| `markdown-to-html` | Convert Markdown to HTML | `markdown: string` |
-| `html-to-markdown` | Convert HTML to Markdown | `html: string` |
-| **Security & Crypto** | | |
-| `hash-md5` | Generate MD5 hash | `text: string` |
-| `hash-sha1` | Generate SHA1 hash | `text: string` |
-| `hash-sha256` | Generate SHA256 hash | `text: string` |
-| `hash-sha512` | Generate SHA512 hash | `text: string` |
-| `hmac-generator` | Generate HMAC | `message: string`, `key: string`, `algorithm?: 'sha1'|'sha256'|'sha512'` |
-| `jwt-decode` | Decode JWT token | `token: string` |
-| `basic-auth-generator` | Generate Basic Auth header | `username: string`, `password: string` |
-| `bcrypt-hash` | Generate/verify bcrypt hash | `password: string`, `rounds?: number`, `hash?: string` |
-| `bip39-generate` | Generate BIP39 mnemonic | `wordCount?: '12'|'15'|'18'|'21'|'24'` |
-| `password-generate` | Generate secure password | `length?: number`, `includeUppercase?: boolean`, `includeLowercase?: boolean`, `includeNumbers?: boolean`, `includeSymbols?: boolean` |
-| `token-generator` | Generate secure token | `length?: number`, `charset?: 'alphanumeric'|'hex'|'base64'|'custom'`, `customChars?: string` |
-| `otp-code-generator` | Generate TOTP codes | `secret: string`, `digits?: number`, `period?: number` |
-| **Text Processing** | | |
-| `text-uppercase` | Convert to uppercase | `text: string` |
-| `text-lowercase` | Convert to lowercase | `text: string` |
-| `text-capitalize` | Capitalize words | `text: string` |
-| `text-camelcase` | Convert to camelCase | `text: string` |
-| `text-pascalcase` | Convert to PascalCase | `text: string` |
-| `text-kebabcase` | Convert to kebab-case | `text: string` |
-| `text-snakecase` | Convert to snake_case | `text: string` |
-| `text-stats` | Get text statistics | `text: string` |
-| `text-diff` | Compare texts | `text1: string`, `text2: string` |
-| `ascii-art-text` | Generate ASCII art | `text: string`, `font?: 'small'|'standard'|'big'` |
-| `text-to-nato-alphabet` | Convert to NATO alphabet | `text: string` |
-| `string-obfuscator` | Obfuscate text | `text: string`, `method?: 'html-entities'|'unicode'|'base64'` |
-| `slugify-string` | Convert to URL slug | `text: string`, `separator?: string`, `lowercase?: boolean` |
-| `lorem-ipsum-generator` | Generate Lorem Ipsum | `type?: 'words'|'sentences'|'paragraphs'`, `count?: number` |
-| `numeronym-generator` | Generate numeronyms | `text: string` |
-| `emoji-search` | Search emojis | `query: string` |
-| **Network & Web** | | |
-| `ip-subnet-calculator` | Calculate IPv4 subnet | `ip: string`, `cidr: number` |
-| `ipv4-subnet-calc` | Enhanced IPv4 subnet calc | `cidr: string` |
-| `ipv6-ula-generator` | Generate IPv6 ULA | `globalId?: string` |
-| `url-parse` | Parse URL components | `url: string` |
-| `random-port` | Generate random ports | `count?: number`, `min?: number`, `max?: number`, `exclude?: number[]` |
-| `mac-address-generate` | Generate MAC address | `prefix?: string`, `separator?: ':'|'-'` |
-| `phone-format` | Format phone numbers | `phoneNumber: string`, `countryCode?: string` |
-| `iban-validate` | Validate IBAN | `iban: string` |
-| **Math & Calculations** | | |
-| `math-evaluate` | Evaluate expressions | `expression: string` |
-| `number-base-converter` | Convert number bases | `number: string`, `fromBase: number`, `toBase: number` |
-| `roman-numeral-converter` | Convert Roman numerals | `input: string` |
-| `temperature-converter` | Convert temperatures | `temperature: number`, `from: 'celsius'|'fahrenheit'|'kelvin'`, `to: 'celsius'|'fahrenheit'|'kelvin'` |
-| `percentage-calculator` | Calculate percentages | `operation: 'percentage-of'|'what-percentage'|'percentage-change'`, `value1: number`, `value2: number` |
-| `unix-timestamp-converter` | Convert timestamps | `input: string` |
-| **ID & Code Generators** | | |
-| `uuid-generate` | Generate UUID v4 | None |
-| `ulid-generate` | Generate ULID | None |
-| `qr-generate` | Generate QR code | `text: string`, `size?: number` |
-| `wifi-qr-code-generator` | Generate WiFi QR | `ssid: string`, `password: string`, `security?: 'WPA'|'WEP'|'nopass'`, `hidden?: boolean` |
-| `svg-placeholder-generator` | Generate SVG placeholder | `width?: number`, `height?: number`, `text?: string`, `backgroundColor?: string`, `textColor?: string` |
-| **Development Tools** | | |
-| `regex-tester` | Test regular expressions | `pattern: string`, `text: string`, `flags?: string` |
-| `crontab-generate` | Generate cron expressions | `minute?: string`, `hour?: string`, `dayOfMonth?: string`, `month?: string`, `dayOfWeek?: string` |
-| `list-converter` | Convert list formats | `list: string`, `inputFormat: 'comma'|'semicolon'|'newline'|'space'|'pipe'`, `outputFormat: 'comma'|'semicolon'|'newline'|'space'|'pipe'|'json'|'quoted'`, `trim?: boolean` |
-| **Utility Tools** | | |
-| `color-hex-to-rgb` | Convert HEX to RGB | `hex: string` |
-| `color-rgb-to-hex` | Convert RGB to HEX | `r: number`, `g: number`, `b: number` |
-| `email-normalizer` | Normalize email addresses | `email: string` |
-| `mime-types` | Look up MIME types | `input: string`, `lookupType?: 'extension-to-mime'|'mime-to-extension'` |
-| `device-info` | Get system information | None |
-| `http-status-codes` | HTTP status reference | `code?: number` |
+| Tool                        | Description                            | Parameters                                                                                                                            |
+| --------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Encoding & Decoding**     |                                        |                                                                                                                                       |
+| `base64-encode`             | Encode text to Base64                  | `text: string`                                                                                                                        |
+| `base64-decode`             | Decode Base64 text                     | `text: string`                                                                                                                        |
+| `url-encode`                | URL encode text                        | `text: string`                                                                                                                        |
+| `url-decode`                | URL decode text                        | `text: string`                                                                                                                        |
+| `html-encode`               | Encode HTML entities                   | `text: string`                                                                                                                        |
+| `html-decode`               | Decode HTML entities                   | `text: string`                                                                                                                        |
+| `html-entities-extended`    | Extended HTML entity encoding/decoding | `text: string`, `operation: 'encode'                                                                                                  | 'decode'`            |
+| `text-to-binary`            | Convert text to binary and vice versa  | `input: string`, `operation: 'encode'                                                                                                 | 'decode'`            |
+| `text-to-unicode`           | Convert text to Unicode and vice versa | `input: string`, `operation: 'encode'                                                                                                 | 'decode'`            |
+| **Data Format**             |                                        |                                                                                                                                       |
+| `json-format`               | Format and validate JSON               | `json: string`, `indent?: number`                                                                                                     |
+| `json-minify`               | Minify JSON                            | `json: string`                                                                                                                        |
+| `json-to-csv`               | Convert JSON to CSV                    | `json: string`, `delimiter?: string`                                                                                                  |
+| `json-to-toml`              | Convert JSON to TOML                   | `json: string`                                                                                                                        |
+| `json-diff`                 | Compare JSON objects                   | `json1: string`, `json2: string`                                                                                                      |
+| `xml-format`                | Format XML                             | `xml: string`, `indent?: number`                                                                                                      |
+| `yaml-format`               | Format YAML                            | `yaml: string`                                                                                                                        |
+| `sql-format`                | Format SQL                             | `sql: string`                                                                                                                         |
+| `toml-to-json`              | Convert TOML to JSON                   | `toml: string`                                                                                                                        |
+| `markdown-to-html`          | Convert Markdown to HTML               | `markdown: string`                                                                                                                    |
+| `html-to-markdown`          | Convert HTML to Markdown               | `html: string`                                                                                                                        |
+| **Security & Crypto**       |                                        |                                                                                                                                       |
+| `hash-md5`                  | Generate MD5 hash                      | `text: string`                                                                                                                        |
+| `hash-sha1`                 | Generate SHA1 hash                     | `text: string`                                                                                                                        |
+| `hash-sha256`               | Generate SHA256 hash                   | `text: string`                                                                                                                        |
+| `hash-sha512`               | Generate SHA512 hash                   | `text: string`                                                                                                                        |
+| `hmac-generator`            | Generate HMAC                          | `message: string`, `key: string`, `algorithm?: 'sha1'                                                                                 | 'sha256'             | 'sha512'`                                                |
+| `jwt-decode`                | Decode JWT token                       | `token: string`                                                                                                                       |
+| `basic-auth-generator`      | Generate Basic Auth header             | `username: string`, `password: string`                                                                                                |
+| `bcrypt-hash`               | Generate/verify bcrypt hash            | `password: string`, `rounds?: number`, `hash?: string`                                                                                |
+| `bip39-generate`            | Generate BIP39 mnemonic                | `wordCount?: '12'                                                                                                                     | '15'                 | '18'                                                     | '21'                              | '24'`                           |
+| `password-generate`         | Generate secure password               | `length?: number`, `includeUppercase?: boolean`, `includeLowercase?: boolean`, `includeNumbers?: boolean`, `includeSymbols?: boolean` |
+| `token-generator`           | Generate secure token                  | `length?: number`, `charset?: 'alphanumeric'                                                                                          | 'hex'                | 'base64'                                                 | 'custom'`, `customChars?: string` |
+| `otp-code-generator`        | Generate TOTP codes                    | `secret: string`, `digits?: number`, `period?: number`                                                                                |
+| **Text Processing**         |                                        |                                                                                                                                       |
+| `text-uppercase`            | Convert to uppercase                   | `text: string`                                                                                                                        |
+| `text-lowercase`            | Convert to lowercase                   | `text: string`                                                                                                                        |
+| `text-capitalize`           | Capitalize words                       | `text: string`                                                                                                                        |
+| `text-camelcase`            | Convert to camelCase                   | `text: string`                                                                                                                        |
+| `text-pascalcase`           | Convert to PascalCase                  | `text: string`                                                                                                                        |
+| `text-kebabcase`            | Convert to kebab-case                  | `text: string`                                                                                                                        |
+| `text-snakecase`            | Convert to snake_case                  | `text: string`                                                                                                                        |
+| `text-stats`                | Get text statistics                    | `text: string`                                                                                                                        |
+| `text-diff`                 | Compare texts                          | `text1: string`, `text2: string`                                                                                                      |
+| `ascii-art-text`            | Generate ASCII art                     | `text: string`, `font?: 'small'                                                                                                       | 'standard'           | 'big'`                                                   |
+| `text-to-nato-alphabet`     | Convert to NATO alphabet               | `text: string`                                                                                                                        |
+| `string-obfuscator`         | Obfuscate text                         | `text: string`, `method?: 'html-entities'                                                                                             | 'unicode'            | 'base64'`                                                |
+| `slugify-string`            | Convert to URL slug                    | `text: string`, `separator?: string`, `lowercase?: boolean`                                                                           |
+| `lorem-ipsum-generator`     | Generate Lorem Ipsum                   | `type?: 'words'                                                                                                                       | 'sentences'          | 'paragraphs'`, `count?: number`                          |
+| `numeronym-generator`       | Generate numeronyms                    | `text: string`                                                                                                                        |
+| `emoji-search`              | Search emojis                          | `query: string`                                                                                                                       |
+| **Network & Web**           |                                        |                                                                                                                                       |
+| `ip-subnet-calculator`      | Calculate IPv4 subnet                  | `ip: string`, `cidr: number`                                                                                                          |
+| `ipv4-subnet-calc`          | Enhanced IPv4 subnet calc              | `cidr: string`                                                                                                                        |
+| `ipv6-ula-generator`        | Generate IPv6 ULA                      | `globalId?: string`                                                                                                                   |
+| `url-parse`                 | Parse URL components                   | `url: string`                                                                                                                         |
+| `random-port`               | Generate random ports                  | `count?: number`, `min?: number`, `max?: number`, `exclude?: number[]`                                                                |
+| `mac-address-generate`      | Generate MAC address                   | `prefix?: string`, `separator?: ':'                                                                                                   | '-'`                 |
+| `phone-format`              | Format phone numbers                   | `phoneNumber: string`, `countryCode?: string`                                                                                         |
+| `iban-validate`             | Validate IBAN                          | `iban: string`                                                                                                                        |
+| **Math & Calculations**     |                                        |                                                                                                                                       |
+| `math-evaluate`             | Evaluate expressions                   | `expression: string`                                                                                                                  |
+| `number-base-converter`     | Convert number bases                   | `number: string`, `fromBase: number`, `toBase: number`                                                                                |
+| `roman-numeral-converter`   | Convert Roman numerals                 | `input: string`                                                                                                                       |
+| `temperature-converter`     | Convert temperatures                   | `temperature: number`, `from: 'celsius'                                                                                               | 'fahrenheit'         | 'kelvin'`, `to: 'celsius'                                | 'fahrenheit'                      | 'kelvin'`                       |
+| `percentage-calculator`     | Calculate percentages                  | `operation: 'percentage-of'                                                                                                           | 'what-percentage'    | 'percentage-change'`, `value1: number`, `value2: number` |
+| `unix-timestamp-converter`  | Convert timestamps                     | `input: string`                                                                                                                       |
+| **ID & Code Generators**    |                                        |                                                                                                                                       |
+| `uuid-generate`             | Generate UUID v4                       | None                                                                                                                                  |
+| `ulid-generate`             | Generate ULID                          | None                                                                                                                                  |
+| `qr-generate`               | Generate QR code                       | `text: string`, `size?: number`                                                                                                       |
+| `wifi-qr-code-generator`    | Generate WiFi QR                       | `ssid: string`, `password: string`, `security?: 'WPA'                                                                                 | 'WEP'                | 'nopass'`, `hidden?: boolean`                            |
+| `svg-placeholder-generator` | Generate SVG placeholder               | `width?: number`, `height?: number`, `text?: string`, `backgroundColor?: string`, `textColor?: string`                                |
+| **Development Tools**       |                                        |                                                                                                                                       |
+| `regex-tester`              | Test regular expressions               | `pattern: string`, `text: string`, `flags?: string`                                                                                   |
+| `crontab-generate`          | Generate cron expressions              | `minute?: string`, `hour?: string`, `dayOfMonth?: string`, `month?: string`, `dayOfWeek?: string`                                     |
+| `list-converter`            | Convert list formats                   | `list: string`, `inputFormat: 'comma'                                                                                                 | 'semicolon'          | 'newline'                                                | 'space'                           | 'pipe'`, `outputFormat: 'comma' | 'semicolon' | 'newline' | 'space' | 'pipe' | 'json' | 'quoted'`, `trim?: boolean` |
+| **Utility Tools**           |                                        |                                                                                                                                       |
+| `color-hex-to-rgb`          | Convert HEX to RGB                     | `hex: string`                                                                                                                         |
+| `color-rgb-to-hex`          | Convert RGB to HEX                     | `r: number`, `g: number`, `b: number`                                                                                                 |
+| `email-normalizer`          | Normalize email addresses              | `email: string`                                                                                                                       |
+| `mime-types`                | Look up MIME types                     | `input: string`, `lookupType?: 'extension-to-mime'                                                                                    | 'mime-to-extension'` |
+| `device-info`               | Get system information                 | None                                                                                                                                  |
+| `http-status-codes`         | HTTP status reference                  | `code?: number`                                                                                                                       |
 
 ## Complete Tool Reference
 
