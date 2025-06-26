@@ -108,7 +108,7 @@ Ask Claude to use these tools:
 
 ### Password Hash Generation
 
-![Password Hash Example](https://raw.githubusercontent.com/wrenchpilot/it-tools-mcp/main/screenshots/password-hash-example.png)
+![Password Hash Example](https://github.com/wrenchpilot/it-tools-mcp/blob/master/screenshots/password-hash-example.png?raw=true)
 
 Example of using the IT Tools MCP server to generate secure password hashes with VS Code Copilot Chat
 
