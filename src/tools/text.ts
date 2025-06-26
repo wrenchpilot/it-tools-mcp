@@ -264,7 +264,7 @@ Lines in text 2: ${lines2.length}`,
     "Generate ASCII art text",
     {
       text: z.string().describe("Text to convert to ASCII art"),
-      font: z.string().describe("ASCII art font style (e.g., 'standard', 'big', 'slant', '3-d', 'banner', 'block', 'shadow', 'larry3d'). Supports all 295+ figlet fonts. Use 'standard' if unsure.").optional(),
+      font: z.string().describe("ASCII art font style. Supports all 295+ figlet fonts. Use 'standard' if unsure.").optional(),
     },
     async ({ text, font = "standard" }) => {
       try {
