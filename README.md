@@ -20,9 +20,15 @@ Add to your VS Code `settings.json`:
     "servers": {
       "it-tools": {
         "command": "docker",
-        "args": ["run", "-i", "--rm", "wrenchpilot/it-tools-mcp:latest"]
+        "args": [
+          "run",
+          "-i",
+          "--rm",
+          "--name",
+          "it-tools-mcp",
+          "wrenchpilot/it-tools-mcp:latest"
+        ]
       }
-    }
   }
 }
 ```
