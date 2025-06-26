@@ -4,7 +4,7 @@
 [![Docker Image Size](https://img.shields.io/docker/image-size/wrenchpilot/it-tools-mcp/latest?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
 [![Build Status](https://github.com/wrenchpilot/it-tools-mcp/workflows/Build%20and%20Push%20to%20Docker%20Hub/badge.svg)](https://github.com/wrenchpilot/it-tools-mcp/actions)
 
-A comprehensive Model Context Protocol (MCP) server that provides access to **76 IT tools and utilities** commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to **75 IT tools and utilities** commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 ## Using with VS Code
 
@@ -34,7 +34,7 @@ Add to your VS Code `settings.json`:
 }
 ```
 
-See the complete list of all 76 tools with detailed parameters on [GitHub](https://github.com/wrenchpilot/it-tools-mcp#available-tools)
+See the complete list of all 75 tools with detailed parameters on [GitHub](https://github.com/wrenchpilot/it-tools-mcp#available-tools)
 
 ## 📸 Examples in Action
 
@@ -54,7 +54,7 @@ Built with **TypeScript**, **Zod** validation, and **MCP SDK** for robust, type-
 
 This project was developed using **VS Code**, **Copilot Chat Agent**, **Playwright MCP**, and the **Claude Sonnet 4 Model**, showcasing modern AI-assisted software development:
 
-- 🔧 **All 76 tools** designed and implemented with AI assistance
+- 🔧 **All 75 tools** designed and implemented with AI assistance
 - 📦 **Complete Docker setup** with GitHub Actions CI/CD pipeline
 - 🔍 **Schema optimization** with systematic validation cleanup
 - 📚 **Comprehensive documentation** and tool catalogs

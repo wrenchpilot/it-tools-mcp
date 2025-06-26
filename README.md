@@ -6,7 +6,7 @@
 
 > **📝 Note**: A condensed version of this README is automatically synced to [Docker Hub](https://hub.docker.com/r/wrenchpilot/it-tools-mcp) due to character limits.
 
-A comprehensive Model Context Protocol (MCP) server that provides access to 70+ IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to 75 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 ## 📦 Installation & Setup
 
@@ -58,7 +58,7 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"base64-enc
 
 ## 🛠️ Tool Categories
 
-This MCP server provides **76 tools** across **8 categories**:
+This MCP server provides **75 tools** across **8 categories**:
 
 - **🔧 Encoding & Decoding** (9 tools): Base64, URL, HTML entities, text-to-binary, Unicode
 - **📝 Data Format** (11 tools): JSON, XML, YAML, SQL, TOML, Markdown ↔ HTML conversion
@@ -66,7 +66,7 @@ This MCP server provides **76 tools** across **8 categories**:
 - **✨ Text Processing** (16 tools): Case conversion, stats, diff, ASCII art, NATO alphabet, slugify
 - **🌐 Network & Web** (8 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, phone formatting
 - **🔢 Math & Calculations** (6 tools): Expression evaluation, base conversion, temperature, percentages
-- **🆔 ID & Code Generators** (5 tools: UUID, ULID, QR codes, WiFi QR, SVG placeholders
+- **🆔 ID & Code Generators** (4 tools): UUID, ULID, QR codes, SVG placeholders
 - **🔧 Development & Utilities** (9 tools): Regex testing, cron expressions, color conversion, MIME types
 
 ## 📸 Screenshot Examples
@@ -156,8 +156,7 @@ This MCP server provides **76 tools** across **8 categories**:
 | **ID & Code Generators**    |                                        |                                                                                                                                                                                                           |
 | `uuid-generate`             | Generate UUID v4                       | None                                                                                                                                                                                                      |
 | `ulid-generate`             | Generate ULID                          | None                                                                                                                                                                                                      |
-| `qr-generate`               | Generate QR code                       | `text: string`, `size?: number`                                                                                                                                                                           |
-| `wifi-qr-code-generator`    | Generate WiFi QR                       | `ssid: string`, `password: string`, `security?: 'WPA' \| 'WEP' \| 'nopass'`, `hidden?: boolean`                                                                                                           |
+| `qr-generate`               | Generate QR codes for any content      | `text: string`, `size?: number` - Supports URLs, WiFi (WIFI:T:WPA;S:network;P:password;;), contact info, etc.                                                                                        |
 | `svg-placeholder-generator` | Generate SVG placeholder               | `width?: number`, `height?: number`, `text?: string`, `backgroundColor?: string`, `textColor?: string`                                                                                                    |
 | **Development Tools**       |                                        |                                                                                                                                                                                                           |
 | `regex-tester`              | Test regular expressions               | `pattern: string`, `text: string`, `flags?: string`                                                                                                                                                       |
@@ -171,6 +170,38 @@ This MCP server provides **76 tools** across **8 categories**:
 | `device-info`               | Get system information                 | None                                                                                                                                                                                                      |
 | `http-status-codes`         | HTTP status reference                  | `code?: number`                                                                                                                                                                                           |
 
+## 📱 QR Code Usage Examples
+
+The `qr-generate` tool supports various content types. Here are common usage patterns:
+
+### WiFi Networks
+
+```text
+text: "WIFI:T:WPA;S:MyNetwork;P:password123;;"
+text: "WIFI:T:WPA;S:GuestNet;P:welcome123;H:true;;" (hidden network)
+text: "WIFI:T:;S:OpenNetwork;P:;;" (open network)
+```
+
+### Contact Information (MECARD format)
+
+```text
+text: "MECARD:N:John Doe;TEL:+1234567890;EMAIL:john@example.com;;"
+```
+
+### URLs and Links
+
+```text
+text: "https://example.com"
+text: "mailto:someone@example.com?subject=Hello&body=Message"
+text: "SMS:+1234567890:Hello from QR code!"
+```
+
+### Plain Text
+
+```text
+text: "Any text content you want to encode"
+```
+
 ## 🏗️ Architecture & Development
 
 Built with **TypeScript**, **Zod** validation, and **MCP SDK** for robust, type-safe operation.
@@ -180,14 +211,14 @@ Built with **TypeScript**, **Zod** validation, and **MCP SDK** for robust, type-
 This project was developed using **VS Code**, **Copilot Chat Agent**, **Playwright MCP**, and the **Claude Sonnet 4 Model**, demonstrating the power of AI-assisted software development:
 
 - **Intelligent Code Generation**: Claude Sonnet analyzed requirements and generated comprehensive tool implementations
-- **Schema Validation**: Automatically identified and resolved JSON schema validation issues across 76 tools
+- **Schema Validation**: Automatically identified and resolved JSON schema validation issues across 75 tools
 - **Docker Optimization**: Created production-ready Docker workflows and multi-stage builds
 - **Documentation**: Generated comprehensive README with examples and tool reference tables
 - **Testing**: Implemented robust error handling and validation throughout the codebase
 
 **Key AI Contributions:**
 
-- 🔧 **Tool Implementation**: All 76 tools designed and implemented with AI assistance
+- 🔧 **Tool Implementation**: All 75 tools designed and implemented with AI assistance
 - 📦 **Docker Setup**: Complete containerization with GitHub Actions CI/CD pipeline
 - 🔍 **Schema Cleanup**: Systematic removal of unsupported Zod keywords from all tool definitions
 - 📚 **Documentation**: Comprehensive README with usage examples and tool catalogs

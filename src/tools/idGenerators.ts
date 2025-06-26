@@ -64,9 +64,9 @@ For production use, please use a proper ULID library.`,
   // QR code generator (Real implementation using qrcode library)
   server.tool(
     "qr-generate",
-    "Generate ASCII QR code",
+    "Generate QR code for any text including URLs, WiFi networks, contact info, etc.",
     {
-      text: z.string().describe("Text to encode in QR code"),
+      text: z.string().describe("Text to encode in QR code (URLs, WiFi: WIFI:T:WPA;S:network;P:password;;, contact info, etc.)"),
       size: z.number().describe("Size multiplier (1-3)").optional(),
     },
     async ({ text, size = 1 }) => {
@@ -137,66 +137,7 @@ Debug info:
     }
   );
 
-  // WiFi QR code generator
-  server.tool(
-    "wifi-qr-code-generator",
-    "Generate QR code for WiFi network connection",
-    {
-      ssid: z.string().describe("WiFi network name (SSID)"),
-      password: z.string().describe("WiFi password"),
-      security: z.enum(["WPA", "WEP", "nopass"]).describe("Security type").optional(),
-      hidden: z.boolean().describe("Is the network hidden?").optional(),
-    },
-    async ({ ssid, password, security = "WPA", hidden = false }) => {
-      try {
-        // WiFi QR code format: WIFI:T:WPA;S:mynetwork;P:mypass;H:false;;
-        const wifiString = `WIFI:T:${security};S:${ssid};P:${password};H:${hidden};;`;
 
-        // Generate QR code as base64 data URL
-        const dataUrl = await QRCode.toDataURL(wifiString, {
-          type: 'image/png',
-          errorCorrectionLevel: 'M',
-          width: 256,
-          margin: 2,
-          color: {
-            dark: '#000000',  // Black
-            light: '#FFFFFF'  // White
-          }
-        });
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: `🔗 WiFi QR Code Generated!
-
-WiFi Connection Details:
-• Network Name (SSID): ${ssid}
-• Security Type: ${security}
-• Hidden Network: ${hidden}
-• WiFi Connection String: ${wifiString}
-
-📱 Scan this QR code to connect to the WiFi network!`,
-            },
-            {
-              type: "image",
-              data: dataUrl,
-              mimeType: "image/png"
-            }
-          ],
-        };
-      } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error generating WiFi QR code: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            },
-          ],
-        };
-      }
-    }
-  );
 
   // SVG placeholder generator
   server.tool(
