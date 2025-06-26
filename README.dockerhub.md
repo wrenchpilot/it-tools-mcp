@@ -6,15 +6,49 @@
 
 A comprehensive Model Context Protocol (MCP) server that provides access to **76 IT tools and utilities** commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
-## 🚀 Quick Start
+### Using with VS Code
 
-```bash
-# Pull and run the latest version
-docker run -it --rm wrenchpilot/it-tools-mcp:latest
+Add to your VS Code `settings.json`:
 
-# Or use docker-compose
-curl -O https://raw.githubusercontent.com/wrenchpilot/it-tools-mcp/main/docker-compose.yml
-docker-compose up
+```json
+{
+  "mcp": {
+    "servers": {
+      "it-tools": {
+        "command": "docker",
+        "args": [
+          "run",
+          "-i",
+          "--rm",
+          "--name",
+          "it-tools-mcp",
+          "wrenchpilot/it-tools-mcp:latest"
+        ]
+      }
+  }
+}
+```
+
+Then restart VS Code and the IT Tools will be available in Copilot Chat with `#[tool-name]` prefix.
+
+### Using with Claude Desktop
+
+Add to your `claude_desktop_config.json`:
+
+```json
+  "mcpServers": {
+    "it-tools": {
+      "command": "docker",
+      "args": [
+          "run",
+          "-i",
+          "--rm",
+          "--name",
+          "it-tools-mcp",
+          "wrenchpilot/it-tools-mcp:latest"
+      ]
+    }
+  }
 ```
 
 ### Usage Examples
@@ -44,42 +78,6 @@ This MCP server provides **76 tools** across **8 categories**:
 - **🔢 Math & Calculations** (6 tools): Expression evaluation, base conversion, temperature, percentages
 - **🆔 ID & Code Generators** (5 tools): UUID, ULID, QR codes, WiFi QR, SVG placeholders
 - **🔧 Development & Utilities** (9 tools): Regex testing, cron expressions, color conversion, MIME types
-
-## 📦 Installation & Setup
-
-### Using with Claude Desktop
-
-Add to your `claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "it-tools": {
-      "command": "docker",
-      "args": ["run", "-i", "--rm", "wrenchpilot/it-tools-mcp:latest"]
-    }
-  }
-}
-```
-
-### Using with VS Code
-
-Add to your VS Code `settings.json`:
-
-```json
-{
-  "mcp": {
-    "servers": {
-      "it-tools": {
-        "command": "docker",
-        "args": ["run", "-i", "--rm", "wrenchpilot/it-tools-mcp:latest"]
-      }
-    }
-  }
-}
-```
-
-Then restart VS Code and the IT Tools will be available in Copilot Chat with `#[tool-name]` prefix.
 
 ### Local Development
 
