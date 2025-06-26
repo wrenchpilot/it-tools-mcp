@@ -51,3 +51,6 @@ temp/
 
 # Internal Documentation
 internal/
+
+# SpecStory
+.specstory/
