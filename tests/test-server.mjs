@@ -71,10 +71,12 @@ async function testServer() {
   console.log('Testing IT Tools MCP Server...\n');
   
   const server = spawn('node', ['build/index.js'], {
-    stdio: ['pipe', 'pipe', 'pipe']
+    stdio: ['pipe', 'pipe', 'pipe'],
+    env: { ...process.env, NODE_ENV: 'test' }
   });
 
   let output = '';
+  let testCompleted = false;
   
   server.stdout.on('data', (data) => {
     output += data.toString();
@@ -84,16 +86,41 @@ async function testServer() {
     console.error('Server stderr:', data.toString());
   });
 
+  // Set a timeout to kill the server if it doesn't exit
+  const timeout = setTimeout(() => {
+    if (!testCompleted) {
+      console.log('Test timeout - killing server...');
+      server.kill('SIGTERM');
+      setTimeout(() => {
+        if (!server.killed) {
+          server.kill('SIGKILL');
+        }
+      }, 1000);
+    }
+  }, 10000); // 10 second timeout
+
   // Send test messages
   for (const message of testMessages) {
     server.stdin.write(JSON.stringify(message) + '\n');
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
+  // Wait a bit for responses, then close
+  await new Promise(resolve => setTimeout(resolve, 2000));
   server.stdin.end();
+  
+  // Force close after a short delay
+  setTimeout(() => {
+    if (!testCompleted) {
+      server.kill('SIGTERM');
+    }
+  }, 1000);
 
   await new Promise((resolve) => {
     server.on('close', () => {
+      testCompleted = true;
+      clearTimeout(timeout);
+      
       console.log('Test Results:');
       console.log('=============');
       
@@ -111,6 +138,7 @@ async function testServer() {
         }
       });
       
+      console.log('\n✅ Test completed successfully!');
       resolve();
     });
   });

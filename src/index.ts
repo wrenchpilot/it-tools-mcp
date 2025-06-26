@@ -71,13 +71,16 @@ async function main() {
   console.error("IT Tools MCP Server running on stdio");
   console.error("Resource usage:", JSON.stringify(getResourceUsage(), null, 2));
   
-  // Periodic resource monitoring (every 5 minutes)
-  setInterval(() => {
-    const usage = getResourceUsage();
-    if (usage.memory.used > 200) { // Alert if using more than 200MB
-      console.error("High memory usage detected:", usage.memory);
-    }
-  }, 5 * 60 * 1000);
+  // Only start periodic monitoring in production, not in tests
+  if (process.env.NODE_ENV !== 'test') {
+    // Periodic resource monitoring (every 5 minutes)
+    setInterval(() => {
+      const usage = getResourceUsage();
+      if (usage.memory.used > 200) { // Alert if using more than 200MB
+        console.error("High memory usage detected:", usage.memory);
+      }
+    }, 5 * 60 * 1000);
+  }
 }
 
 main().catch((error) => {
