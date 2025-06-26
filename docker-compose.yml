@@ -1,19 +1,56 @@
 version: '3.8'
+
 services:
   it-tools-mcp:
     image: wrenchpilot/it-tools-mcp:latest
     container_name: it-tools-mcp
-    restart: unless-stopped
-    stdin_open: true
-    tty: true
+    
+    # Security hardening (default secure configuration)
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "1001:1001"  # Non-root user
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+          cpus: '0.25'
+    
+    # Network isolation
+    networks:
+      - it-tools-isolated
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "node", "-e", "process.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Environment variables
     environment:
       - NODE_ENV=production
-    # Uncomment if you need to persist data
-    # volumes:
-    #   - ./data:/app/data
-    # Uncomment if you need to expose ports
-    # ports:
-    #   - "3000:3000"
+      - NODE_OPTIONS=--max-old-space-size=128
+    
+    # Restart policy
+    restart: unless-stopped
+
 networks:
-  default:
+  it-tools-isolated:
     driver: bridge
+    internal: true  # No external access

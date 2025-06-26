@@ -24,35 +24,18 @@ Add to your VS Code `settings.json`:
           "run",
           "-i",
           "--rm",
-          "--name",
-          "it-tools-mcp",
+          "--security-opt", "no-new-privileges:true",
+          "--cap-drop", "ALL",
+          "--read-only",
+          "--user", "1001:1001",
+          "--memory=256m",
+          "--cpus=0.5",
+          "--name", "it-tools-mcp",
           "wrenchpilot/it-tools-mcp:latest"
         ]
       }
   }
 }
-```
-
-Then restart VS Code and the IT Tools will be available in Copilot Chat with `#[tool-name]` prefix.
-
-### Using with Claude Desktop
-
-Add to your `claude_desktop_config.json`:
-
-```json
-  "mcpServers": {
-    "it-tools": {
-      "command": "docker",
-      "args": [
-          "run",
-          "-i",
-          "--rm",
-          "--name",
-          "it-tools-mcp",
-          "wrenchpilot/it-tools-mcp:latest"
-      ]
-    }
-  }
 ```
 
 #### Interactive Mode
@@ -88,17 +71,46 @@ This MCP server provides **76 tools** across **8 categories**:
 
 ### Local Development
 
+#### Production Deployment (Secure by Default)
+
 ```bash
 git clone https://github.com/wrenchpilot/it-tools-mcp.git
 cd it-tools-mcp
 npm install
-npm run build
-npm start
+npm start  # Uses secure Docker configuration
 ```
+
+#### Development Mode
+
+```bash
+npm run dev  # Direct Node.js execution for development
+```
+
+#### Available Scripts
+
+```bash
+npm start              # Secure Docker deployment (production-ready)
+npm run dev            # Development mode with Node.js
+npm run test:all       # Run all tests including security tests
+npm run docker:stop    # Stop Docker containers
+```
+
+## 🔒 Security Features
+
+This MCP server is built with enterprise-grade security:
+
+- **Input Validation**: All inputs validated with size limits and type checking
+- **Rate Limiting**: Protection against abuse with configurable limits
+- **Resource Monitoring**: Real-time memory and CPU usage tracking
+- **Container Security**: Read-only filesystem, dropped capabilities, non-root user
+- **Network Isolation**: Containers run in isolated networks
+- **Error Handling**: Secure error messages without information disclosure
+
+For detailed security information, see [SECURITY.md](SECURITY.md).
 
 ## 💡 Usage Examples
 
-Ask Claude to use these tools:
+Ask Copilot to use these tools:
 
 - **Encoding**: "Base64 encode 'Hello World'" → `SGVsbG8gV29ybGQ=`
 - **Hashing**: "Generate SHA256 hash for 'password123'"
@@ -115,7 +127,6 @@ Ask Claude to use these tools:
 
 ![Password Hash Example](screenshots/password-hash-example.png)
 
-*Example of using the IT Tools MCP server to generate secure password hashes with VS Code Copilot Chat*
 
 ## Available Tools
 
