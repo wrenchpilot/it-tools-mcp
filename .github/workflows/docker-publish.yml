@@ -39,7 +39,7 @@ jobs:
           DOCS_ONLY=true
           
           for file in $CHANGED_FILES; do
-            if [[ ! "$file" =~ \.(md|txt)$ ]] && [[ "$file" != "LICENSE" ]] && [[ ! "$file" =~ ^docs/ ]] && [[ ! "$file" =~ ".gitignore" ]]; then
+            if [[ ! "$file" =~ \.(md|txt|png)$ ]] && [[ "$file" != "LICENSE" ]] && [[ ! "$file" =~ ^docs/ ]] && [[ ! "$file" =~ ".gitignore" ]]; then
               CODE_CHANGED=true
               DOCS_ONLY=false
               break
