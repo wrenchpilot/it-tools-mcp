@@ -69,19 +69,6 @@ This MCP server provides **76 tools** across **8 categories**:
 - **🆔 ID & Code Generators** (5 tools: UUID, ULID, QR codes, WiFi QR, SVG placeholders
 - **🔧 Development & Utilities** (9 tools): Regex testing, cron expressions, color conversion, MIME types
 
-## 💡 Usage Examples
-
-Ask Copilot to use these tools:
-
-- **Encoding**: "Base64 encode 'Hello World'" → `SGVsbG8gV29ybGQ=`
-- **Hashing**: "Generate SHA256 hash for 'password123'"
-- **Formatting**: "Format this JSON: {'name':'John','age':30}"
-- **Text**: "Convert 'hello world' to camelCase" → `helloWorld`
-- **Security**: "Generate a 16-character password with symbols"
-- **Network**: "Calculate subnet info for 192.168.1.0/24"
-- **Colors**: "Convert HEX color #FF5733 to RGB" → `rgb(255, 87, 51)`
-- **IDs**: "Generate a UUID" → `550e8400-e29b-41d4-a716-446655440000`
-
 ## 📸 Screenshot Examples
 
 ### Password Hash Generation Example

@@ -34,81 +34,7 @@ Add to your VS Code `settings.json`:
 }
 ```
 
-Then restart VS Code and the IT Tools will be available in Copilot Chat with `#[tool-name]` prefix.
-
-### Usage Examples
-
-```bash
-# Interactive Mode
-docker run -it --rm wrenchpilot/it-tools-mcp:latest
-
-# Generate a UUID
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"uuid-generate","arguments":{}}}' | \
-  docker run -i --rm wrenchpilot/it-tools-mcp:latest
-
-# Encode text to Base64
-echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"base64-encode","arguments":{"text":"Hello World"}}}' | \
-  docker run -i --rm wrenchpilot/it-tools-mcp:latest
-```
-
-## 🛠️ Tool Categories
-
-This MCP server provides **76 tools** across **8 categories**:
-
-- **🔧 Encoding & Decoding** (9 tools): Base64, URL, HTML entities, text-to-binary, Unicode
-- **📝 Data Format** (11 tools): JSON, XML, YAML, SQL, TOML, Markdown ↔ HTML conversion
-- **🔐 Security & Crypto** (12 tools): Hashing (MD5, SHA1-512), HMAC, JWT, bcrypt, passwords, tokens
-- **✨ Text Processing** (16 tools): Case conversion, stats, diff, ASCII art, NATO alphabet, slugify
-- **🌐 Network & Web** (8 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, phone formatting
-- **🔢 Math & Calculations** (6 tools): Expression evaluation, base conversion, temperature, percentages
-- **🆔 ID & Code Generators** (5 tools): UUID, ULID, QR codes, WiFi QR, SVG placeholders
-- **🔧 Development & Utilities** (9 tools): Regex testing, cron expressions, color conversion, MIME types
-
-### Local Development
-
-```bash
-git clone https://github.com/wrenchpilot/it-tools-mcp.git
-cd it-tools-mcp
-npm install
-npm run build
-npm start
-```
-
-## 💡 Usage Examples
-
-Ask Claude to use these tools:
-
-- **Encoding**: "Base64 encode 'Hello World'" → `SGVsbG8gV29ybGQ=`
-- **Hashing**: "Generate SHA256 hash for 'password123'"
-- **Formatting**: "Format this JSON: {'name':'John','age':30}"
-- **Text**: "Convert 'hello world' to camelCase" → `helloWorld`
-- **Security**: "Generate a 16-character password with symbols"
-- **Network**: "Calculate subnet info for 192.168.1.0/24"
-- **Colors**: "Convert HEX color #FF5733 to RGB" → `rgb(255, 87, 51)`
-- **IDs**: "Generate a UUID" → `550e8400-e29b-41d4-a716-446655440000`
-
-## 📸 Screenshot Example
-
-### Password Hash Generation
-
-![Password Hash Example](https://github.com/wrenchpilot/it-tools-mcp/blob/master/screenshots/password-hash-example.png?raw=true)
-
-Example of using the IT Tools MCP server to generate secure password hashes with VS Code Copilot Chat
-
-## 🔧 Sample Tools
-
-| Category     | Tool                   | Description              |
-| ------------ | ---------------------- | ------------------------ |
-| **Encoding** | `base64-encode/decode` | Base64 encoding/decoding |
-| **Security** | `hash-sha256`          | Generate SHA256 hash     |
-| **Text**     | `text-camelcase`       | Convert to camelCase     |
-| **Network**  | `ip-subnet-calculator` | Calculate IPv4 subnets   |
-| **Math**     | `math-evaluate`        | Evaluate expressions     |
-| **IDs**      | `uuid-generate`        | Generate UUID v4         |
-| **Data**     | `json-format`          | Format and validate JSON |
-| **Utility**  | `color-hex-to-rgb`     | Convert HEX to RGB       |
-
-> **📋 Full Tool List**: See the complete list of all 76 tools with detailed parameters on [GitHub](https://github.com/wrenchpilot/it-tools-mcp#available-tools)
+See the complete list of all 76 tools with detailed parameters on [GitHub](https://github.com/wrenchpilot/it-tools-mcp#available-tools)
 
 ## 🏗️ Architecture
 
@@ -152,7 +78,7 @@ Contributions welcome! Please submit a Pull Request on [GitHub](https://github.c
 
 ## 📄 License
 
-MIT License - see [LICENSE](https://github.com/wrenchpilot/it-tools-mcp/blob/main/LICENSE) for details.
+MIT License - see [LICENSE](https://github.com/wrenchpilot/it-tools-mcp/blob/master/LICENSE) for details.
 
 ## 🔗 Links
 
