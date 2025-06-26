@@ -36,6 +36,16 @@ Add to your VS Code `settings.json`:
 
 See the complete list of all 76 tools with detailed parameters on [GitHub](https://github.com/wrenchpilot/it-tools-mcp#available-tools)
 
+## 📸 Examples in Action
+
+### Password Hash Generation
+![Password Hash Example](https://raw.githubusercontent.com/wrenchpilot/it-tools-mcp/master/screenshots/password-hash-example.png)
+
+### ASCII Art Text Generation  
+![ASCII Art Text Example](https://raw.githubusercontent.com/wrenchpilot/it-tools-mcp/master/screenshots/ascii-art-text-example.png)
+
+*Examples of using the IT Tools MCP server with VS Code Copilot Chat*
+
 ## 🏗️ Architecture
 
 Built with **TypeScript**, **Zod** validation, and **MCP SDK** for robust, type-safe operation.

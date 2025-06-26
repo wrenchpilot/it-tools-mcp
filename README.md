@@ -75,6 +75,12 @@ This MCP server provides **76 tools** across **8 categories**:
 
 ![Password Hash Example](screenshots/password-hash-example.png)
 
+### ASCII Art Text Generation Example
+
+![ASCII Art Text Example](screenshots/ascii-art-text-example.png)
+
+*Examples of using the IT Tools MCP server with VS Code Copilot Chat for secure password hashing and creative ASCII art generation*
+
 ## Available Tools
 
 | Tool                        | Description                            | Parameters                                                                                                                                                                                                |
