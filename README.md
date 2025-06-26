@@ -69,45 +69,6 @@ This MCP server provides **76 tools** across **8 categories**:
 - **🆔 ID & Code Generators** (5 tools: UUID, ULID, QR codes, WiFi QR, SVG placeholders
 - **🔧 Development & Utilities** (9 tools): Regex testing, cron expressions, color conversion, MIME types
 
-### Local Development
-
-#### Production Deployment (Secure by Default)
-
-```bash
-git clone https://github.com/wrenchpilot/it-tools-mcp.git
-cd it-tools-mcp
-npm install
-npm start  # Uses secure Docker configuration
-```
-
-#### Development Mode
-
-```bash
-npm run dev  # Direct Node.js execution for development
-```
-
-#### Available Scripts
-
-```bash
-npm start              # Secure Docker deployment (production-ready)
-npm run dev            # Development mode with Node.js
-npm run test:all       # Run all tests including security tests
-npm run docker:stop    # Stop Docker containers
-```
-
-## 🔒 Security Features
-
-This MCP server is built with enterprise-grade security:
-
-- **Input Validation**: All inputs validated with size limits and type checking
-- **Rate Limiting**: Protection against abuse with configurable limits
-- **Resource Monitoring**: Real-time memory and CPU usage tracking
-- **Container Security**: Read-only filesystem, dropped capabilities, non-root user
-- **Network Isolation**: Containers run in isolated networks
-- **Error Handling**: Secure error messages without information disclosure
-
-For detailed security information, see [SECURITY.md](SECURITY.md).
-
 ## 💡 Usage Examples
 
 Ask Copilot to use these tools:
@@ -126,7 +87,6 @@ Ask Copilot to use these tools:
 ### Password Hash Generation Example
 
 ![Password Hash Example](screenshots/password-hash-example.png)
-
 
 ## Available Tools
 
