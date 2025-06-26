@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
+import IBAN from "iban";
 import { z } from "zod";
 
 export function registerNetworkTools(server: McpServer) {
@@ -574,8 +575,6 @@ Valid: ${parsedNumber.isValid()}
     },
     async ({ iban }) => {
       try {
-        const IBAN = require('iban');
-
         // Clean the input
         const cleanIban = iban.replace(/\s/g, '').toUpperCase();
 
@@ -588,8 +587,9 @@ Valid: ${parsedNumber.isValid()}
           const checkDigits = cleanIban.slice(2, 4);
           const bban = cleanIban.slice(4); // Basic Bank Account Number
 
-          // Get country information if available
-          const countryName = IBAN.countries[countryCode]?.name || 'Unknown';
+          // Get country information if available (simplified approach)
+          const countryInfo = IBAN.countries[countryCode];
+          const countryName = countryInfo ? 'Available' : 'Unknown';
 
           return {
             content: [

@@ -4,6 +4,8 @@ import * as YAML from "js-yaml";
 import Papa from "papaparse";
 import { format as formatSQL } from "sql-formatter";
 import formatXML from "xml-formatter";
+import { marked } from "marked";
+import TurndownService from "turndown";
 import { z } from "zod";
 
 export function registerDataFormatTools(server: McpServer) {
@@ -412,17 +414,11 @@ ${formatted}
     },
     async ({ markdown }) => {
       try {
-        const { marked } = require('marked');
-
-        // Configure marked options for safety and consistency
-        marked.setOptions({
+        // Use marked with basic configuration (marked is synchronous)
+        const html = marked(markdown, {
           breaks: true,
-          gfm: true,
-          headerIds: false,
-          mangle: false
+          gfm: true
         });
-
-        const html = marked(markdown);
 
         return {
           content: [
@@ -454,8 +450,6 @@ ${formatted}
     },
     async ({ html }) => {
       try {
-        const TurndownService = require('turndown');
-
         // Configure turndown for better output
         const turndownService = new TurndownService({
           headingStyle: 'atx',

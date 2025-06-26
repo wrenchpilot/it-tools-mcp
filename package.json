@@ -51,10 +51,12 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/figlet": "^1.7.0",
     "@types/html-to-text": "^9.0.4",
+    "@types/iban": "^0.0.35",
     "@types/marked": "^5.0.2",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^22.15.32",
     "@types/speakeasy": "^2.0.10",
+    "@types/turndown": "^5.0.5",
     "@types/validator": "^13.15.2",
     "@types/xml-formatter": "^1.2.0",
     "typescript": "^5.8.3"
