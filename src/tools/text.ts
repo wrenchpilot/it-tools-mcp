@@ -263,7 +263,7 @@ Lines in text 2: ${lines2.length}`,
     "ascii-art-text",
     "Generate ASCII art text",
     {
-      text: z.string().describe("Text to convert to ASCII art"),
+      text: z.string().describe("Text to convert to ASCII art, or use 'LIST_FONTS' to get all available font names"),
       font: z.string().describe("ASCII art font style. Supports all 295+ figlet fonts. Use 'standard' if unsure.").optional(),
     },
     async ({ text, font = "standard" }) => {
@@ -273,6 +273,38 @@ Lines in text 2: ${lines2.length}`,
         
         // Get list of available fonts
         const availableFonts = figlet.default.fontsSync();
+        
+        // Check if user wants to list all fonts
+        if (text.toUpperCase() === 'LIST_FONTS') {
+          const sortedFonts = availableFonts.sort();
+          const popularFonts = [
+            "Standard", "Big", "Small", "Slant", "3-D", "Banner", "Block", "Shadow", 
+            "Larry 3D", "Doom", "Star Wars", "Gothic", "Graffiti", "Bubble", "Digital"
+          ];
+          
+          // Filter popular fonts that are actually available
+          const availablePopularFonts = popularFonts.filter(f => 
+            sortedFonts.some(availableFont => availableFont === f)
+          );
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Available ASCII Art Fonts (${sortedFonts.length} total):
+
+🌟 POPULAR FONTS:
+${availablePopularFonts.join(', ')}
+
+📝 ALL AVAILABLE FONTS:
+${sortedFonts.join(', ')}
+
+💡 Usage: Use any font name above as the 'font' parameter.
+Examples: 'Standard', '3-D', 'Larry 3D', 'Banner', 'Block', etc.`,
+              },
+            ],
+          };
+        }
         
         // Find the exact font match (case insensitive and flexible matching)
         let targetFont = "Standard"; // Default fallback
