@@ -264,13 +264,14 @@ Lines in text 2: ${lines2.length}`,
     "Generate ASCII art text",
     {
       text: z.string().describe("Text to convert to ASCII art"),
-      font: z.enum(["small", "standard", "big"]).describe("ASCII art font style").optional(),
+      font: z.enum(["small", "standard", "big", "block"]).describe("ASCII art font style").optional(),
     },
     async ({ text, font = "standard" }) => {
       try {
         // Map our font options to figlet fonts
         const figletFont = font === "small" ? "Small" : 
-                          font === "big" ? "Big" : "Standard";
+                          font === "big" ? "Big" : 
+                          font === "block" ? "Block" : "Standard";
 
         // Generate ASCII art using figlet
         const figlet = await import('figlet');
