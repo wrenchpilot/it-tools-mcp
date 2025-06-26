@@ -264,42 +264,91 @@ Lines in text 2: ${lines2.length}`,
     "Generate ASCII art text",
     {
       text: z.string().describe("Text to convert to ASCII art"),
-      font: z.enum(["small", "standard", "big", "block"]).describe("ASCII art font style").optional(),
+      font: z.string().describe("ASCII art font style (e.g., 'standard', 'big', 'slant', '3-d', 'banner', 'block', 'shadow', 'larry3d'). Supports all 295+ figlet fonts. Use 'standard' if unsure.").optional(),
     },
     async ({ text, font = "standard" }) => {
       try {
-        // Map our font options to figlet fonts
-        const figletFont = font === "small" ? "Small" : 
-                          font === "big" ? "Big" : 
-                          font === "block" ? "Block" : "Standard";
-
         // Generate ASCII art using figlet
         const figlet = await import('figlet');
+        
+        // Get list of available fonts
+        const availableFonts = figlet.default.fontsSync();
+        
+        // Find the exact font match (case insensitive and flexible matching)
+        let targetFont = "Standard"; // Default fallback
+        const inputFont = font.toLowerCase();
+        
+        // Direct match
+        const exactMatch = availableFonts.find(f => f.toLowerCase() === inputFont);
+        if (exactMatch) {
+          targetFont = exactMatch;
+        } else {
+          // Fuzzy match - look for fonts that contain the input as substring
+          const partialMatch = availableFonts.find(f => 
+            f.toLowerCase().includes(inputFont) || 
+            inputFont.includes(f.toLowerCase())
+          );
+          if (partialMatch) {
+            targetFont = partialMatch;
+          }
+        }
+
+        // Generate ASCII art
         const asciiArt = figlet.default.textSync(text, {
-          font: figletFont,
+          font: targetFont as any,
           horizontalLayout: 'default',
           verticalLayout: 'default'
         });
+        
+        const fontUsed = targetFont === font ? font : `${font} → ${targetFont}`;
         
         return {
           content: [
             {
               type: "text",
-              text: `ASCII Art (${font}):\n\n${asciiArt}`,
+              text: `ASCII Art (${fontUsed}):\n\n${asciiArt}`,
             },
           ],
         };
       } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error generating ASCII art: ${error instanceof Error ? error.message : 'Unknown error'}
+        // Get available fonts for error message
+        try {
+          const figlet = await import('figlet');
+          const availableFonts = figlet.default.fontsSync();
+          const popularFonts = [
+            "Standard", "Big", "Small", "Slant", "3-D", "Banner", "Block", "Shadow", 
+            "Larry 3D", "Doom", "Star Wars", "Gothic", "Graffiti", "Bubble", "Digital"
+          ];
+          
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error generating ASCII art: ${error instanceof Error ? error.message : 'Unknown error'}
+
+Font '${font}' not found or invalid.
+
+Popular fonts to try: ${popularFonts.join(', ')}
+
+Total available fonts: ${availableFonts.length}
+Some examples: ${availableFonts.slice(0, 10).join(', ')}...
 
 Note: ASCII art generation works best with short text (1-10 characters).`,
-            },
-          ],
-        };
+              },
+            ],
+          };
+        } catch {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error generating ASCII art: ${error instanceof Error ? error.message : 'Unknown error'}
+
+Note: ASCII art generation works best with short text (1-10 characters).`,
+              },
+            ],
+          };
+        }
       }
     }
   );
