@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.10 - 2025-06-27
+
+### Changed
+
+- Removed unused dependency: `node-fetch` from package.json.
+
 ## 3.0.9 - 2025-06-27
 
 ### Added
