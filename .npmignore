@@ -1,0 +1,23 @@
+# Ignore source files and configs not needed in the npm package
+src/
+tests/
+screenshots/
+internal/
+.devcontainer/
+.github/
+*.md
+*.sh
+*.mjs
+*.ts
+*.log
+docker-compose.yml
+Dockerfile
+README.dockerhub.md
+tsconfig.json
+.dockerignore
+.vscode/
+.git/
+.gitignore
+.env
+node_modules/
+.specstory/
