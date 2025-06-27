@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.2 - 2025-06-26
+
+- Updated README with improved instructions and documentation.
+
 ## 3.0.1 - 2025-06-26
 
 - Prepare for npm publish: added .npmignore, improved README, and updated package metadata.

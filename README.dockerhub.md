@@ -20,7 +20,7 @@ Add to your VS Code `settings.json`:
         "command": "npx",
         "args": [
           "-y",
-          "@wrenchpilot/it-tools-mcp"
+          "wrenchpilot/it-tools-mcp"
         ],
         "env": {}
       }
