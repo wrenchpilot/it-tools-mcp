@@ -2,31 +2,31 @@
 
 ## 3.0.13 - 2025-06-27
 
-### Changed
+### Updated
 
 - GitHub Actions workflow now excludes test file changes (`tests/**`, `*.test.js`, `*.test.mjs`) from triggering a full Docker build and publish. Only actual code changes will trigger a rebuild/publish.
 
 ## 3.0.12 - 2025-06-27
 
-### Fixed
+### Bug Fixes
 
 - SSH tool now uses imported `os` and `fs` modules for ESM compatibility (no `require`).
 - SSH tool no longer fails with `require is not defined` in ESM environments.
 
 ## 3.0.11 - 2025-06-27
 
-### Added
+### New Features
 
 - SSH tool now supports loading private keys from file paths (e.g., `~/.ssh/id_rsa`) and will automatically use the user's default SSH key if no key is provided.
 - The SSH tool is now compatible with both PEM and OpenSSH key formats (if supported by ssh2).
 
-### Changed
+### Improved
 
 - Improved SSH tool logic for key resolution and error reporting.
 
 ## 3.0.10 - 2025-06-27
 
-### Changed
+### Improvements
 
 - Removed unused dependency: `node-fetch` from package.json.
 
