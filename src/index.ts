@@ -18,8 +18,10 @@ import { registerUtilityTools } from "./tools/utility.js";
 import { registerDevelopmentTools } from "./tools/development.js";
 import { registerColorTools } from "./tools/color.js";
 
-// Helper to read version from package.json at runtime
+// Helper to read version from package.json at runtime (ESM compatible)
 function getPackageVersion() {
+  // Use import.meta.url to get the directory in ESM
+  const __dirname = path.dirname(new URL(import.meta.url).pathname);
   const pkgPath = path.resolve(__dirname, '../package.json');
   const pkgRaw = fs.readFileSync(pkgPath, 'utf-8');
   return JSON.parse(pkgRaw).version;
