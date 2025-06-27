@@ -3,6 +3,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { getResourceUsage } from "./security.js";
+import fs from 'fs';
+import path from 'path';
 
 // Import tool modules
 import { registerEncodingTools } from "./tools/encoding.js";
@@ -16,10 +18,17 @@ import { registerUtilityTools } from "./tools/utility.js";
 import { registerDevelopmentTools } from "./tools/development.js";
 import { registerColorTools } from "./tools/color.js";
 
+// Helper to read version from package.json at runtime
+function getPackageVersion() {
+  const pkgPath = path.resolve(__dirname, '../package.json');
+  const pkgRaw = fs.readFileSync(pkgPath, 'utf-8');
+  return JSON.parse(pkgRaw).version;
+}
+
 // Create server instance
 const server = new McpServer({
   name: "it-tools-mcp",
-  version: "3.0.0",
+  version: getPackageVersion(),
   capabilities: {
     resources: {},
     tools: {},
@@ -51,7 +60,7 @@ server.tool(
           type: "text",
           text: JSON.stringify({
             server: "IT Tools MCP Server",
-            version: "3.0.0",
+            version: getPackageVersion(),
             uptime: `${Math.floor(usage.uptimeSeconds)} seconds`,
             memory: usage.memory,
             timestamp: new Date().toISOString(),

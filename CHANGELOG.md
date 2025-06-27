@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.5 - 2025-06-26
+
+- Server version is now always in sync with package.json at runtime (no more manual version bumps in code).
+- Fixed TypeScript import assertion error for JSON imports by switching to runtime fs read.
+
 ## 3.0.4 - 2025-06-26
 
 - Fixed package.json warnings by running `npm pkg fix`.
