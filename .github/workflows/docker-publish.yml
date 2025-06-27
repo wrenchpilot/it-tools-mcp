@@ -26,31 +26,34 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      
       - name: Check for changes
         id: changes
         run: |
           # Get list of changed files
           CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
           echo "Changed files: $CHANGED_FILES"
-          
+
           # Check if only documentation files changed
           CODE_CHANGED=false
           DOCS_ONLY=true
-          
+
           for file in $CHANGED_FILES; do
-            if [[ ! "$file" =~ \.(md|txt|png)$ ]] && [[ "$file" != "LICENSE" ]] && [[ ! "$file" =~ ^docs/ ]] && [[ ! "$file" =~ ".gitignore" ]]; then
+            if [[ ! "$file" =~ \.(md|txt|png)$ ]] && \
+               [[ "$file" != "LICENSE" ]] && \
+               [[ ! "$file" =~ ^docs/ ]] && \
+               [[ ! "$file" =~ ".gitignore" ]] && \
+               [[ ! "$file" =~ ^tests/ ]] && \
+               [[ ! "$file" =~ (\.test\.js|\.test\.mjs)$ ]]; then
               CODE_CHANGED=true
               DOCS_ONLY=false
               break
             fi
           done
-          
+
           echo "code=$CODE_CHANGED" >> $GITHUB_OUTPUT
           echo "docs-only=$DOCS_ONLY" >> $GITHUB_OUTPUT
           echo "Code changed: $CODE_CHANGED"
           echo "Docs only: $DOCS_ONLY"
-
   build-and-push:
     needs: check-changes
     if: (needs.check-changes.outputs.code-changed == 'true' || github.event_name == 'schedule') && !(github.event_name == 'workflow_dispatch' && github.event.inputs.update_readme_only == 'true')
@@ -120,7 +123,6 @@ jobs:
       - name: Publish to NPM
         if: github.event_name != 'pull_request'
         run: npm publish --access public
-
   update-docker-readme:
     needs: [check-changes]
     if: github.event_name != 'pull_request' && (needs.check-changes.outputs.docs-only == 'true' || needs.check-changes.outputs.code-changed == 'true' || (github.event_name == 'workflow_dispatch' && github.event.inputs.update_readme_only == 'true'))
@@ -128,7 +130,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
       - name: Update Docker Hub README
         uses: peter-evans/dockerhub-description@v3
         with:

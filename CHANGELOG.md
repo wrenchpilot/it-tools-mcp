@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.13 - 2025-06-27
+
+### Changed
+
+- GitHub Actions workflow now excludes test file changes (`tests/**`, `*.test.js`, `*.test.mjs`) from triggering a full Docker build and publish. Only actual code changes will trigger a rebuild/publish.
+
 ## 3.0.12 - 2025-06-27
 
 ### Fixed

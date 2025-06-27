@@ -216,15 +216,13 @@ async function testAllTools() {
   for (const msg of testMessages) {
     if (!msg.id || msg.id === 1) continue; // skip init
     const resp = responses.find(r => r.id === msg.id);
-    if (msg.params?.name === 'ssh') {
-      // Always print the SSH tool's result content for debugging
-      if (resp && resp.result && resp.result.content) {
-        console.log(`[DEBUG] SSH result content:`, JSON.stringify(resp.result.content));
-      } else if (resp && resp.result) {
-        console.log(`[DEBUG] SSH result:`, JSON.stringify(resp.result));
-      } else {
-        console.log(`[DEBUG] SSH response:`, JSON.stringify(resp));
-      }
+    // Always print the tool's result content for debugging
+    if (resp && resp.result && resp.result.content) {
+      console.log(`[DEBUG] ${msg.params?.name || msg.method} result content:`, JSON.stringify(resp.result.content));
+    } else if (resp && resp.result) {
+      console.log(`[DEBUG] ${msg.params?.name || msg.method} result:`, JSON.stringify(resp.result));
+    } else {
+      console.log(`[DEBUG] ${msg.params?.name || msg.method} response:`, JSON.stringify(resp));
     }
     if (!resp) {
       console.log(`❌ Tool ${msg.params?.name || msg.method} (id ${msg.id}): No response`);
