@@ -6,7 +6,7 @@
 
 > **📝 Note**: A condensed version of this README is automatically synced to [Docker Hub](https://hub.docker.com/r/wrenchpilot/it-tools-mcp) due to character limits.
 
-A comprehensive Model Context Protocol (MCP) server that provides access to 75 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to 86 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 ## 📦 Installation & Setup
 
@@ -80,16 +80,16 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"base64-enc
 
 ## 🛠️ Tool Categories
 
-This MCP server provides **75 tools** across **8 categories**:
+This MCP server provides **86 tools** across **8 categories**:
 
 - **🔧 Encoding & Decoding** (9 tools): Base64, URL, HTML entities, text-to-binary, Unicode
 - **📝 Data Format** (11 tools): JSON, XML, YAML, SQL, TOML, Markdown ↔ HTML conversion
 - **🔐 Security & Crypto** (12 tools): Hashing (MD5, SHA1-512), HMAC, JWT, bcrypt, passwords, tokens
 - **✨ Text Processing** (16 tools): Case conversion, stats, diff, ASCII art, NATO alphabet, slugify
-- **🌐 Network & Web** (8 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, phone formatting
+- **🌐 Network & System** (19 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, phone formatting, ps, top, cat, head, tail, grep, ping, nslookup, telnet, dig, ssh, random-port, mac-address-generate, ip/ipv6 calculators
 - **🔢 Math & Calculations** (6 tools): Expression evaluation, base conversion, temperature, percentages
-- **🆔 ID & Code Generators** (4 tools): UUID, ULID, QR codes, SVG placeholders
-- **🔧 Development & Utilities** (9 tools): Regex testing, cron expressions, color conversion, MIME types
+- **🆔 ID & Code Generators** (4 tools: UUID, ULID, QR codes, SVG placeholders
+- **🛠️ Utility Tools** (9 tools): Color, MIME, HTTP, device info, email normalization, etc.
 
 ## 📸 Screenshot Examples
 
@@ -159,14 +159,25 @@ This MCP server provides **75 tools** across **8 categories**:
 | `lorem-ipsum-generator`     | Generate Lorem Ipsum                   | `type?: 'words' \| 'sentences' \| 'paragraphs'`, `count?: number`                                                                                                                                         |
 | `numeronym-generator`       | Generate numeronyms                    | `text: string`                                                                                                                                                                                            |
 | `emoji-search`              | Search emojis                          | `query: string`                                                                                                                                                                                           |
-| **Network & Web**           |                                        |                                                                                                                                                                                                           |
+| **Network & System**        |                                        |                                                                                                                                                                                                           |
+| `ps`                        | List running processes                 | None                                                                                                                                                                                                      |
+| `top`                       | Show top processes (by CPU)            | None                                                                                                                                                                                                      |
+| `cat`                       | Display file content                   | `file: string`                                                                                                                                                                                            |
+| `head`                      | Show first N lines of file             | `file: string`, `lines?: number`                                                                                                                                                                          |
+| `tail`                      | Show last N lines of file              | `file: string`, `lines?: number`                                                                                                                                                                          |
+| `grep`                      | Search for pattern in file             | `file: string`, `pattern: string`                                                                                                                                                                         |
+| `ping`                      | Ping a host                            | `target: string`, `count?: number`                                                                                                                                                                        |
+| `nslookup`                  | DNS lookup (A/AAAA/CNAME)              | `target: string`                                                                                                                                                                                          |
+| `telnet`                    | Test TCP connectivity                  | `target: string`, `port: number`                                                                                                                                                                          |
+| `dig`                       | DNS query (custom type)                | `target: string`, `type?: string`                                                                                                                                                                         |
+| `ssh`                       | SSH command execution                  | `target: string`, `user: string`, `command: string`                                                                                                                                                       |
 | `ip-subnet-calculator`      | Calculate IPv4 subnet                  | `ip: string`, `cidr: number`                                                                                                                                                                              |
 | `ipv4-subnet-calc`          | Enhanced IPv4 subnet calc              | `cidr: string`                                                                                                                                                                                            |
 | `ipv6-ula-generator`        | Generate IPv6 ULA                      | `globalId?: string`                                                                                                                                                                                       |
 | `url-parse`                 | Parse URL components                   | `url: string`                                                                                                                                                                                             |
 | `random-port`               | Generate random ports                  | `count?: number`, `min?: number`, `max?: number`, `exclude?: number[]`                                                                                                                                    |
-| `mac-address-generate`      | Generate MAC address                   | `prefix?: string`, `separator?: ':' \| '-'`                                                                                                                                                               |
-| `phone-format`              | Format phone numbers                   | `phoneNumber: string`, `countryCode?: string`                                                                                                                                                             |
+| `mac-address-generate`      | Generate MAC address                   | `prefix?: string`, `separator?: ':' | '-'`                                                                                                                                                                |
+| `phone-format`              | Parse and format phone numbers         | `phoneNumber: string`, `countryCode?: string`                                                                                                                                                             |
 | `iban-validate`             | Validate IBAN                          | `iban: string`                                                                                                                                                                                            |
 | **Math & Calculations**     |                                        |                                                                                                                                                                                                           |
 | `math-evaluate`             | Evaluate expressions                   | `expression: string`                                                                                                                                                                                      |
@@ -260,6 +271,7 @@ This showcases how AI can accelerate development while maintaining code quality,
 ```text
 src/
 ├── index.ts              # Main MCP server
+├── security.ts           # Security settings
 └── tools/                # Tool modules by category
     ├── encoding.ts       # Base64, URL, HTML encoding
     ├── crypto.ts         # Hashing, JWT, passwords

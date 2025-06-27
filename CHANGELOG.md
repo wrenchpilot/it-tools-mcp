@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.0.9 - 2025-06-27
+
+### Added
+
+- 11 new network/system tools: `ps`, `top`, `cat`, `head`, `tail`, `grep`, `ping`, `nslookup`, `dig`, `telnet`, `ssh` (all implemented using npm libraries for security/portability)
+- Integration tests for all new tools using JSON-RPC over stdio
+
+### Changed
+
+- Refactored all network/system tool names to remove `_tool` suffix
+- Improved error handling and robustness in process/system tools
+- Updated documentation and tool tables to reflect new tools and names
+- README and Docker README now show tool count as 86
+
+### Fixed
+
+- Fixed markdown table formatting and category summaries in documentation
+- Defensive coding for process listing on all platforms
+
 ## 3.0.8 - 2025-06-27
 
 - Optimized math-evaluate tool to use mathjs.compile for faster and more flexible expression evaluation.

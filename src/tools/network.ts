@@ -1,5 +1,24 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { exec } from "child_process";
+import { Client as SSHClient } from "ssh2";
+import ping from "ping";
+import dns from "dns";
+import Telnet from "telnet-client";
+import psList from "ps-list";
+import fs from "fs";
+import readLastLines from "read-last-lines";
+import shellEscape from "shell-escape";
+
+// Fix implicit any types for callbacks and Telnet import
+
+// For ssh2 callbacks
+type SSHExecCallback = (err: Error | undefined, stream: any) => void;
+type SSHErrorCallback = (err: Error) => void;
+type SSHDataCallback = (data: Buffer) => void;
+
+// For Telnet import (telnet-client exports as an object, not a class)
+const TelnetClient = (Telnet as any).Telnet || Telnet;
 
 export function registerNetworkTools(server: McpServer) {
   // IP address tools
@@ -504,67 +523,7 @@ ${prefix ? `Used prefix: ${prefix}` : 'Randomly generated'}`,
     }
   );
 
-  // Phone number formatter
-  server.tool(
-    "phone-format",
-    "Parse and format phone numbers",
-    {
-      phoneNumber: z.string().describe("Phone number to parse and format"),
-      countryCode: z.string().optional().describe("Country code (e.g., 'US', 'GB', 'FR')"),
-    },
-    async ({ phoneNumber, countryCode }) => {
-      try {
-        const { isValidPhoneNumber, parsePhoneNumber } = await import("libphonenumber-js");
-
-        // First check if it's a valid phone number
-        if (!isValidPhoneNumber(phoneNumber, countryCode as any)) {
-          throw new Error("Invalid phone number format");
-        }
-
-        // Parse the phone number
-        const parsedNumber = parsePhoneNumber(phoneNumber, countryCode as any);
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Phone Number Formatting:
-
-Original: ${phoneNumber}
-Country: ${parsedNumber.country || 'Unknown'}
-National: ${parsedNumber.formatNational()}
-International: ${parsedNumber.formatInternational()}
-E.164: ${parsedNumber.format('E.164')}
-URI: ${parsedNumber.getURI()}
-
-Details:
-Type: ${parsedNumber.getType() || 'Unknown'}
-Country Code: +${parsedNumber.countryCallingCode}
-National Number: ${parsedNumber.nationalNumber}
-Valid: ${parsedNumber.isValid()}
-
-✅ Formatted using libphonenumber-js library for accuracy.`,
-            },
-          ],
-        };
-      } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error formatting phone number: ${error instanceof Error ? error.message : 'Unknown error'}
-
-💡 Tips:
-• Include country code (e.g., +1 555-123-4567)
-• Use standard formats (e.g., (555) 123-4567)
-• Specify country code parameter if needed
-• Examples: "+1-555-123-4567", "555-123-4567" with countryCode="US"`,
-            },
-          ],
-        };
-      }
-    }
-  );
+  // Phone number formatter tool moved to dataFormat.ts
 
   // IBAN validator (using iban library)
   server.tool(
@@ -652,6 +611,252 @@ Common issues:
             },
           ],
         };
+      }
+    }
+  );
+
+  // SSH Tool (using ssh2)
+  server.tool(
+    "ssh",
+    "Connect to a target via SSH",
+    {
+      target: z.string().describe("Target host"),
+      user: z.string().describe("Username"),
+      command: z.string().describe("Command to run on remote host"),
+      privateKey: z.string().optional().describe("Private key for authentication (PEM format, optional)")
+    },
+    async ({ target, user, command, privateKey }) => {
+      return new Promise((resolve) => {
+        const conn = new SSHClient();
+        let output = "";
+        conn.on("ready", () => {
+          conn.exec(command, (err, stream) => {
+            if (err) {
+              resolve({ content: [{ type: "text", text: `SSH error: ${err.message}` }] });
+              conn.end();
+              return;
+            }
+            stream.on("close", () => {
+              conn.end();
+              resolve({ content: [{ type: "text", text: output }] });
+            }).on("data", (data: Buffer) => {
+              output += data.toString();
+            }).stderr.on("data", (data: Buffer) => {
+              output += data.toString();
+            });
+          });
+        }).on("error", (err) => {
+          resolve({ content: [{ type: "text", text: `SSH connection error: ${err.message}` }] });
+        }).connect({
+          host: target,
+          username: user,
+          ...(privateKey ? { privateKey } : {})
+        });
+      });
+    }
+  );
+
+  // Ping Tool (using ping)
+  server.tool(
+    "ping",
+    "Ping a host to check connectivity",
+    {
+      target: z.string().describe("Host to ping"),
+      count: z.number().default(4).describe("Number of ping attempts")
+    },
+    async ({ target, count }) => {
+      try {
+        const res = await ping.promise.probe(target, { min_reply: count });
+        return {
+          content: [
+            { type: "text", text: `Ping to ${target}:\nAlive: ${res.alive}\nTime: ${res.time} ms\nOutput: ${res.output}` }
+          ]
+        };
+      } catch (error) {
+        return { content: [{ type: "text", text: `Ping failed: ${error instanceof Error ? error.message : error}` }] };
+      }
+    }
+  );
+
+  // nslookup Tool (using dns)
+  server.tool(
+    "nslookup",
+    "Perform DNS lookup on a hostname or IP address",
+    {
+      target: z.string().describe("Hostname or IP address")
+    },
+    async ({ target }) => {
+      return new Promise((resolve) => {
+        dns.lookup(target, (err, address, family) => {
+          if (err) {
+            resolve({ content: [{ type: "text", text: `nslookup failed: ${err.message}` }] });
+          } else {
+            resolve({ content: [{ type: "text", text: `Address: ${address}\nFamily: IPv${family}` }] });
+          }
+        });
+      });
+    }
+  );
+
+  // telnet Tool (using telnet-client)
+  server.tool(
+    "telnet",
+    "Test TCP connectivity to a host and port",
+    {
+      target: z.string().describe("Host to connect to"),
+      port: z.number().describe("Port number")
+    },
+    async ({ target, port }) => {
+      const connection = new TelnetClient();
+      const params = {
+        host: target,
+        port: port,
+        shellPrompt: /[$%#>]$/,
+        timeout: 1500,
+      };
+      try {
+        await connection.connect(params);
+        await connection.end();
+        return { content: [{ type: "text", text: `Telnet to ${target}:${port} succeeded.` }] };
+      } catch (error) {
+        return { content: [{ type: "text", text: `Telnet failed: ${error instanceof Error ? error.message : error}` }] };
+      }
+    }
+  );
+
+  // dig Tool (using dns.resolve)
+  server.tool(
+    "dig",
+    "Perform DNS lookup with dig command",
+    {
+      target: z.string().describe("Hostname or IP address"),
+      type: z.string().default("A").describe("DNS record type")
+    },
+    async ({ target, type }) => {
+      return new Promise((resolve) => {
+        dns.resolve(target, type, (err, addresses) => {
+          if (err) {
+            resolve({ content: [{ type: "text", text: `dig failed: ${err.message}` }] });
+          } else {
+            resolve({ content: [{ type: "text", text: `${type} records for ${target}:\n${JSON.stringify(addresses, null, 2)}` }] });
+          }
+        });
+      });
+    }
+  );
+
+  // ps Tool (using ps-list)
+  server.tool(
+    "ps",
+    "List running processes",
+    {},
+    async () => {
+      try {
+        const processes = await psList();
+        // Defensive: handle missing properties and filter out bad entries
+        const output = processes
+          .map(p => {
+            const pid = p.pid ?? 'N/A';
+            const name = p.name ?? 'N/A';
+            return `${pid}\t${name}`;
+          })
+          .join("\n");
+        return { content: [{ type: "text", text: output || 'No processes found.' }] };
+      } catch (error) {
+        // Log error for debugging
+        console.error('ps error:', error);
+        return { content: [{ type: "text", text: `ps failed: ${error instanceof Error ? error.message : error}` }] };
+      }
+    }
+  );
+
+  // cat Tool (using fs)
+  server.tool(
+    "cat",
+    "Display content of a file",
+    {
+      file: z.string().describe("File path")
+    },
+    async ({ file }) => {
+      try {
+        const data = fs.readFileSync(file, "utf8");
+        return { content: [{ type: "text", text: data }] };
+      } catch (error) {
+        return { content: [{ type: "text", text: `cat failed: ${error instanceof Error ? error.message : error}` }] };
+      }
+    }
+  );
+
+  // top Tool (using ps-list, show top 10 by CPU)
+  server.tool(
+    "top",
+    "Display system processes (snapshot)",
+    {},
+    async () => {
+      try {
+        const processes = await psList();
+        const sorted = processes.sort((a, b) => (b.cpu || 0) - (a.cpu || 0)).slice(0, 10);
+        const output = sorted.map(p => `${p.pid}\t${p.name}\tCPU: ${p.cpu || 0}%\tMEM: ${p.memory || 0}`).join("\n");
+        return { content: [{ type: "text", text: output }] };
+      } catch (error) {
+        return { content: [{ type: "text", text: `top failed: ${error instanceof Error ? error.message : error}` }] };
+      }
+    }
+  );
+
+  // grep Tool (using grep-js)
+  server.tool(
+    "grep",
+    "Search for patterns in files",
+    {
+      pattern: z.string().describe("Pattern to search for"),
+      file: z.string().describe("File path")
+    },
+    async ({ pattern, file }) => {
+      try {
+        const data = fs.readFileSync(file, "utf8");
+        const lines = data.split("\n");
+        const matches = lines.filter(line => line.includes(pattern));
+        return { content: [{ type: "text", text: matches.join("\n") }] };
+      } catch (error) {
+        return { content: [{ type: "text", text: `grep failed: ${error instanceof Error ? error.message : error}` }] };
+      }
+    }
+  );
+
+  // head Tool (using fs)
+  server.tool(
+    "head",
+    "Display the beginning of a file",
+    {
+      file: z.string().describe("File path"),
+      lines: z.number().default(10).describe("Number of lines")
+    },
+    async ({ file, lines }) => {
+      try {
+        const data = fs.readFileSync(file, "utf8");
+        const out = data.split("\n").slice(0, lines).join("\n");
+        return { content: [{ type: "text", text: out }] };
+      } catch (error) {
+        return { content: [{ type: "text", text: `head failed: ${error instanceof Error ? error.message : error}` }] };
+      }
+    }
+  );
+
+  // tail Tool (using read-last-lines)
+  server.tool(
+    "tail",
+    "Display the end of a file",
+    {
+      file: z.string().describe("File path"),
+      lines: z.number().default(10).describe("Number of lines")
+    },
+    async ({ file, lines }) => {
+      try {
+        const out = await readLastLines.read(file, lines);
+        return { content: [{ type: "text", text: out }] };
+      } catch (error) {
+        return { content: [{ type: "text", text: `tail failed: ${error instanceof Error ? error.message : error}` }] };
       }
     }
   );
