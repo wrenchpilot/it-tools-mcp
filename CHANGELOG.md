@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.8 - 2025-06-27
+
+- Optimized math-evaluate tool to use mathjs.compile for faster and more flexible expression evaluation.
+
 ## 3.0.7 - 2025-06-27
 
 - Math tools: preload mathjs in the background for faster first-use (except in test mode).

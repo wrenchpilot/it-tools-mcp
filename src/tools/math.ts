@@ -11,9 +11,11 @@ export function registerMathTools(server: McpServer) {
     },
     async ({ expression }) => {
       try {
-        const { evaluate } = await import("mathjs");
+        // @ts-ignore: Ignore missing type declarations for mathjs
+        const { compile } = await import("mathjs");
         const start = Date.now();
-        const result = evaluate(expression);
+        const code = compile(expression);
+        const result = code.evaluate();
         const elapsed = Date.now() - start;
         return {
           content: [
