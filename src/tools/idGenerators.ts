@@ -1,6 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { randomUUID } from "crypto";
-import QRCode from "qrcode";
 import { z } from "zod";
 
 export function registerIdGeneratorTools(server: McpServer) {
@@ -71,6 +70,8 @@ For production use, please use a proper ULID library.`,
     },
     async ({ text, size = 1 }) => {
       try {
+        const QRCode = (await import("qrcode")).default;
+
         if (size < 1 || size > 3) {
           return {
             content: [
@@ -124,12 +125,7 @@ For production use, please use a proper ULID library.`,
           content: [
             {
               type: "text",
-              text: `Error generating QR code: ${error instanceof Error ? error.message : 'Unknown error'}
-
-Debug info:
-- Text: "${text}"
-- Size: ${size}
-- QRCode library available: ${typeof QRCode !== 'undefined' ? 'Yes' : 'No'}`,
+              text: `Error generating QR code: ${error instanceof Error ? error.message : 'Unknown error'}\n\nDebug info:\n- Text: \"${text}\"\n- Size: ${size}`,
             },
           ],
         };

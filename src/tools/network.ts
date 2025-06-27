@@ -1,6 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
-import IBAN from "iban";
 import { z } from "zod";
 
 export function registerNetworkTools(server: McpServer) {
@@ -516,6 +514,8 @@ ${prefix ? `Used prefix: ${prefix}` : 'Randomly generated'}`,
     },
     async ({ phoneNumber, countryCode }) => {
       try {
+        const { isValidPhoneNumber, parsePhoneNumber } = await import("libphonenumber-js");
+
         // First check if it's a valid phone number
         if (!isValidPhoneNumber(phoneNumber, countryCode as any)) {
           throw new Error("Invalid phone number format");
@@ -575,6 +575,8 @@ Valid: ${parsedNumber.isValid()}
     },
     async ({ iban }) => {
       try {
+        const IBAN = (await import("iban")).default;
+
         // Clean the input
         const cleanIban = iban.replace(/\s/g, '').toUpperCase();
 

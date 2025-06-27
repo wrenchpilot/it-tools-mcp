@@ -1,11 +1,4 @@
-import * as toml from "@iarna/toml";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import * as YAML from "js-yaml";
-import Papa from "papaparse";
-import { format as formatSQL } from "sql-formatter";
-import formatXML from "xml-formatter";
-import { marked } from "marked";
-import TurndownService from "turndown";
 import { z } from "zod";
 
 export function registerDataFormatTools(server: McpServer) {
@@ -144,7 +137,7 @@ Examples of supported formats:
     }
   );
 
-  // JSON to CSV converter
+  // CSV converter (using papaparse)
   server.tool(
     "json-to-csv",
     "Convert JSON to CSV format",
@@ -154,6 +147,7 @@ Examples of supported formats:
     },
     async ({ json, delimiter = "," }) => {
       try {
+        const Papa = (await import("papaparse")).default;
         const data = JSON.parse(json);
         if (!Array.isArray(data)) {
           throw new Error("JSON must be an array of objects");
@@ -180,55 +174,6 @@ Examples of supported formats:
     }
   );
 
-  // XML formatter tool
-  server.tool(
-    "xml-format",
-    "Format and prettify XML",
-    {
-      xml: z.string().describe("XML string to format"),
-      indent: z.number().describe("Number of spaces for indentation").optional(),
-    },
-    async ({ xml, indent = 2 }) => {
-      try {
-        const formatted = formatXML(xml, {
-          indentation: ' '.repeat(indent),
-          filter: (node: any) => node.type !== 'Comment',
-          collapseContent: true,
-          lineSeparator: '\n'
-        });
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Formatted XML:
-
-${formatted}
-
-✅ XML formatted successfully
-🎯 Features: ${indent}-space indentation, collapsed content, clean structure`,
-            },
-          ],
-        };
-      } catch (error) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Error formatting XML: ${error instanceof Error ? error.message : 'Unknown error'}
-
-💡 Common XML issues:
-• Check that all tags are properly closed
-• Ensure proper nesting of elements
-• Validate attribute syntax (key="value")
-• Check for special character encoding`,
-            },
-          ],
-        };
-      }
-    }
-  );
-
   // YAML formatter tool
   server.tool(
     "yaml-format",
@@ -238,6 +183,7 @@ ${formatted}
     },
     async ({ yaml }) => {
       try {
+        const YAML = await import("js-yaml");
         // Parse YAML to validate and then dump with proper formatting
         const parsed = YAML.load(yaml);
 
@@ -292,6 +238,54 @@ ${formatted.trim()}
     }
   );
 
+  // XML formatter tool
+  server.tool(
+    "xml-format",
+    "Format and prettify XML",
+    {
+      xml: z.string().describe("XML string to format"),
+      indent: z.number().describe("Number of spaces for indentation").optional(),
+    },
+    async ({ xml, indent = 2 }) => {
+      try {
+        const formatXML = (await import("xml-formatter")).default;
+        const formatted = formatXML(xml, {
+          indentation: ' '.repeat(indent),
+          collapseContent: true,
+        });
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Formatted XML:
+
+${formatted}
+
+✅ XML formatted successfully
+🎯 Features: ${indent}-space indentation, collapsed content, clean structure`,
+            },
+          ],
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error formatting XML: ${error instanceof Error ? error.message : 'Unknown error'}
+
+💡 Common XML issues:
+• Check that all tags are properly closed
+• Ensure proper nesting of elements
+• Validate attribute syntax (key="value")
+• Check for special character encoding`,
+            },
+          ],
+        };
+      }
+    }
+  );
+
   // SQL formatter tool
   server.tool(
     "sql-format",
@@ -301,13 +295,9 @@ ${formatted.trim()}
     },
     async ({ sql }) => {
       try {
+        const { format: formatSQL } = await import("sql-formatter");
         const formatted = formatSQL(sql, {
-          language: 'sql',
-          tabWidth: 2,
-          useTabs: false,
-          keywordCase: 'upper',
-          identifierCase: 'lower',
-          functionCase: 'upper'
+          language: "sql"
         });
 
         return {
@@ -351,6 +341,7 @@ ${formatted}
     },
     async ({ toml: tomlString }) => {
       try {
+        const toml = await import("@iarna/toml");
         const result = toml.parse(tomlString);
         return {
           content: [
@@ -382,6 +373,7 @@ ${formatted}
     },
     async ({ json }) => {
       try {
+        const toml = await import("@iarna/toml");
         const data = JSON.parse(json);
         const tomlResult = toml.stringify(data);
         return {
@@ -414,7 +406,7 @@ ${formatted}
     },
     async ({ markdown }) => {
       try {
-        // Use marked with basic configuration (marked is synchronous)
+        const { marked } = await import("marked");
         const html = marked(markdown, {
           breaks: true,
           gfm: true
@@ -450,15 +442,12 @@ ${formatted}
     },
     async ({ html }) => {
       try {
-        // Configure turndown for better output
+        const TurndownService = (await import("turndown")).default;
         const turndownService = new TurndownService({
           headingStyle: 'atx',
           codeBlockStyle: 'fenced',
-          bulletListMarker: '-',
           emDelimiter: '*',
-          strongDelimiter: '**'
         });
-
         const markdown = turndownService.turndown(html);
 
         return {

@@ -1,5 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { evaluate } from "mathjs";
 import { z } from "zod";
 
 export function registerMathTools(server: McpServer) {
@@ -12,6 +11,8 @@ export function registerMathTools(server: McpServer) {
     },
     async ({ expression }) => {
       try {
+        // Dynamically import mathjs only when needed
+        const { evaluate } = await import("mathjs");
         const result = evaluate(expression);
         return {
           content: [
