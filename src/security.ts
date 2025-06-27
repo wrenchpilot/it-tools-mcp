@@ -187,23 +187,42 @@ export const sanitize = {
 };
 
 /**
- * Memory and CPU usage monitoring
+ * Format bytes as human-readable string (e.g., 1.2 MB, 512 KB)
+ */
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`;
+}
+
+/**
+ * Memory and CPU usage monitoring (human-readable + raw values)
  */
 export function getResourceUsage() {
   const usage = process.memoryUsage();
   const cpuUsage = process.cpuUsage();
-  
+  const uptime = process.uptime();
+
   return {
     memory: {
-      used: Math.round(usage.heapUsed / 1024 / 1024), // MB
-      total: Math.round(usage.heapTotal / 1024 / 1024), // MB
-      external: Math.round(usage.external / 1024 / 1024), // MB
+      heapUsed: formatBytes(usage.heapUsed),
+      heapUsedBytes: usage.heapUsed,
+      heapTotal: formatBytes(usage.heapTotal),
+      heapTotalBytes: usage.heapTotal,
+      external: formatBytes(usage.external),
+      externalBytes: usage.external,
+      rss: formatBytes(usage.rss),
+      rssBytes: usage.rss,
     },
     cpu: {
-      user: cpuUsage.user,
-      system: cpuUsage.system,
+      user: `${(cpuUsage.user / 1000).toFixed(1)} ms`, // microseconds to ms
+      userMicros: cpuUsage.user,
+      system: `${(cpuUsage.system / 1000).toFixed(1)} ms`,
+      systemMicros: cpuUsage.system,
     },
-    uptime: process.uptime(),
+    uptime: `${uptime.toFixed(1)} s`,
+    uptimeSeconds: uptime,
   };
 }
 

@@ -52,7 +52,7 @@ server.tool(
           text: JSON.stringify({
             server: "IT Tools MCP Server",
             version: "3.0.0",
-            uptime: `${Math.floor(usage.uptime)} seconds`,
+            uptime: `${Math.floor(usage.uptimeSeconds)} seconds`,
             memory: usage.memory,
             timestamp: new Date().toISOString(),
           }, null, 2),
@@ -76,7 +76,7 @@ async function main() {
     // Periodic resource monitoring (every 5 minutes)
     setInterval(() => {
       const usage = getResourceUsage();
-      if (usage.memory.used > 200) { // Alert if using more than 200MB
+      if (usage.memory.heapUsedBytes > 200 * 1024 * 1024) { // Alert if using more than 200MB
         console.error("High memory usage detected:", usage.memory);
       }
     }, 5 * 60 * 1000);
