@@ -112,6 +112,16 @@ jobs:
           sbom: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Publish to NPM
+        if: github.event_name != 'pull_request'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "NPM_TOKEN is not set. Skipping npm publish."
+            exit 0
+          fi
+          npm publish --access public
 
   update-docker-readme:
     needs: [check-changes]

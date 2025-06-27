@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.3 - 2025-06-26
+
+- Added automated NPM publishing to GitHub Actions workflow (`docker-publish.yml`).
+- Fixed workflow syntax for NPM publish step to handle missing `NPM_TOKEN` gracefully.
+
 ## 3.0.2 - 2025-06-26
 
 - Updated README with improved instructions and documentation.
