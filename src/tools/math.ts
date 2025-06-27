@@ -11,14 +11,15 @@ export function registerMathTools(server: McpServer) {
     },
     async ({ expression }) => {
       try {
-        // Dynamically import mathjs only when needed
         const { evaluate } = await import("mathjs");
+        const start = Date.now();
         const result = evaluate(expression);
+        const elapsed = Date.now() - start;
         return {
           content: [
             {
               type: "text",
-              text: `Expression: ${expression}\nResult: ${result}`
+              text: `Expression: ${expression}\nResult: ${result}\n(evaluated in ${elapsed} ms)`
             }
           ]
         };

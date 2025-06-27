@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.7 - 2025-06-27
+
+- Math tools: preload mathjs in the background for faster first-use (except in test mode).
+- Math tool test: now waits for all responses (event-driven, not fixed timeout), and matches the style of other utility tests.
+- Improved test robustness and user experience for slow-loading tools.
+
 ## 3.0.6 - 2025-06-27
 
 - Dramatically improved startup speed by moving all heavy imports (mathjs, papaparse, js-yaml, xml-formatter, sql-formatter, @iarna/toml, marked, turndown, qrcode, libphonenumber-js, iban) inside their specific tool functions. Now tools only load dependencies when needed.
