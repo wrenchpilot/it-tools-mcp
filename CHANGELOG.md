@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.0.11 - 2025-06-27
+
+### Added
+
+- SSH tool now supports loading private keys from file paths (e.g., `~/.ssh/id_rsa`) and will automatically use the user's default SSH key if no key is provided.
+- The SSH tool is now compatible with both PEM and OpenSSH key formats (if supported by ssh2).
+
+### Changed
+
+- Improved SSH tool logic for key resolution and error reporting.
+
 ## 3.0.10 - 2025-06-27
 
 ### Changed

@@ -124,9 +124,14 @@ const testMessages = [
   { jsonrpc: "2.0", id: 87, method: "tools/call", params: { name: "http-status-codes", arguments: { code: 200 } } },
 ];
 
-function checkResult(result) {
-  // Accept any result with a non-empty content array
-  return result && result.content && result.content.length > 0;
+function checkResult(result, toolName) {
+  if (!result || !result.content || result.content.length === 0) return false;
+  // For ssh, fail if any error is present in the content
+  if (toolName === 'ssh') {
+    const contentStr = result.content.join(' ').toLowerCase();
+    if (contentStr.includes('error') || contentStr.includes('failed')) return false;
+  }
+  return true;
 }
 
 async function testAllTools() {
@@ -211,16 +216,32 @@ async function testAllTools() {
   for (const msg of testMessages) {
     if (!msg.id || msg.id === 1) continue; // skip init
     const resp = responses.find(r => r.id === msg.id);
+    if (msg.params?.name === 'ssh') {
+      // Always print the SSH tool's result content for debugging
+      if (resp && resp.result && resp.result.content) {
+        console.log(`[DEBUG] SSH result content:`, JSON.stringify(resp.result.content));
+      } else if (resp && resp.result) {
+        console.log(`[DEBUG] SSH result:`, JSON.stringify(resp.result));
+      } else {
+        console.log(`[DEBUG] SSH response:`, JSON.stringify(resp));
+      }
+    }
     if (!resp) {
       console.log(`❌ Tool ${msg.params?.name || msg.method} (id ${msg.id}): No response`);
       failed++;
       continue;
     }
-    if (checkResult(resp.result)) {
+    if (checkResult(resp.result, msg.params?.name)) {
       console.log(`✅ Tool ${msg.params?.name || msg.method} (id ${msg.id}): PASS`);
       passed++;
     } else {
+      // Print the actual result content for debugging
       console.log(`❌ Tool ${msg.params?.name || msg.method} (id ${msg.id}): FAIL`);
+      if (resp.result && resp.result.content) {
+        console.log(`    Result content:`, JSON.stringify(resp.result.content));
+      } else {
+        console.log(`    Result:`, JSON.stringify(resp.result));
+      }
       failed++;
     }
   }
