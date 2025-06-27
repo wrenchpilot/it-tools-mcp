@@ -18,8 +18,9 @@ Add to your VS Code `settings.json`:
         "command": "docker",
         "args": [
           "run",
-          "-it",
+          "-i",
           "--rm",
+          "--init",
           "--security-opt", "no-new-privileges:true",
           "--cap-drop", "ALL",
           "--read-only",
