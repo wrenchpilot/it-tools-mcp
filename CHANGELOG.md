@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.6 - 2025-06-27
+
+- Dramatically improved startup speed by moving all heavy imports (mathjs, papaparse, js-yaml, xml-formatter, sql-formatter, @iarna/toml, marked, turndown, qrcode, libphonenumber-js, iban) inside their specific tool functions. Now tools only load dependencies when needed.
+- Reduced memory usage and cold start time for all deployments.
+- No breaking changes to tool APIs.
+
 ## 3.0.5 - 2025-06-26
 
 - Server version is now always in sync with package.json at runtime (no more manual version bumps in code).
