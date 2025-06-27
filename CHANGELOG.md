@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.0.12 - 2025-06-27
+
+### Fixed
+
+- SSH tool now uses imported `os` and `fs` modules for ESM compatibility (no `require`).
+- SSH tool no longer fails with `require is not defined` in ESM environments.
+
 ## 3.0.11 - 2025-06-27
 
 ### Added

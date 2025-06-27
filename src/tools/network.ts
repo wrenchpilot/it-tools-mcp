@@ -10,6 +10,7 @@ import fs from "fs";
 import readLastLines from "read-last-lines";
 import shellEscape from "shell-escape";
 import path from "path";
+import os from "os";
 
 // Fix implicit any types for callbacks and Telnet import
 
@@ -22,8 +23,6 @@ type SSHDataCallback = (data: Buffer) => void;
 const TelnetClient = (Telnet as any).Telnet || Telnet;
 
 function resolvePrivateKey(privateKeyArg?: string): string | undefined {
-  const os = require('os');
-  const fs = require('fs');
   // If not provided, try default keys
   if (!privateKeyArg) {
     const home = os.homedir();
