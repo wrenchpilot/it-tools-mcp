@@ -14,6 +14,27 @@ A comprehensive Model Context Protocol (MCP) server that provides access to 75 I
 
 Add to your VS Code `settings.json`:
 
+*Node*
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "it-tools": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@wrenchpilot/it-tools-mcp"
+        ],
+        "env": {}
+      }
+    }
+  }
+}
+```
+
+*Docker*
+
 ```json
 {
   "mcp": {
@@ -131,7 +152,7 @@ This MCP server provides **75 tools** across **8 categories**:
 | `text-snakecase`            | Convert to snake_case                  | `text: string`                                                                                                                                                                                            |
 | `text-stats`                | Get text statistics                    | `text: string`                                                                                                                                                                                            |
 | `text-diff`                 | Compare texts                          | `text1: string`, `text2: string`                                                                                                                                                                          |
-| `ascii-art-text`            | Generate ASCII art                     | `text: string`, `font?: string` (supports 295+ figlet fonts)                                                                                                                                             |
+| `ascii-art-text`            | Generate ASCII art                     | `text: string`, `font?: string` (supports 295+ figlet fonts)                                                                                                                                              |
 | `text-to-nato-alphabet`     | Convert to NATO alphabet               | `text: string`                                                                                                                                                                                            |
 | `string-obfuscator`         | Obfuscate text                         | `text: string`, `method?: 'html-entities' \| 'unicode' \| 'base64'`                                                                                                                                       |
 | `slugify-string`            | Convert to URL slug                    | `text: string`, `separator?: string`, `lowercase?: boolean`                                                                                                                                               |
@@ -157,7 +178,7 @@ This MCP server provides **75 tools** across **8 categories**:
 | **ID & Code Generators**    |                                        |                                                                                                                                                                                                           |
 | `uuid-generate`             | Generate UUID v4                       | None                                                                                                                                                                                                      |
 | `ulid-generate`             | Generate ULID                          | None                                                                                                                                                                                                      |
-| `qr-generate`               | Generate QR codes for any content      | `text: string`, `size?: number` - Supports URLs, WiFi (WIFI:T:WPA;S:network;P:password;;), contact info, etc.                                                                                        |
+| `qr-generate`               | Generate QR codes for any content      | `text: string`, `size?: number` - Supports URLs, WiFi (WIFI:T:WPA;S:network;P:password;;), contact info, etc.                                                                                             |
 | `svg-placeholder-generator` | Generate SVG placeholder               | `width?: number`, `height?: number`, `text?: string`, `backgroundColor?: string`, `textColor?: string`                                                                                                    |
 | **Development Tools**       |                                        |                                                                                                                                                                                                           |
 | `regex-tester`              | Test regular expressions               | `pattern: string`, `text: string`, `flags?: string`                                                                                                                                                       |

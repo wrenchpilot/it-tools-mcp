@@ -10,6 +10,27 @@ A comprehensive Model Context Protocol (MCP) server that provides access to **75
 
 Add to your VS Code `settings.json`:
 
+*Node*
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "it-tools": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@wrenchpilot/it-tools-mcp"
+        ],
+        "env": {}
+      }
+    }
+  }
+}
+```
+
+*Docker*
+
 ```json
 {
   "mcp": {
