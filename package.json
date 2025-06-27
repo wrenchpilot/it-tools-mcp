@@ -1,11 +1,11 @@
 {
   "name": "it-tools-mcp",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "MCP server providing access to various IT tools and utilities for developers",
   "type": "module",
   "main": "./build/index.js",
   "bin": {
-    "it-tools-mcp": "./build/index.js"
+    "it-tools-mcp": "build/index.js"
   },
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
@@ -41,7 +41,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wrenchpilot/it-tools-mcp.git"
+    "url": "git+https://github.com/wrenchpilot/it-tools-mcp.git"
   },
   "homepage": "https://github.com/wrenchpilot/it-tools-mcp#readme",
   "bugs": {

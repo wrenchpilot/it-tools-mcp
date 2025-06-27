@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.4 - 2025-06-26
+
+- Fixed package.json warnings by running `npm pkg fix`.
+- Cleaned up `bin` script name and normalized `repository.url` for npm publish compatibility.
+
 ## 3.0.3 - 2025-06-26
 
 - Added automated NPM publishing to GitHub Actions workflow (`docker-publish.yml`).
