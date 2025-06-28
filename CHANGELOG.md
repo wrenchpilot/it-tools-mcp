@@ -2,7 +2,7 @@
 
 ## 3.0.14 - 2025-06-27
 
-### Changed
+### Enhancements
 
 - Refactored `telnet` tool to use Node.js `net.Socket` for true TCP connectivity (not just telnet protocol).
 - Added dynamic import for ESM compatibility in telnet tool.

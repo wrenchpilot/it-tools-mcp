@@ -14,7 +14,7 @@ A comprehensive Model Context Protocol (MCP) server that provides access to 86 I
 
 Add to your VS Code `settings.json`:
 
-*Node*
+#### Node
 
 ```json
 {
@@ -33,7 +33,7 @@ Add to your VS Code `settings.json`:
 }
 ```
 
-*Docker*
+#### Docker
 
 ```json
 {
@@ -101,7 +101,7 @@ This MCP server provides **86 tools** across **8 categories**:
 
 ![ASCII Art Text Example](screenshots/ascii-art-text-example.png)
 
-*Examples of using the IT Tools MCP server with VS Code Copilot Chat for secure password hashing and creative ASCII art generation*
+Examples of using the IT Tools MCP server with VS Code Copilot Chat for secure password hashing and creative ASCII art generation.
 
 ## Available Tools
 
@@ -176,7 +176,7 @@ This MCP server provides **86 tools** across **8 categories**:
 | `ipv6-ula-generator`        | Generate IPv6 ULA                      | `globalId?: string`                                                                                                                                                                                       |
 | `url-parse`                 | Parse URL components                   | `url: string`                                                                                                                                                                                             |
 | `random-port`               | Generate random ports                  | `count?: number`, `min?: number`, `max?: number`, `exclude?: number[]`                                                                                                                                    |
-| `mac-address-generate`      | Generate MAC address                   | `prefix?: string`, `separator?: ':' | '-'`                                                                                                                                                                |
+| `mac-address-generate`      | Generate MAC address                   | `prefix?: string`, `separator?: ':' \| '-'`                                                                                                                                                               |
 | `phone-format`              | Parse and format phone numbers         | `phoneNumber: string`, `countryCode?: string`                                                                                                                                                             |
 | `iban-validate`             | Validate IBAN                          | `iban: string`                                                                                                                                                                                            |
 | **Math & Calculations**     |                                        |                                                                                                                                                                                                           |

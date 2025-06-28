@@ -10,7 +10,7 @@ A comprehensive Model Context Protocol (MCP) server that provides access to **86
 
 Add to your VS Code `settings.json`:
 
-*Node*
+### Node
 
 ```json
 {
@@ -29,7 +29,7 @@ Add to your VS Code `settings.json`:
 }
 ```
 
-*Docker*
+#### Docker
 
 ```json
 {
@@ -61,12 +61,14 @@ See the complete list of all 86 tools with detailed parameters on [GitHub](https
 ## 📸 Examples in Action
 
 ### Password Hash Generation
+
 ![Password Hash Example](https://raw.githubusercontent.com/wrenchpilot/it-tools-mcp/master/screenshots/password-hash-example.png)
 
 ### ASCII Art Text Generation  
+
 ![ASCII Art Text Example](https://raw.githubusercontent.com/wrenchpilot/it-tools-mcp/master/screenshots/ascii-art-text-example.png)
 
-*Examples of using the IT Tools MCP server with VS Code Copilot Chat*
+#### Examples of using the IT Tools MCP server with VS Code Copilot Chat
 
 ## 🏗️ Architecture
 
