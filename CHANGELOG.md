@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.0.14 - 2025-06-27
+
+### Changed
+
+- Refactored `telnet` tool to use Node.js `net.Socket` for true TCP connectivity (not just telnet protocol).
+- Added dynamic import for ESM compatibility in telnet tool.
+- Improved error handling and output for telnet tool (now fails on connection error, returns banner if present).
+- SSH tool and telnet tool are now robust and ESM-compatible.
+- Integration test and workflow improvements for tool robustness and CI efficiency.
+- Integration test logic for telnet tool improved to fail on connection failure.
+
 ## 3.0.13 - 2025-06-27
 
 ### Updated

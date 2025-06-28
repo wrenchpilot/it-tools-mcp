@@ -131,6 +131,11 @@ function checkResult(result, toolName) {
     const contentStr = result.content.join(' ').toLowerCase();
     if (contentStr.includes('error') || contentStr.includes('failed')) return false;
   }
+  // For telnet, fail if result contains 'failed' or 'cannot connect'
+  if (toolName === 'telnet') {
+    const contentStr = result.content.map(x => (x.text || x).toLowerCase()).join(' ');
+    if (contentStr.includes('failed') || contentStr.includes('cannot connect')) return false;
+  }
   return true;
 }
 

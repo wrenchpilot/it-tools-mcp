@@ -743,7 +743,7 @@ Common issues:
     }
   );
 
-  // telnet Tool (using telnet-client)
+  // telnet Tool (using net for raw TCP connectivity)
   server.tool(
     "telnet",
     "Test TCP connectivity to a host and port",
@@ -752,20 +752,41 @@ Common issues:
       port: z.number().describe("Port number")
     },
     async ({ target, port }) => {
-      const connection = new TelnetClient();
-      const params = {
-        host: target,
-        port: port,
-        shellPrompt: /[$%#>]$/,
-        timeout: 1500,
-      };
-      try {
-        await connection.connect(params);
-        await connection.end();
-        return { content: [{ type: "text", text: `Telnet to ${target}:${port} succeeded.` }] };
-      } catch (error) {
-        return { content: [{ type: "text", text: `Telnet failed: ${error instanceof Error ? error.message : error}` }] };
-      }
+      return new Promise(async (resolve) => {
+        try {
+          const net = (await import('net')).default;
+          const socket = new net.Socket();
+          let connected = false;
+          let banner = '';
+          socket.setTimeout(2000);
+          socket.connect(port, target, () => {
+            connected = true;
+          });
+          socket.on('data', (data: Buffer) => {
+            banner += data.toString();
+            // If we get a banner, close immediately
+            socket.end();
+          });
+          socket.on('timeout', () => {
+            socket.destroy();
+            if (!connected) {
+              resolve({ content: [{ type: "text", text: `Telnet failed: Connection timed out` }] });
+            } else {
+              resolve({ content: [{ type: "text", text: `Telnet to ${target}:${port} succeeded.${banner ? '\nBanner: ' + banner.trim() : ''}` }] });
+            }
+          });
+          socket.on('error', (err: Error) => {
+            resolve({ content: [{ type: "text", text: `Telnet failed: ${err.message}` }] });
+          });
+          socket.on('close', (hadError: boolean) => {
+            if (connected) {
+              resolve({ content: [{ type: "text", text: `Telnet to ${target}:${port} succeeded.${banner ? '\nBanner: ' + banner.trim() : ''}` }] });
+            }
+          });
+        } catch (error) {
+          resolve({ content: [{ type: "text", text: `Telnet failed: ${error instanceof Error ? error.message : error}` }] });
+        }
+      });
     }
   );
 
