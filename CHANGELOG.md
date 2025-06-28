@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.16 - 2025-06-27
+
+### New Tool
+
+- Added `scp` tool for uploading and downloading files to/from remote hosts using SFTP (SCP-like) via SSH.
+- Updated documentation and tool counts to 87 tools.
+- Added integration test for `scp` tool.
+
 ## 3.0.15 - 2025-06-27
 
 ### Enhancements

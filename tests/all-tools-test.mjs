@@ -122,6 +122,23 @@ const testMessages = [
   { jsonrpc: "2.0", id: 85, method: "tools/call", params: { name: "mime-types", arguments: { input: 'txt' } } },
   { jsonrpc: "2.0", id: 86, method: "tools/call", params: { name: "device-info", arguments: {} } },
   { jsonrpc: "2.0", id: 87, method: "tools/call", params: { name: "http-status-codes", arguments: { code: 200 } } },
+  // SCP test: only run if sshPrivateKey is available and SSH server is accessible
+  ...((sshPrivateKey && fs.existsSync('/usr/sbin/sshd')) ? [{
+    jsonrpc: "2.0",
+    id: 88,
+    method: "tools/call",
+    params: {
+      name: "scp",
+      arguments: {
+        target: "localhost",
+        user: sshUser,
+        direction: "upload",
+        localPath: tempFile, // tempFile is created before tests run
+        remotePath: "/tmp/testfile_scp.txt",
+        privateKey: sshPrivateKey
+      }
+    }
+  }] : [])
 ];
 
 function checkResult(result, toolName) {

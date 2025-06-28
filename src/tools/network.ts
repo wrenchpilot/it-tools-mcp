@@ -503,7 +503,7 @@ ${exclude.length > 0 ? `Custom excluded: ${exclude.join(', ')}` : ''}`,
           }
 
           for (const part of prefixParts) {
-            if (!/^[0-9A-Fa-f]{2}$/.test(part)) {
+            if (!/^[0-9-A-Fa-f]{2}$/.test(part)) {
               throw new Error(`Invalid MAC address part: ${part}`);
             }
             macParts.push(part.toUpperCase());
@@ -923,6 +923,98 @@ Common issues:
         return { content: [{ type: "text", text: out }] };
       } catch (error) {
         return { content: [{ type: "text", text: `tail failed: ${error instanceof Error ? error.message : error}` }] };
+      }
+    }
+  );
+
+  // SCP Tool (using ssh2 SFTP)
+  server.tool(
+    "scp",
+    "Copy files to or from a remote host using SFTP (SCP-like)",
+    {
+      target: z.string().describe("Target host"),
+      user: z.string().describe("Username"),
+      direction: z.enum(["upload", "download"]).describe("Direction: upload (local to remote) or download (remote to local)"),
+      localPath: z.string().describe("Local file path (source for upload, destination for download)"),
+      remotePath: z.string().describe("Remote file path (destination for upload, source for download)"),
+      privateKey: z.string().optional().describe("Private key for authentication (PEM format, optional, or path to key file)")
+    },
+    async ({ target, user, direction, localPath, remotePath, privateKey }) => {
+      try {
+        const { Client } = await import("ssh2");
+        const fs = await import("fs");
+        let resolvedKey: string | undefined;
+        try {
+          resolvedKey = resolvePrivateKey(privateKey);
+        } catch (err: any) {
+          return { content: [{ type: "text", text: `SCP key error: ${err.message}` }] };
+        }
+        return await new Promise((resolve) => {
+          const conn = new Client();
+          let finished = false;
+          const finish = (msg: string) => {
+            if (!finished) {
+              finished = true;
+              try { conn.end(); } catch {}
+              resolve({ content: [{ type: "text", text: msg }] });
+            }
+          };
+          // Connection timeout (20s)
+          const timeout = setTimeout(() => {
+            finish(`SCP connection timed out after 20 seconds`);
+          }, 20000);
+          conn.on("ready", () => {
+            clearTimeout(timeout);
+            conn.sftp((err: any, sftp: any) => {
+              if (err) {
+                finish(`SFTP error: ${err.message}`);
+                return;
+              }
+              if (direction === "upload") {
+                let readStream, writeStream;
+                try {
+                  readStream = fs.createReadStream(localPath);
+                  writeStream = sftp.createWriteStream(remotePath);
+                } catch (streamErr: any) {
+                  finish(`Upload failed: ${streamErr.message}`);
+                  return;
+                }
+                writeStream.on("close", () => finish(`Upload complete: ${localPath} → ${user}@${target}:${remotePath}`));
+                writeStream.on("error", (err: any) => finish(`Upload failed: ${err.message}`));
+                readStream.on("error", (err: any) => finish(`Upload failed: ${err.message}`));
+                readStream.pipe(writeStream);
+              } else {
+                let readStream, writeStream;
+                try {
+                  readStream = sftp.createReadStream(remotePath);
+                  writeStream = fs.createWriteStream(localPath);
+                } catch (streamErr: any) {
+                  finish(`Download failed: ${streamErr.message}`);
+                  return;
+                }
+                writeStream.on("close", () => finish(`Download complete: ${user}@${target}:${remotePath} → ${localPath}`));
+                writeStream.on("error", (err: any) => finish(`Download failed: ${err.message}`));
+                readStream.on("error", (err: any) => finish(`Download failed: ${err.message}`));
+                readStream.pipe(writeStream);
+              }
+            });
+          }).on("error", (err: any) => {
+            clearTimeout(timeout);
+            finish(`SCP connection error: ${err.message}`);
+          });
+          try {
+            conn.connect({
+              host: target,
+              username: user,
+              ...(resolvedKey ? { privateKey: resolvedKey } : {})
+            });
+          } catch (err: any) {
+            clearTimeout(timeout);
+            finish(`SCP connect threw: ${err.message}`);
+          }
+        });
+      } catch (fatalErr: any) {
+        return { content: [{ type: "text", text: `SCP fatal error: ${fatalErr.message || fatalErr}` }] };
       }
     }
   );
