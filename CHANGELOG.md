@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.20 - 2025-06-28
+
+### Maintenance & CI
+
+- Add `glama.json` configuration file for MCP server registration and maintenance.
+
 ## 3.0.19 - 2025-06-28
 
 ### Maintenance
