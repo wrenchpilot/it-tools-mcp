@@ -1,26 +1,15 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { exec } from "child_process";
 import { Client as SSHClient } from "ssh2";
 import ping from "ping";
 import dns from "dns";
-import Telnet from "telnet-client";
 import psList from "ps-list";
 import fs from "fs";
 import readLastLines from "read-last-lines";
-import shellEscape from "shell-escape";
 import path from "path";
 import os from "os";
 
-// Fix implicit any types for callbacks and Telnet import
-
-// For ssh2 callbacks
-type SSHExecCallback = (err: Error | undefined, stream: any) => void;
-type SSHErrorCallback = (err: Error) => void;
-type SSHDataCallback = (data: Buffer) => void;
-
-// For Telnet import (telnet-client exports as an object, not a class)
-const TelnetClient = (Telnet as any).Telnet || Telnet;
+// Removed unused imports: exec, Telnet, shellEscape
 
 function resolvePrivateKey(privateKeyArg?: string): string | undefined {
   // If not provided, try default keys
