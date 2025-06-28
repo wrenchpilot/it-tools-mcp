@@ -241,7 +241,6 @@ This showcases how AI can accelerate development while maintaining code quality,
 ```text
 src/
 ├── index.ts              # Main MCP server
-├── security.ts           # Security settings
 └── tools/                # Tool modules by category
     ├── encoding.ts       # Base64, URL, HTML encoding
     ├── crypto.ts         # Hashing, JWT, passwords

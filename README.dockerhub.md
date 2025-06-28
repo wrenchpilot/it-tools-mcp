@@ -88,7 +88,6 @@ This project was developed using **VS Code**, **Copilot Chat Agent**, **Playwrig
 ```text
 src/
 ├── index.ts              # Main MCP server
-├── security.ts           # Security settings
 └── tools/                # Tool modules by category
     ├── encoding.ts       # Base64, URL, HTML encoding
     ├── crypto.ts         # Hashing, JWT, passwords
