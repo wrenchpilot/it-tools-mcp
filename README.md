@@ -205,38 +205,6 @@ Examples of using the IT Tools MCP server with VS Code Copilot Chat for secure p
 | `http-status-codes`         | HTTP status reference                  | `code?: number`                                                                                                                                                                                           |
 | `mime-types`                | Look up MIME types                     | `input: string`, `lookupType?: 'extension-to-mime' \| 'mime-to-extension'`                                                                                                                                |
 
-## 📱 QR Code Usage Examples
-
-The `qr-generate` tool supports various content types. Here are common usage patterns:
-
-### WiFi Networks
-
-```text
-text: "WIFI:T:WPA;S:MyNetwork;P:password123;;"
-text: "WIFI:T:WPA;S:GuestNet;P:welcome123;H:true;;" (hidden network)
-text: "WIFI:T:;S:OpenNetwork;P:;;" (open network)
-```
-
-### Contact Information (MECARD format)
-
-```text
-text: "MECARD:N:John Doe;TEL:+1234567890;EMAIL:john@example.com;;"
-```
-
-### URLs and Links
-
-```text
-text: "https://example.com"
-text: "mailto:someone@example.com?subject=Hello&body=Message"
-text: "SMS:+1234567890:Hello from QR code!"
-```
-
-### Plain Text
-
-```text
-text: "Any text content you want to encode"
-```
-
 ## 🏗️ Architecture & Development
 
 Built with **TypeScript**, **Zod** validation, and **MCP SDK** for robust, type-safe operation.
