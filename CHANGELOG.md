@@ -1,8 +1,15 @@
 # Changelog
 
-## 3.0.14 - 2025-06-27
+## 3.0.15 - 2025-06-27
 
 ### Enhancements
+
+- `qr-generate` tool now includes a Markdown snippet for inline QR code display in its text output.
+- Improved error handling and fallback response for `qr-generate` to ensure a response is always returned.
+
+## 3.0.14 - 2025-06-27
+
+### Improvements
 
 - Refactored `telnet` tool to use Node.js `net.Socket` for true TCP connectivity (not just telnet protocol).
 - Added dynamic import for ESM compatibility in telnet tool.
@@ -37,7 +44,7 @@
 
 ## 3.0.10 - 2025-06-27
 
-### Improvements
+### Dependency Cleanup
 
 - Removed unused dependency: `node-fetch` from package.json.
 
