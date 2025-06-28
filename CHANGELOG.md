@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.19 - 2025-06-28
+
+### Maintenance
+
+- Removed unused imports (`exec`, `Telnet`, `shellEscape`) from `network.ts` for a cleaner and more efficient codebase.
+- Confirmed all remaining imports in `network.ts` are used.
+- No user-facing changes; internal cleanup only.
+
 ## 3.0.18 - 2025-06-28
 
 ### Refactor & Internal
