@@ -1,8 +1,15 @@
 # Changelog
 
-## 3.0.16 - 2025-06-27
+## 3.0.17 - 2025-06-27
 
 ### New Tool
+
+- Added `curl` tool for making HTTP requests (GET, POST, etc.) like curl. Supports method, URL, headers, and body. Available via MCP server and tested in integration suite.
+- Updated documentation and tool counts to 88 tools.
+
+## 3.0.16 - 2025-06-27
+
+### New Tool: SCP
 
 - Added `scp` tool for uploading and downloading files to/from remote hosts using SFTP (SCP-like) via SSH.
 - Updated documentation and tool counts to 87 tools.

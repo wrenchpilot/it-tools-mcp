@@ -6,7 +6,7 @@
 
 > **📝 Note**: A condensed version of this README is automatically synced to [Docker Hub](https://hub.docker.com/r/wrenchpilot/it-tools-mcp) due to character limits.
 
-A comprehensive Model Context Protocol (MCP) server that provides access to 86 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to 87 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 ## 📦 Installation & Setup
 
@@ -80,13 +80,13 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"base64-enc
 
 ## 🛠️ Tool Categories
 
-This MCP server provides **86 tools** across **8 categories**:
+This MCP server provides **87 tools** across **8 categories**:
 
 - **🔧 Encoding & Decoding** (9 tools): Base64, URL, HTML entities, text-to-binary, Unicode
 - **📝 Data Format** (11 tools): JSON, XML, YAML, SQL, TOML, Markdown ↔ HTML conversion
 - **🔐 Security & Crypto** (12 tools): Hashing (MD5, SHA1-512), HMAC, JWT, bcrypt, passwords, tokens
 - **✨ Text Processing** (16 tools): Case conversion, stats, diff, ASCII art, NATO alphabet, slugify
-- **🌐 Network & System** (19 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, phone formatting, ps, top, cat, head, tail, grep, ping, nslookup, telnet, dig, ssh, random-port, mac-address-generate, ip/ipv6 calculators
+- **🌐 Network & System** (20 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, phone formatting, ps, top, cat, head, tail, grep, ping, nslookup, telnet, dig, ssh, random-port, mac-address-generate, ip/ipv6 calculators, curl
 - **🔢 Math & Calculations** (6 tools): Expression evaluation, base conversion, temperature, percentages
 - **🆔 ID & Code Generators** (4 tools: UUID, ULID, QR codes, SVG placeholders
 - **🛠️ Utility Tools** (9 tools): Color, MIME, HTTP, device info, email normalization, etc.

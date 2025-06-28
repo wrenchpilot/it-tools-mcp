@@ -118,14 +118,15 @@ const testMessages = [
   // Utility Tools
   { jsonrpc: "2.0", id: 82, method: "tools/call", params: { name: "color-hex-to-rgb", arguments: { hex: '#ff0000' } } },
   { jsonrpc: "2.0", id: 83, method: "tools/call", params: { name: "color-rgb-to-hex", arguments: { r: 255, g: 0, b: 0 } } },
-  { jsonrpc: "2.0", id: 84, method: "tools/call", params: { name: "email-normalizer", arguments: { email: 'foo.bar+test@gmail.com' } } },
-  { jsonrpc: "2.0", id: 85, method: "tools/call", params: { name: "mime-types", arguments: { input: 'txt' } } },
-  { jsonrpc: "2.0", id: 86, method: "tools/call", params: { name: "device-info", arguments: {} } },
-  { jsonrpc: "2.0", id: 87, method: "tools/call", params: { name: "http-status-codes", arguments: { code: 200 } } },
+  { jsonrpc: "2.0", id: 84, method: "tools/call", params: { name: "curl", arguments: { url: "https://httpbin.org/get", method: "GET" } } },
+  { jsonrpc: "2.0", id: 85, method: "tools/call", params: { name: "email-normalizer", arguments: { email: 'foo.bar+test@gmail.com' } } },
+  { jsonrpc: "2.0", id: 86, method: "tools/call", params: { name: "mime-types", arguments: { input: 'txt' } } },
+  { jsonrpc: "2.0", id: 87, method: "tools/call", params: { name: "device-info", arguments: {} } },
+  { jsonrpc: "2.0", id: 88, method: "tools/call", params: { name: "http-status-codes", arguments: { code: 200 } } },
   // SCP test: only run if sshPrivateKey is available and SSH server is accessible
   ...((sshPrivateKey && fs.existsSync('/usr/sbin/sshd')) ? [{
     jsonrpc: "2.0",
-    id: 88,
+    id: 89,
     method: "tools/call",
     params: {
       name: "scp",

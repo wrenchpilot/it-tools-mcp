@@ -1018,4 +1018,55 @@ Common issues:
       }
     }
   );
+
+  // curl Tool (HTTP client)
+  server.tool(
+    "curl",
+    "Make HTTP requests (GET, POST, etc.) like curl",
+    {
+      url: z.string().describe("URL to request"),
+      method: z.enum(["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"]).default("GET").describe("HTTP method"),
+      headers: z.record(z.string()).optional().describe("Request headers (object of key-value pairs)"),
+      body: z.string().optional().describe("Request body (for POST/PUT/PATCH)")
+    },
+    async ({ url, method, headers, body }) => {
+      try {
+        // Use native fetch if available (Node 18+), fallback to node-fetch
+        let fetchImpl;
+        if (typeof globalThis.fetch === 'function') {
+          fetchImpl = globalThis.fetch;
+        } else {
+          fetchImpl = (await import('node-fetch')).default;
+        }
+        const options: any = {
+          method,
+          headers: headers || {},
+        };
+        if (body && ["POST", "PUT", "PATCH"].includes(method)) {
+          options.body = body;
+        }
+        const response = await fetchImpl(url, options);
+        let contentType = '';
+        if (response.headers && typeof response.headers.get === 'function') {
+          contentType = response.headers.get('content-type') || '';
+        }
+        let responseBody;
+        if (contentType.includes('application/json')) {
+          responseBody = await response.json();
+          responseBody = JSON.stringify(responseBody, null, 2);
+        } else {
+          responseBody = await response.text();
+        }
+        return {
+          content: [
+            { type: "text", text: `Status: ${response.status} ${response.statusText}` },
+            { type: "text", text: `Headers:\n${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}` },
+            { type: "text", text: `Body:\n${responseBody}` }
+          ]
+        };
+      } catch (error) {
+        return { content: [{ type: "text", text: `curl failed: ${error instanceof Error ? error.message : error}` }] };
+      }
+    }
+  );
 }

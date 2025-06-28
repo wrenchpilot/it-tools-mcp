@@ -1,6 +1,6 @@
 {
   "name": "it-tools-mcp",
-  "version": "3.0.16",
+  "version": "3.0.17",
   "description": "MCP server providing access to various IT tools and utilities for developers",
   "type": "module",
   "main": "./build/index.js",
@@ -84,6 +84,7 @@
     "marked": "^15.0.12",
     "mathjs": "^14.5.2",
     "mime-types": "^3.0.1",
+    "node-fetch": "^3.3.2",
     "papaparse": "^5.5.3",
     "ping": "^0.4.4",
     "ps-list": "^8.1.1",
