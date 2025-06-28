@@ -175,7 +175,7 @@ async function testAllTools() {
     output += data.toString();
     const lines = data.toString().split('\n').filter(line => line.trim());
     for (const line of lines) {
-      if (line.startsWith('{')) {
+      if (line.trim().startsWith('{')) {
         try {
           const parsed = JSON.parse(line);
           responses.push(parsed);
@@ -238,7 +238,8 @@ async function testAllTools() {
   let passed = 0, failed = 0;
   for (const msg of testMessages) {
     if (!msg.id || msg.id === 1) continue; // skip init
-    const resp = responses.find(r => r.id === msg.id);
+    // Match response by id using loose equality to handle string/number mismatch
+    const resp = responses.find(r => r.id == msg.id);
     // Always print the tool's result content for debugging
     if (resp && resp.result && resp.result.content) {
       console.log(`[DEBUG] ${msg.params?.name || msg.method} result content:`, JSON.stringify(resp.result.content));
