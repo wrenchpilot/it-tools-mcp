@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.18 - 2025-06-28
+
+### Refactor & Internal
+
+- Merged all security utilities from `security.ts` into `index.ts` for a single source of security logic.
+- Removed `security.ts` from the build and updated all imports to use `index.ts` for security exports.
+- Updated tests and build scripts to reflect the new structure.
+- No user-facing changes; all security and validation logic remains available and tested.
+
 ## 3.0.17 - 2025-06-27
 
 ### New Tool
