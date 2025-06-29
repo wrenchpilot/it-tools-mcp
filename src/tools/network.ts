@@ -1025,7 +1025,7 @@ Common issues:
         if (typeof globalThis.fetch === 'function') {
           fetchImpl = globalThis.fetch;
         } else {
-          fetchImpl = (await import('node-fetch')).default;
+          throw new Error('Native fetch is not available. Please upgrade Node.js to v18 or later.');
         }
         const options: any = {
           method,

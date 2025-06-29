@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.0.21 - 2025-06-28
+
+### Maintenance & Dependency Cleanup
+
+- Removed deprecated `node-fetch` and all transitive dependencies (including `node-domexception`).
+- Updated `curl` tool to use native `fetch` (Node.js v18+ required).
+- Added standalone test for `curl` tool.
+- Updated all outdated dependencies to latest versions.
+- Ensured all tests pass and process exits cleanly.
+
 ## 3.0.20 - 2025-06-28
 
 ### Maintenance & CI
