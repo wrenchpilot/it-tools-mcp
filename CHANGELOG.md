@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.22 - 2025-06-29
+
+### SQL Formatter Dialect Support & Documentation
+
+- `sql-format` tool now supports a `dialect` parameter for proper SQL dialect formatting (e.g., `postgresql`, `mysql`, etc.).
+- Added/updated tests to verify SQL formatting with dialects.
+- Updated documentation in `README.md` to reflect new `dialect` parameter and allowed values for `sql-format`.
+- Minor: Improved error handling and parameter validation for SQL formatting tool.
+
 ## 3.0.21 - 2025-06-28
 
 ### Maintenance & Dependency Cleanup
