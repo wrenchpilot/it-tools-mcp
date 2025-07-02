@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: CI/CD Pipeline
 
 on:
   push:
@@ -6,61 +6,306 @@ on:
     tags: ['v*']
   pull_request:
     branches: [main, master]
-  workflow_dispatch:
-    inputs:
-      skip_publish:
-        description: 'Skip publishing (build and test only)'
-        required: false
-        default: false
-        type: boolean
-      force_release:
-        description: 'Force create a new release'
-        required: false
-        default: false
-        type: boolean
 
 permissions:
-  contents: write        # For creating releases and tags
-  packages: write        # For publishing to GitHub Packages/Docker
-  id-token: write        # For OIDC token for attestations
-  attestations: write    # For creating build attestations
+  contents: write
+  packages: write
+  id-token: write
+  attestations: write
 
 jobs:
-  # Run CI first
+  # Always run CI and get version
   ci:
-    uses: ./.github/workflows/ci.yml
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-  # Publish if CI passes and changes warrant it
+      - name: Get package version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Package version: $VERSION"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+  # Determine what to do based on changes
+  analyze-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      has-code-changes: ${{ steps.changes.outputs.has-code-changes }}
+      has-readme-changes: ${{ steps.changes.outputs.has-readme-changes }}
+      package-json-changed: ${{ steps.changes.outputs.package-json-changed }}
+      should-publish: ${{ steps.decide.outputs.should-publish }}
+      should-release: ${{ steps.decide.outputs.should-release }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check what changed
+        id: changes
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "has-code-changes=false" >> $GITHUB_OUTPUT
+            echo "has-readme-changes=false" >> $GITHUB_OUTPUT
+            echo "package-json-changed=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Check if this is a tag push
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "has-code-changes=true" >> $GITHUB_OUTPUT
+            echo "has-readme-changes=true" >> $GITHUB_OUTPUT
+            echo "package-json-changed=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # For push events, check what files changed
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || echo "")
+          echo "Changed files: $CHANGED_FILES"
+          
+          HAS_CODE_CHANGES=false
+          HAS_README_CHANGES=false
+          PACKAGE_JSON_CHANGED=false
+          
+          for file in $CHANGED_FILES; do
+            if [[ "$file" =~ README\.dockerhub\.md$ || "$file" =~ README\.md$ ]]; then
+              HAS_README_CHANGES=true
+            fi
+            
+            if [[ "$file" == "package.json" ]]; then
+              PACKAGE_JSON_CHANGED=true
+            fi
+            
+            if [[ ! "$file" =~ \.(md|txt|png|jpg|jpeg|gif)$ ]] && \
+               [[ "$file" != "LICENSE" ]] && \
+               [[ ! "$file" =~ ^docs/ ]] && \
+               [[ ! "$file" =~ ^screenshots/ ]] && \
+               [[ ! "$file" =~ \.gitignore$ ]]; then
+              HAS_CODE_CHANGES=true
+            fi
+          done
+          
+          echo "has-code-changes=$HAS_CODE_CHANGES" >> $GITHUB_OUTPUT
+          echo "has-readme-changes=$HAS_README_CHANGES" >> $GITHUB_OUTPUT
+          echo "package-json-changed=$PACKAGE_JSON_CHANGED" >> $GITHUB_OUTPUT
+
+      - name: Decide what to do
+        id: decide
+        run: |
+          SHOULD_PUBLISH=false
+          SHOULD_RELEASE=false
+          
+          # Always publish and release if we have code changes
+          if [[ "${{ steps.changes.outputs.has-code-changes }}" == "true" ]]; then
+            SHOULD_PUBLISH=true
+            SHOULD_RELEASE=true
+            echo "Code changes detected - will publish and release"
+          fi
+          
+          echo "should-publish=$SHOULD_PUBLISH" >> $GITHUB_OUTPUT
+          echo "should-release=$SHOULD_RELEASE" >> $GITHUB_OUTPUT
+          echo "Will publish: $SHOULD_PUBLISH"
+          echo "Will release: $SHOULD_RELEASE"
+
+  # Create git tag when needed (before publish/release)
+  create-tag:
+    needs: [ci, analyze-changes]
+    if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.should-publish == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create git tag
+        run: |
+          VERSION="${{ needs.ci.outputs.version }}"
+          TAG="v$VERSION"
+          
+          # Check if tag already exists
+          if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Creating tag $TAG"
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git tag "$TAG"
+            git push origin "$TAG"
+            echo "Tag $TAG created successfully"
+          else
+            echo "Tag $TAG already exists"
+          fi
+
+  # Publish only when needed
   publish:
-    needs: ci
-    if: |
-      (needs.ci.outputs.should-publish == 'true' && github.event_name != 'pull_request') ||
-      (github.event_name == 'workflow_dispatch' && github.event.inputs.skip_publish != 'true')
-    uses: ./.github/workflows/publish.yml
-    with:
-      version: ${{ needs.ci.outputs.version }}
-    secrets:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    needs: [ci, analyze-changes, create-tag]
+    if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.should-publish == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  # Create release if publishing succeeded
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: wrenchpilot/it-tools-mcp
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=v${{ needs.ci.outputs.version }}
+          labels: |
+            org.opencontainers.image.title=IT Tools MCP Server
+            org.opencontainers.image.description=MCP server providing access to various IT tools and utilities
+            org.opencontainers.image.vendor=wrenchpilot
+            org.opencontainers.image.version=${{ needs.ci.outputs.version }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          provenance: true
+          sbom: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Configure npm authentication
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to NPM
+        run: npm publish --access public
+
+  # Create release when needed
   release:
-    needs: [ci, publish]
-    if: |
-      (needs.ci.outputs.should-publish == 'true' && github.event_name != 'pull_request') ||
-      (github.event_name == 'workflow_dispatch' && github.event.inputs.force_release == 'true')
-    uses: ./.github/workflows/release.yml
-    with:
-      version: ${{ needs.ci.outputs.version }}
+    needs: [ci, analyze-changes, create-tag]
+    if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.should-release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-  # Update Docker Hub README when needed
+      - name: Check if release exists
+        id: check-release
+        run: |
+          VERSION="${{ needs.ci.outputs.version }}"
+          TAG="v$VERSION"
+          
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Tag $TAG already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag $TAG does not exist"
+          fi
+
+      - name: Generate release notes
+        if: steps.check-release.outputs.exists == 'false'
+        run: |
+          VERSION="${{ needs.ci.outputs.version }}"
+          
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [[ -n "$LAST_TAG" ]]; then
+            echo "## Changes since $LAST_TAG" > release_notes.md
+            echo "" >> release_notes.md
+            git log --pretty=format:"- %s (%h)" "$LAST_TAG"..HEAD >> release_notes.md
+          else
+            echo "## Initial Release" > release_notes.md
+            echo "" >> release_notes.md
+            echo "First release of IT Tools MCP Server v$VERSION" >> release_notes.md
+          fi
+          
+          echo "" >> release_notes.md
+          echo "## Installation" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### Docker" >> release_notes.md
+          echo "\`\`\`bash" >> release_notes.md
+          echo "docker pull wrenchpilot/it-tools-mcp:v$VERSION" >> release_notes.md
+          echo "docker pull wrenchpilot/it-tools-mcp:latest" >> release_notes.md
+          echo "\`\`\`" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### NPM" >> release_notes.md
+          echo "\`\`\`bash" >> release_notes.md
+          echo "npm install -g it-tools-mcp@$VERSION" >> release_notes.md
+          echo "\`\`\`" >> release_notes.md
+
+      - name: Create Release
+        if: steps.check-release.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.ci.outputs.version }}
+          name: IT Tools MCP Server v${{ needs.ci.outputs.version }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+
+  # Update Docker README when README files change
   update-docker-readme:
-    needs: [ci, publish]
-    if: |
-      (needs.ci.outputs.should-publish == 'true' && github.event_name != 'pull_request') ||
-      github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/docker-readme.yml
-    secrets:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    needs: [analyze-changes]
+    if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.has-readme-changes == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update Docker Hub README
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: wrenchpilot/it-tools-mcp
+          readme-filepath: ./README.dockerhub.md

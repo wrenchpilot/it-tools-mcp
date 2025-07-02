@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.0.23 - 2025-01-29
+
+### CI/CD Workflow Refactoring & Automation Improvements
+
+- **Major refactoring of GitHub Actions workflow** for cleaner, more maintainable CI/CD pipeline.
+- **Removed automatic version bumping** - version management is now fully manual via `package.json`.
+- **Enhanced automation** for build, test, and publish processes while maintaining user control over releases.
+- **Improved workflow structure**:
+  - Added `analyze-changes` job to detect code/README/package.json changes.
+  - Added `create-tag` job to automatically create git tags from `package.json` version.
+  - Streamlined job dependencies and conditional execution.
+  - Better error handling and validation throughout the pipeline.
+- **Updated documentation** and commit templates to reflect manual versioning workflow.
+- **Maintained security best practices** with proper permissions and token usage.
+- Workflow now only publishes/releases when actual code changes are detected.
+
 ## 3.0.22 - 2025-06-29
 
 ### SQL Formatter Dialect Support & Documentation

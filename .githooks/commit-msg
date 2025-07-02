@@ -1,0 +1,61 @@
+#!/bin/bash
+# Git commit-msg hook to validate conventional commit format
+# This enforces the commit message format for automated versioning
+
+commit_regex='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|major|feature|bug|hotfix)(\([a-z0-9-]+\))?!?:[[:space:]].+|^BREAKING CHANGE:[[:space:]].+'
+
+error_msg="
+❌ Invalid commit message format!
+
+Your commit message must follow the Conventional Commits specification:
+  <type>[optional scope]: <description>
+
+Valid types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, major, feature, bug, hotfix
+
+Examples:
+  ✅ feat: add new password generator tool
+  ✅ fix: resolve base64 encoding issue  
+  ✅ feat!: change API structure (breaking change)
+  ✅ major: restructure tool organization
+  ✅ BREAKING CHANGE: remove deprecated functions
+
+For more info, see: COMMIT_TEMPLATE_SETUP.md
+"
+
+# Read the commit message
+commit_message=$(cat "$1")
+
+# Skip merge commits and revert commits with standard format
+if echo "$commit_message" | grep -qE "^(Merge|Revert)"; then
+    exit 0
+fi
+
+# Skip automated version bump commits
+if echo "$commit_message" | grep -qE "^chore: bump version to v[0-9]+\.[0-9]+\.[0-9]+$"; then
+    exit 0
+fi
+
+# Validate the commit message format
+if ! echo "$commit_message" | grep -qE "$commit_regex"; then
+    echo "$error_msg" >&2
+    echo "Your commit message:" >&2
+    echo "  $commit_message" >&2
+    exit 1
+fi
+
+# Additional check for BREAKING CHANGE in footer
+if echo "$commit_message" | grep -qE "BREAKING CHANGE:"; then
+    echo "✅ Breaking change detected - will trigger MAJOR version bump"
+elif echo "$commit_message" | grep -qE "^(feat|feature|minor):"; then
+    echo "✅ Feature detected - will trigger MINOR version bump"
+elif echo "$commit_message" | grep -qE "^(fix|patch|bug|hotfix):"; then
+    echo "✅ Fix detected - will trigger PATCH version bump"
+elif echo "$commit_message" | grep -qE "^major:"; then
+    echo "✅ Major change detected - will trigger MAJOR version bump"
+elif echo "$commit_message" | grep -qE "!:"; then
+    echo "✅ Breaking change detected - will trigger MAJOR version bump"
+else
+    echo "✅ Other change detected - will trigger PATCH version bump"
+fi
+
+exit 0

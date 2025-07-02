@@ -256,7 +256,45 @@ src/
 
 ## 🤝 Contributing
 
-Contributions welcome! Please submit a Pull Request.
+Contributions are welcome! Please follow the guidelines below:
+
+### Commit Message Format
+
+This project uses **Conventional Commits** for clear, consistent commit messages.
+
+**Version Management:**
+- 🔧 **Manual version bumping** - Update `package.json` when you want to release
+- 🤖 **Automatic publishing** - CI/CD detects changes and publishes automatically
+- 🏷️ **Git tags** - Created automatically based on package.json version
+
+**Examples:**
+```bash
+git commit -m "feat: add new encryption tool"
+git commit -m "fix: resolve base64 decoding issue"
+git commit -m "docs: improve README examples"
+
+# When ready to release, update package.json:
+npm version patch  # or minor, major
+git commit -m "chore: bump version to v1.2.3"
+git push
+```
+
+📖 See [COMMIT_TEMPLATE_SETUP.md](COMMIT_TEMPLATE_SETUP.md) for setup instructions.
+
+### Development Process
+
+1. Fork the repository
+2. Run `./setup-commit-template.sh` (recommended)
+3. Create a feature branch
+4. Make your changes following the project structure
+5. Use conventional commit messages
+6. Submit a Pull Request
+
+The CI/CD pipeline will automatically:
+- ✅ Build and test your changes
+- 🏷️ Bump version based on commit messages (on merge to main)
+- 📦 Publish to Docker Hub and NPM
+- 🚀 Create GitHub releases
 
 ## 📄 License
 
