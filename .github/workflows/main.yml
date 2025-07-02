@@ -148,16 +148,21 @@ jobs:
           VERSION="${{ needs.ci.outputs.version }}"
           TAG="v$VERSION"
           
-          # Check if tag already exists
-          if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+          # Fetch all tags from remote to check if tag exists
+          git fetch --tags
+          
+          # Check if tag already exists locally or remotely
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists locally"
+          elif git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
+            echo "Tag $TAG already exists on remote"
+          else
             echo "Creating tag $TAG"
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
             git tag "$TAG"
             git push origin "$TAG"
             echo "Tag $TAG created successfully"
-          else
-            echo "Tag $TAG already exists"
           fi
 
   # Publish only when needed
