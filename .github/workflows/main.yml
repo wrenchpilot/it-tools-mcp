@@ -19,6 +19,12 @@ on:
         default: false
         type: boolean
 
+permissions:
+  contents: write        # For creating releases and tags
+  packages: write        # For publishing to GitHub Packages/Docker
+  id-token: write        # For OIDC token for attestations
+  attestations: write    # For creating build attestations
+
 jobs:
   # Run CI first
   ci:

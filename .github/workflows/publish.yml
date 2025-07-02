@@ -28,6 +28,7 @@ env:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Permissions are inherited from calling workflow when used as reusable workflow
     permissions:
       contents: read
       packages: write
