@@ -116,21 +116,23 @@ jobs:
           SHOULD_PUBLISH=false
           SHOULD_RELEASE=false
           
-          # Publish and release if we have code changes OR package.json changed (version bump)
+          # Only publish and release if we have actual code changes OR package.json version changed
           if [[ "${{ steps.changes.outputs.has-code-changes }}" == "true" ]]; then
             SHOULD_PUBLISH=true
             SHOULD_RELEASE=true
             echo "Code changes detected - will publish and release"
           elif [[ "${{ steps.changes.outputs.package-json-changed }}" == "true" ]]; then
+            # For package.json changes, only proceed if it's likely a version bump
+            # We'll let Docker and NPM checks handle whether to actually publish
             SHOULD_PUBLISH=true
             SHOULD_RELEASE=true
-            echo "Package.json changed (version bump) - will publish and release"
+            echo "Package.json changed (likely version bump) - will check if publish needed"
           fi
           
           echo "should-publish=$SHOULD_PUBLISH" >> $GITHUB_OUTPUT
           echo "should-release=$SHOULD_RELEASE" >> $GITHUB_OUTPUT
-          echo "Will publish: $SHOULD_PUBLISH"
-          echo "Will release: $SHOULD_RELEASE"
+          echo "Will check for publish: $SHOULD_PUBLISH"
+          echo "Will check for release: $SHOULD_RELEASE"
 
   # Create git tag when needed (before publish/release)
   create-tag:
@@ -191,16 +193,33 @@ jobs:
       - name: Build TypeScript
         run: npm run build
 
+      - name: Check if Docker image exists
+        id: docker-check
+        run: |
+          VERSION="${{ needs.ci.outputs.version }}"
+          
+          # Check if this version tag already exists on Docker Hub
+          if docker manifest inspect wrenchpilot/it-tools-mcp:v$VERSION >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Docker image v$VERSION already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Docker image v$VERSION does not exist"
+          fi
+
       - name: Set up Docker Buildx
+        if: steps.docker-check.outputs.exists == 'false'
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to Docker Hub
+        if: steps.docker-check.outputs.exists == 'false'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Extract metadata
+        if: steps.docker-check.outputs.exists == 'false'
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -215,6 +234,7 @@ jobs:
             org.opencontainers.image.version=${{ needs.ci.outputs.version }}
 
       - name: Build and push Docker image
+        if: steps.docker-check.outputs.exists == 'false'
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -232,7 +252,22 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Check if NPM version exists
+        id: npm-check
+        run: |
+          VERSION="${{ needs.ci.outputs.version }}"
+          
+          # Check if this version already exists on NPM
+          if npm view it-tools-mcp@$VERSION version >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Version $VERSION already exists on NPM"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Version $VERSION does not exist on NPM"
+          fi
+
       - name: Publish to NPM
+        if: steps.npm-check.outputs.exists == 'false'
         run: npm publish --access public
 
   # Create release when needed
