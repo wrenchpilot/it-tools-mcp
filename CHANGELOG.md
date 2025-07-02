@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.0.24 - 2025-07-02
+
+### Bug Fixes & Test Reliability Improvements
+
+- **Fixed curl test failure** in integration test suite - curl tool was timing out during tests.
+- **Added 10-second timeout** to curl tool to prevent hanging in test environments.
+- **Improved test reliability** by adding network-specific delays for curl, ssh, ping, and other network tools.
+- **Enhanced error handling** for curl tool with better timeout detection and abort signal support.
+- **Updated test URL** for curl test to use more reliable endpoint (`httpbin.org/status/200`).
+- **Improved test result validation** with specific logic for curl tool success detection.
+
 ## 3.0.23 - 2025-01-29
 
 ### CI/CD Workflow Refactoring & Automation Improvements

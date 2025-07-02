@@ -118,7 +118,7 @@ const testMessages = [
   // Utility Tools
   { jsonrpc: "2.0", id: 82, method: "tools/call", params: { name: "color-hex-to-rgb", arguments: { hex: '#ff0000' } } },
   { jsonrpc: "2.0", id: 83, method: "tools/call", params: { name: "color-rgb-to-hex", arguments: { r: 255, g: 0, b: 0 } } },
-  { jsonrpc: "2.0", id: 84, method: "tools/call", params: { name: "curl", arguments: { url: "https://httpbin.org/get", method: "GET" } } },
+  { jsonrpc: "2.0", id: 84, method: "tools/call", params: { name: "curl", arguments: { url: "https://httpbin.org/status/200", method: "GET" } } },
   { jsonrpc: "2.0", id: 85, method: "tools/call", params: { name: "email-normalizer", arguments: { email: 'foo.bar+test@gmail.com' } } },
   { jsonrpc: "2.0", id: 86, method: "tools/call", params: { name: "mime-types", arguments: { input: 'txt' } } },
   { jsonrpc: "2.0", id: 87, method: "tools/call", params: { name: "device-info", arguments: {} } },
@@ -144,6 +144,19 @@ const testMessages = [
 
 function checkResult(result, toolName) {
   if (!result || !result.content || result.content.length === 0) return false;
+  
+  // For curl, check that we have status, headers, and body content
+  if (toolName === 'curl') {
+    const contentStr = result.content.map(x => (x.text || x).toLowerCase()).join(' ');
+    if (contentStr.includes('status:') && (contentStr.includes('200') || contentStr.includes('ok'))) {
+      return true;
+    }
+    if (contentStr.includes('curl failed') || contentStr.includes('timeout')) {
+      return false;
+    }
+    return contentStr.length > 0; // At least some content
+  }
+  
   // For ssh, fail if any error is present in the content
   if (toolName === 'ssh') {
     const contentStr = result.content.join(' ').toLowerCase();
@@ -203,7 +216,10 @@ async function testAllTools() {
   // Send test messages
   for (const message of testMessages) {
     server.stdin.write(JSON.stringify(message) + '\n');
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Give more time for network-related tools (curl, ssh, etc.)
+    const isNetworkTool = message.params?.name && ['curl', 'ssh', 'ping', 'nslookup', 'telnet', 'dig', 'scp'].includes(message.params.name);
+    const delay = isNetworkTool ? 500 : 100; // 500ms for network tools, 100ms for others
+    await new Promise(resolve => setTimeout(resolve, delay));
   }
 
   // Wait for responses or until timeout

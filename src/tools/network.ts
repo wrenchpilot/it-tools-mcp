@@ -1034,7 +1034,14 @@ Common issues:
         if (body && ["POST", "PUT", "PATCH"].includes(method)) {
           options.body = body;
         }
+        
+        // Add timeout to prevent hanging in test environments
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        options.signal = controller.signal;
+        
         const response = await fetchImpl(url, options);
+        clearTimeout(timeoutId);
         let contentType = '';
         if (response.headers && typeof response.headers.get === 'function') {
           contentType = response.headers.get('content-type') || '';
@@ -1054,6 +1061,9 @@ Common issues:
           ]
         };
       } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          return { content: [{ type: "text", text: `curl failed: Request timeout (10s)` }] };
+        }
         return { content: [{ type: "text", text: `curl failed: ${error instanceof Error ? error.message : error}` }] };
       }
     }
