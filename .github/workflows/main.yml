@@ -304,16 +304,48 @@ jobs:
         if: steps.check-release.outputs.exists == 'false'
         run: |
           VERSION="${{ needs.ci.outputs.version }}"
+          TAG="v$VERSION"
           
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [[ -n "$LAST_TAG" ]]; then
-            echo "## Changes since $LAST_TAG" > release_notes.md
-            echo "" >> release_notes.md
-            git log --pretty=format:"- %s (%h)" "$LAST_TAG"..HEAD >> release_notes.md
+          # Extract release notes from CHANGELOG.md
+          if [[ -f "CHANGELOG.md" ]]; then
+            echo "Extracting release notes from CHANGELOG.md for version $VERSION"
+            
+            # Find the section for this version and extract until next version or EOF
+            awk "
+            /^## $VERSION / { found=1; next }
+            found && /^## [0-9]/ { exit }
+            found { print }
+            " CHANGELOG.md > release_notes.md
+            
+            # Remove leading/trailing whitespace
+            sed -i '/^$/d' release_notes.md
+            
+            # If no content found in changelog, fall back to git log
+            if [[ ! -s release_notes.md ]]; then
+              echo "No changelog entry found for $VERSION, using git log"
+              LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+              if [[ -n "$LAST_TAG" ]]; then
+                echo "## Changes since $LAST_TAG" > release_notes.md
+                echo "" >> release_notes.md
+                git log --pretty=format:"- %s (%h)" "$LAST_TAG"..HEAD >> release_notes.md
+              else
+                echo "## Initial Release" > release_notes.md
+                echo "" >> release_notes.md
+                echo "First release of IT Tools MCP Server v$VERSION" >> release_notes.md
+              fi
+            fi
           else
-            echo "## Initial Release" > release_notes.md
-            echo "" >> release_notes.md
-            echo "First release of IT Tools MCP Server v$VERSION" >> release_notes.md
+            echo "No CHANGELOG.md found, using git log"
+            LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+            if [[ -n "$LAST_TAG" ]]; then
+              echo "## Changes since $LAST_TAG" > release_notes.md
+              echo "" >> release_notes.md
+              git log --pretty=format:"- %s (%h)" "$LAST_TAG"..HEAD >> release_notes.md
+            else
+              echo "## Initial Release" > release_notes.md
+              echo "" >> release_notes.md
+              echo "First release of IT Tools MCP Server v$VERSION" >> release_notes.md
+            fi
           fi
           
           echo "" >> release_notes.md
