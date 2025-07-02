@@ -2,7 +2,14 @@
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/wrenchpilot/it-tools-mcp?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
 [![Docker Image Size](https://img.shields.io/docker/image-size/wrenchpilot/it-tools-mcp/latest?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
-[![Build Status](https://github.com/wrenchpilot/it-tools-mcp/workflows/Build%20and%20Push%20to%20Docker%20Hub/badge.svg)](https://github.com/wrenchpilot/it-tools-mcp/actions)
+[![NPM Version](https://img.shields.io/npm/v/it-tools-mcp?color=blue)](https://www.npmjs.com/package/it-tools-mcp)
+[![NPM Downloads](https://img.shields.io/npm/dm/it-tools-mcp?color=green)](https://www.npmjs.com/package/it-tools-mcp)
+[![GitHub Release](https://img.shields.io/github/v/release/wrenchpilot/it-tools-mcp?include_prereleases&sort=semver)](https://github.com/wrenchpilot/it-tools-mcp/releases)
+[![License](https://img.shields.io/github/license/wrenchpilot/it-tools-mcp)](https://github.com/wrenchpilot/it-tools-mcp/blob/main/LICENSE)
+[![GitHub Issues](https://img.shields.io/github/issues/wrenchpilot/it-tools-mcp)](https://github.com/wrenchpilot/it-tools-mcp/issues)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/wrenchpilot/it-tools-mcp)](https://github.com/wrenchpilot/it-tools-mcp/commits/main)
+[![Docker Platform](https://img.shields.io/badge/platform-linux%2Famd64%20%7C%20linux%2Farm64-blue)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
+[![GitHub Stars](https://img.shields.io/github/stars/wrenchpilot/it-tools-mcp?style=social)](https://github.com/wrenchpilot/it-tools-mcp/stargazers)
 
 A comprehensive Model Context Protocol (MCP) server that provides access to **88 IT tools and utilities** commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
