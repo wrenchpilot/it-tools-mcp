@@ -1,0 +1,60 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      skip_publish:
+        description: 'Skip publishing (build and test only)'
+        required: false
+        default: false
+        type: boolean
+      force_release:
+        description: 'Force create a new release'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  # Run CI first
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  # Publish if CI passes and changes warrant it
+  publish:
+    needs: ci
+    if: |
+      (needs.ci.outputs.should-publish == 'true' && github.event_name != 'pull_request') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.skip_publish != 'true')
+    uses: ./.github/workflows/publish.yml
+    with:
+      version: ${{ needs.ci.outputs.version }}
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # Create release if publishing succeeded
+  release:
+    needs: [ci, publish]
+    if: |
+      (needs.ci.outputs.should-publish == 'true' && github.event_name != 'pull_request') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.force_release == 'true')
+    uses: ./.github/workflows/release.yml
+    with:
+      version: ${{ needs.ci.outputs.version }}
+
+  # Update Docker Hub README when needed
+  update-docker-readme:
+    needs: [ci, publish]
+    if: |
+      (needs.ci.outputs.should-publish == 'true' && github.event_name != 'pull_request') ||
+      github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/docker-readme.yml
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

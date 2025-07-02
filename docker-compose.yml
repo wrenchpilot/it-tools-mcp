@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   it-tools-mcp:
     image: wrenchpilot/it-tools-mcp:latest

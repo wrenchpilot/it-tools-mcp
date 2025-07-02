@@ -1,0 +1,99 @@
+name: Create GitHub Release
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (leave empty to use package.json)'
+        required: false
+        type: string
+      force:
+        description: 'Force create release even if tag exists'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version
+        id: version
+        run: |
+          if [[ -n "${{ inputs.version }}" ]]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION=$(node -p "require('./package.json').version")
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Release version: $VERSION"
+
+      - name: Check if release exists
+        id: check-release
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="v$VERSION"
+          
+          # Check if tag already exists
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Tag $TAG already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag $TAG does not exist"
+          fi
+
+      - name: Generate release notes
+        if: steps.check-release.outputs.exists == 'false' || github.event.inputs.force == 'true'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # Get changes since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [[ -n "$LAST_TAG" ]]; then
+            echo "## Changes since $LAST_TAG" > release_notes.md
+            echo "" >> release_notes.md
+            git log --pretty=format:"- %s (%h)" "$LAST_TAG"..HEAD >> release_notes.md
+          else
+            echo "## Initial Release" > release_notes.md
+            echo "" >> release_notes.md
+            echo "First release of IT Tools MCP Server v$VERSION" >> release_notes.md
+          fi
+          
+          echo "" >> release_notes.md
+          echo "## Installation" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### Docker" >> release_notes.md
+          echo "\`\`\`bash" >> release_notes.md
+          echo "docker pull wrenchpilot/it-tools-mcp:v$VERSION" >> release_notes.md
+          echo "# or" >> release_notes.md
+          echo "docker pull wrenchpilot/it-tools-mcp:latest" >> release_notes.md
+          echo "\`\`\`" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### NPM" >> release_notes.md
+          echo "\`\`\`bash" >> release_notes.md
+          echo "npm install -g it-tools-mcp@$VERSION" >> release_notes.md
+          echo "\`\`\`" >> release_notes.md
+
+      - name: Create Release
+        if: steps.check-release.outputs.exists == 'false' || github.event.inputs.force == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: IT Tools MCP Server v${{ steps.version.outputs.version }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false

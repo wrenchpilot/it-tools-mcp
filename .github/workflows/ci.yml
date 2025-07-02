@@ -1,0 +1,101 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_call:
+    outputs:
+      should-publish:
+        description: "Whether code changes warrant publishing"
+        value: ${{ jobs.analyze.outputs.should-publish }}
+      version:
+        description: "Package version from package.json"
+        value: ${{ jobs.analyze.outputs.version }}
+
+jobs:
+  # Analyze what changed and determine next steps
+  analyze:
+    runs-on: ubuntu-latest
+    outputs:
+      should-publish: ${{ steps.determine.outputs.should-publish }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get package version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Package version: $VERSION"
+
+      - name: Determine if publishing is needed
+        id: determine
+        run: |
+          SHOULD_PUBLISH=false
+          
+          # Always publish on push to main/master (except for docs-only changes)
+          if [[ "${{ github.event_name }}" == "push" ]] && [[ "${{ github.ref }}" == "refs/heads/main" || "${{ github.ref }}" == "refs/heads/master" ]]; then
+            # Check if only docs changed
+            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
+            echo "Changed files: $CHANGED_FILES"
+            
+            DOCS_ONLY=true
+            for file in $CHANGED_FILES; do
+              if [[ ! "$file" =~ \.(md|txt|png|jpg|jpeg|gif)$ ]] && \
+                 [[ "$file" != "LICENSE" ]] && \
+                 [[ ! "$file" =~ ^\.github/workflows/.*\.yml$ ]] && \
+                 [[ ! "$file" =~ ^docs/ ]] && \
+                 [[ ! "$file" =~ ^screenshots/ ]] && \
+                 [[ ! "$file" =~ \.gitignore$ ]]; then
+                DOCS_ONLY=false
+                break
+              fi
+            done
+            
+            if [[ "$DOCS_ONLY" == "false" ]]; then
+              SHOULD_PUBLISH=true
+            fi
+          fi
+          
+          # Always publish on tag push
+          if [[ "${{ github.event_name }}" == "push" ]] && [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            SHOULD_PUBLISH=true
+          fi
+          
+          echo "should-publish=$SHOULD_PUBLISH" >> $GITHUB_OUTPUT
+          echo "Should publish: $SHOULD_PUBLISH"
+
+  # Build and test the code
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: build/
+          retention-days: 1
