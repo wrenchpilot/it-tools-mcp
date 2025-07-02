@@ -116,11 +116,15 @@ jobs:
           SHOULD_PUBLISH=false
           SHOULD_RELEASE=false
           
-          # Always publish and release if we have code changes
+          # Publish and release if we have code changes OR package.json changed (version bump)
           if [[ "${{ steps.changes.outputs.has-code-changes }}" == "true" ]]; then
             SHOULD_PUBLISH=true
             SHOULD_RELEASE=true
             echo "Code changes detected - will publish and release"
+          elif [[ "${{ steps.changes.outputs.package-json-changed }}" == "true" ]]; then
+            SHOULD_PUBLISH=true
+            SHOULD_RELEASE=true
+            echo "Package.json changed (version bump) - will publish and release"
           fi
           
           echo "should-publish=$SHOULD_PUBLISH" >> $GITHUB_OUTPUT
@@ -245,13 +249,16 @@ jobs:
           VERSION="${{ needs.ci.outputs.version }}"
           TAG="v$VERSION"
           
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
+          # Check if GitHub release already exists
+          if gh release view "$TAG" >/dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
-            echo "Tag $TAG already exists"
+            echo "Release $TAG already exists"
           else
             echo "exists=false" >> $GITHUB_OUTPUT
-            echo "Tag $TAG does not exist"
+            echo "Release $TAG does not exist"
           fi
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Generate release notes
         if: steps.check-release.outputs.exists == 'false'
