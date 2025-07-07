@@ -13,8 +13,6 @@
 
 A comprehensive Model Context Protocol (MCP) server that provides access to **112 IT tools and utilities** commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
-[![MCP Server Badge](https://glama.ai/mcp/servers/@wrenchpilot/it-tools-mcp/badge)](https://glama.ai/mcp/servers/@wrenchpilot/it-tools-mcp)
-
 ## Using with VS Code
 
 Add to your VS Code `settings.json`:
