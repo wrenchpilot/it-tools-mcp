@@ -1,0 +1,36 @@
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z } from "zod";
+import { Client as SSHClient } from "ssh2";
+import ping from "ping";
+import dns from "dns";
+import psList from "ps-list";
+import fs from "fs";
+import readLastLines from "read-last-lines";
+import path from "path";
+import os from "os";
+
+export function registerPs(server: McpServer) {
+  server.tool(
+    "ps",
+    "List running processes",
+    {},
+    async () => {
+      try {
+        const processes = await psList();
+        // Defensive: handle missing properties and filter out bad entries
+        const output = processes
+          .map(p => {
+            const pid = p.pid ?? 'N/A';
+            const name = p.name ?? 'N/A';
+            return `${pid}\t${name}`;
+          })
+          .join("\n");
+        return { content: [{ type: "text", text: output || 'No processes found.' }] };
+      } catch (error) {
+        // Log error for debugging
+        console.error('ps error:', error);
+        return { content: [{ type: "text", text: `ps failed: ${error instanceof Error ? error.message : error}` }] };
+      }
+    }
+  );
+}

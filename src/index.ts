@@ -5,6 +5,10 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Security utilities for IT Tools MCP Server
@@ -261,24 +265,60 @@ const server = new McpServer({
   },
 });
 
+// Helper function to dynamically load modular tools from a category directory
+async function loadModularTools(server: McpServer, category: string) {
+  const toolsDir = path.join(__dirname, 'tools', category);
+  
+  if (!fs.existsSync(toolsDir)) {
+    console.warn(`Category directory does not exist: ${toolsDir}`);
+    return;
+  }
+
+  const toolDirs = fs.readdirSync(toolsDir, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name);
+
+  for (const toolDir of toolDirs) {
+    const toolPath = path.join(toolsDir, toolDir, 'index.js');
+    
+    if (fs.existsSync(toolPath)) {
+      try {
+        const toolModule = await import(`./${path.relative(__dirname, toolPath).replace(/\\/g, '/')}`);
+        
+        // Find the register function in the module
+        const registerFunction = Object.values(toolModule).find(
+          (fn: any) => typeof fn === 'function' && fn.name.startsWith('register')
+        ) as ((server: McpServer) => void) | undefined;
+
+        if (registerFunction) {
+          console.time(`register:${category}:${toolDir}`);
+          registerFunction(server);
+          console.timeEnd(`register:${category}:${toolDir}`);
+        } else {
+          console.warn(`No register function found in ${toolPath}`);
+        }
+      } catch (error) {
+        console.error(`Failed to load tool ${category}/${toolDir}:`, error);
+      }
+    } else {
+      console.warn(`Tool index file does not exist: ${toolPath}`);
+    }
+  }
+}
+
 // Register all tool modules (dynamically for faster startup, with per-module timing)
 async function registerAllTools(server: McpServer) {
-  const modules = [
-    { name: 'encoding', fn: () => import('./tools/encoding.js').then(m => m.registerEncodingTools(server)) },
-    { name: 'crypto', fn: () => import('./tools/crypto.js').then(m => m.registerCryptoTools(server)) },
-    { name: 'dataFormat', fn: () => import('./tools/dataFormat.js').then(m => m.registerDataFormatTools(server)) },
-    { name: 'text', fn: () => import('./tools/text.js').then(m => m.registerTextTools(server)) },
-    { name: 'idGenerators', fn: () => import('./tools/idGenerators.js').then(m => m.registerIdGeneratorTools(server)) },
-    { name: 'network', fn: () => import('./tools/network.js').then(m => m.registerNetworkTools(server)) },
-    { name: 'math', fn: () => import('./tools/math.js').then(m => m.registerMathTools(server)) },
-    { name: 'utility', fn: () => import('./tools/utility.js').then(m => m.registerUtilityTools(server)) },
-    { name: 'development', fn: () => import('./tools/development.js').then(m => m.registerDevelopmentTools(server)) },
-    { name: 'color', fn: () => import('./tools/color.js').then(m => m.registerColorTools(server)) },
+  // All categories to load modularly
+  const categories = [
+    'docker', 'ansible', 'color', 'encoding', 'idGenerators',
+    'crypto', 'dataFormat', 'text', 'network', 'math', 
+    'utility', 'development', 'forensic', 'physics'
   ];
-  for (const mod of modules) {
-    console.time(`register:${mod.name}`);
-    await mod.fn();
-    console.timeEnd(`register:${mod.name}`);
+
+  for (const category of categories) {
+    console.time(`register:${category}-modular`);
+    await loadModularTools(server, category);
+    console.timeEnd(`register:${category}-modular`);
   }
 }
 

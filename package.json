@@ -1,6 +1,6 @@
 {
   "name": "it-tools-mcp",
-  "version": "3.0.24",
+  "version": "3.1.0",
   "description": "MCP server providing access to various IT tools and utilities for developers",
   "type": "module",
   "main": "./build/index.js",
@@ -12,8 +12,8 @@
     "start": "docker-compose up --build",
     "start:node": "node build/index.js",
     "dev": "tsc && node build/index.js",
-    "test": "node tests/test-server.mjs",
-    "test:all": "node tests/all-tools-test.mjs",
+    "test": "clear;node tests/test-server.mjs",
+    "test:all": "clear;node tests/all-tools-test.mjs",
     "docker:build": "docker buildx build --platform linux/amd64,linux/arm64 --provenance=true --sbom=true -t it-tools-mcp .",
     "docker:build:local": "docker build -t it-tools-mcp .",
     "docker:run": "docker-compose up --build",

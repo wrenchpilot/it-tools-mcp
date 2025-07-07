@@ -11,7 +11,7 @@
 [![Docker Platform](https://img.shields.io/badge/platform-linux%2Famd64%20%7C%20linux%2Farm64-blue)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
 [![GitHub Stars](https://img.shields.io/github/stars/wrenchpilot/it-tools-mcp?style=social)](https://github.com/wrenchpilot/it-tools-mcp/stargazers)
 
-A comprehensive Model Context Protocol (MCP) server that provides access to **88 IT tools and utilities** commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to **112 IT tools and utilities** commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 [![MCP Server Badge](https://glama.ai/mcp/servers/@wrenchpilot/it-tools-mcp/badge)](https://glama.ai/mcp/servers/@wrenchpilot/it-tools-mcp)
 
@@ -65,7 +65,7 @@ Add to your VS Code `settings.json`:
 }
 ```
 
-See the complete list of all 88 tools with detailed parameters on [GitHub](https://github.com/wrenchpilot/it-tools-mcp#available-tools)
+See the complete list of all 112 tools with detailed parameters on [GitHub](https://github.com/wrenchpilot/it-tools-mcp#available-tools)
 
 ## 📸 Examples in Action
 
@@ -87,7 +87,7 @@ Built with **TypeScript**, **Zod** validation, and **MCP SDK** for robust, type-
 
 This project was developed using **VS Code**, **Copilot Chat Agent**, **Playwright MCP**, and the **Claude Sonnet 4 Model**, showcasing modern AI-assisted software development:
 
-- 🔧 **All 88 tools** designed and implemented with AI assistance
+- 🔧 **All 112 tools** designed and implemented with AI assistance
 - 📦 **Complete Docker setup** with GitHub Actions CI/CD pipeline
 - 🔍 **Schema optimization** with systematic validation cleanup
 - 📚 **Comprehensive documentation** and tool catalogs
@@ -96,23 +96,29 @@ This project was developed using **VS Code**, **Copilot Chat Agent**, **Playwrig
 
 ```text
 src/
-├── index.ts              # Main MCP server
-└── tools/                # Tool modules by category
-    ├── encoding.ts       # Base64, URL, HTML encoding
-    ├── crypto.ts         # Hashing, JWT, passwords
-    ├── dataFormat.ts     # JSON, XML, YAML processing
-    ├── text.ts           # Text manipulation tools
-    ├── network.ts        # Network utilities
-    ├── math.ts           # Mathematical operations
-    ├── idGenerators.ts   # UUID, ULID, QR codes
-    └── utility.ts        # Color, MIME, HTTP tools
+├── index.ts              # Main MCP server with dynamic tool loading
+└── tools/                # Modular tool categories
+    ├── ansible/          # 5 Ansible automation tools
+    ├── color/            # 2 Color conversion tools
+    ├── crypto/           # 9 Cryptographic & security tools
+    ├── dataFormat/       # 12 Data format conversion tools
+    ├── development/      # 6 Development utilities
+    ├── docker/           # 5 Docker & containerization tools
+    ├── encoding/         # 8 Encoding/decoding tools
+    ├── forensic/         # 3 Digital forensics tools
+    ├── idGenerators/     # 4 ID & code generation tools
+    ├── math/             # 6 Mathematical operation tools
+    ├── network/          # 23 Network utilities
+    ├── physics/          # 3 Physics calculation tools
+    ├── text/             # 19 Text manipulation tools
+    └── utility/          # 7 General utility tools
 ```
 
 ### Adding New Tools
 
-1. Choose/create a tool module in `src/tools/`
-2. Define tool with input schema using Zod
-3. Register in `src/index.ts`
+1. Create a tool directory in appropriate category under `src/tools/`
+2. Define tool with input schema using Zod in its `index.ts`
+3. Export registration function for dynamic loading
 4. Rebuild with `npm run build`
 
 ## 🤝 Contributing
