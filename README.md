@@ -13,7 +13,7 @@
 
 > **📝 Note**: A condensed version of this README is automatically synced to [Docker Hub](https://hub.docker.com/r/wrenchpilot/it-tools-mcp) due to character limits.
 
-A comprehensive Model Context Protocol (MCP) server that provides access to 87 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to 112 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 [![MCP Server Badge](https://glama.ai/mcp/servers/@wrenchpilot/it-tools-mcp/badge)](https://glama.ai/mcp/servers/@wrenchpilot/it-tools-mcp)
 
@@ -89,16 +89,22 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"base64-enc
 
 ## 🛠️ Tool Categories
 
-This MCP server provides **87 tools** across **8 categories**:
+This MCP server provides **112 tools** across **14 categories**:
 
-- **🔧 Encoding & Decoding** (9 tools): Base64, URL, HTML entities, text-to-binary, Unicode
-- **📝 Data Format** (11 tools): JSON, XML, YAML, SQL, TOML, Markdown ↔ HTML conversion
-- **🔐 Security & Crypto** (12 tools): Hashing (MD5, SHA1-512), HMAC, JWT, bcrypt, passwords, tokens
-- **✨ Text Processing** (16 tools): Case conversion, stats, diff, ASCII art, NATO alphabet, slugify
-- **🌐 Network & System** (20 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, phone formatting, ps, top, cat, head, tail, grep, ping, nslookup, telnet, dig, ssh, random-port, mac-address-generate, ip/ipv6 calculators, curl
-- **🔢 Math & Calculations** (6 tools): Expression evaluation, base conversion, temperature, percentages
-- **🆔 ID & Code Generators** (4 tools: UUID, ULID, QR codes, SVG placeholders
-- **🛠️ Utility Tools** (9 tools): Color, MIME, HTTP, device info, email normalization, etc.
+- **� Ansible Tools** (5 tools): Vault encryption/decryption, inventory parser, playbook validator, reference
+- **🎨 Color Tools** (2 tools): Hex ↔ RGB conversion
+- **📝 Data Format** (12 tools): JSON, XML, YAML, SQL, TOML, Markdown ↔ HTML conversion, phone formatting
+- **�️ Development Tools** (6 tools): Regex testing, cron generation, list conversion, code prettifiers, markdown TOC
+- **🐳 Docker Tools** (5 tools): Compose validation, conversion tools, Traefik generator, reference
+- **🔧 Encoding & Decoding** (8 tools): Base64, URL, HTML entities, text-to-binary
+- **🔍 Forensic Tools** (3 tools): File type identification, safelink decoding, URL fanger
+- **🆔 ID & Code Generators** (4 tools): UUID, ULID, QR codes, SVG placeholders
+- **🔢 Math & Calculations** (6 tools): Expression evaluation, base conversion, temperature, percentages, Unix timestamps, Roman numerals
+- **🌐 Network & System** (23 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, ps, top, cat, head, tail, grep, ping, nslookup, telnet, dig, ssh, scp, curl, IBAN validation
+- **⚡ Physics** (3 tools): Angle, energy, and power unit conversions
+- **🔐 Security & Crypto** (12 tools): Hashing (MD5, SHA1, SHA256, SHA512), HMAC, JWT, bcrypt, passwords, tokens, OTP, BIP39
+- **✨ Text Processing** (19 tools): Case conversion, stats, diff, ASCII art, NATO alphabet, slugify, Unicode
+- **🛠️ Utility Tools** (7 tools): Email normalization, MIME types, HTTP status codes, device info, CSS prettifier, rem/px converter
 
 ## 📸 Screenshot Examples
 
@@ -116,6 +122,15 @@ Examples of using the IT Tools MCP server with VS Code Copilot Chat for secure p
 
 | Tool                        | Description                            | Parameters                                                                                                                                                                                                |
 | --------------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ansible Tools**           |                                        |                                                                                                                                                                                                           |
+| `ansible-inventory-generator` | Generate Ansible inventory           | `hosts: string[]`, `groups?: Record<string, string[]>`, `variables?: Record<string, any>`                                                                                                                |
+| `ansible-playbook-validator` | Validate Ansible playbook YAML       | `playbook: string`                                                                                                                                                                                        |
+| `ansible-reference`         | Ansible syntax and module reference   | `query?: string`                                                                                                                                                                                          |
+| `ansible-vault-decrypt`     | Decrypt Ansible Vault data            | `data: string`, `password: string`                                                                                                                                                                        |
+| `ansible-vault-encrypt`     | Encrypt data with Ansible Vault       | `data: string`, `password: string`                                                                                                                                                                        |
+| **Color Tools**             |                                        |                                                                                                                                                                                                           |
+| `color-hex-to-rgb`          | Convert HEX to RGB                     | `hex: string`                                                                                                                                                                                             |
+| `color-rgb-to-hex`          | Convert RGB to HEX                     | `r: number`, `g: number`, `b: number`                                                                                                                                                                     |
 | **Data Format**             |                                        |                                                                                                                                                                                                           |
 | `html-to-markdown`          | Convert HTML to Markdown               | `html: string`                                                                                                                                                                                            |
 | `json-diff`                 | Compare JSON objects                   | `json1: string`, `json2: string`                                                                                                                                                                          |
@@ -131,8 +146,17 @@ Examples of using the IT Tools MCP server with VS Code Copilot Chat for secure p
 | `yaml-format`               | Format YAML                            | `yaml: string`                                                                                                                                                                                            |
 | **Development Tools**       |                                        |                                                                                                                                                                                                           |
 | `crontab-generate`          | Generate cron expressions              | `minute?: string`, `hour?: string`, `dayOfMonth?: string`, `month?: string`, `dayOfWeek?: string`                                                                                                         |
+| `html-prettifier`           | Format and prettify HTML               | `html: string`, `indent?: number`                                                                                                                                                                         |
+| `javascript-prettifier`     | Format and prettify JavaScript         | `javascript: string`, `indent?: number`                                                                                                                                                                   |
 | `list-converter`            | Convert list formats                   | `list: string`, `inputFormat: 'comma' \| 'semicolon' \| 'newline' \| 'space' \| 'pipe'`, `outputFormat: 'comma' \| 'semicolon' \| 'newline' \| 'space' \| 'pipe' \| 'json' \| 'quoted'`, `trim?: boolean` |
+| `markdown-toc-generator`    | Generate table of contents for Markdown | `markdown: string`, `maxDepth?: number`                                                                                                                                                                 |
 | `regex-tester`              | Test regular expressions               | `pattern: string`, `text: string`, `flags?: string`                                                                                                                                                       |
+| **Docker Tools**            |                                        |                                                                                                                                                                                                           |
+| `docker-compose-to-docker-run` | Convert Compose to Docker run command | `compose: string`, `service?: string`                                                                                                                                                                   |
+| `docker-compose-validator`  | Validate Docker Compose YAML          | `compose: string`                                                                                                                                                                                         |
+| `docker-reference`          | Docker command and syntax reference    | `query?: string`                                                                                                                                                                                          |
+| `docker-run-to-docker-compose` | Convert Docker run to Compose        | `command: string`                                                                                                                                                                                         |
+| `traefik-compose-generator` | Generate Traefik Docker Compose       | `domain: string`, `service: string`, `port?: number`, `network?: string`                                                                                                                                 |
 | **Encoding & Decoding**     |                                        |                                                                                                                                                                                                           |
 | `base64-decode`             | Decode Base64 text                     | `text: string`                                                                                                                                                                                            |
 | `base64-encode`             | Encode text to Base64                  | `text: string`                                                                                                                                                                                            |
@@ -143,6 +167,10 @@ Examples of using the IT Tools MCP server with VS Code Copilot Chat for secure p
 | `text-to-unicode`           | Convert text to Unicode and vice versa | `input: string`, `operation: 'encode' \| 'decode'`                                                                                                                                                        |
 | `url-decode`                | URL decode text                        | `text: string`                                                                                                                                                                                            |
 | `url-encode`                | URL encode text                        | `text: string`                                                                                                                                                                                            |
+| **Forensic Tools**          |                                        |                                                                                                                                                                                                           |
+| `file-type-identifier`      | Identify file type from content        | `data: string`, `filename?: string`                                                                                                                                                                       |
+| `safelink-decoder`          | Decode Microsoft SafeLinks            | `url: string`                                                                                                                                                                                             |
+| `url-fanger`                | Fang and defang URLs for analysis     | `text: string`, `operation: 'fang' \| 'defang'`                                                                                                                                                          |
 | **ID & Code Generators**    |                                        |                                                                                                                                                                                                           |
 | `qr-generate`               | Generate QR codes for any content      | `text: string`, `size?: number` - Supports URLs, WiFi (WIFI:T:WPA;S:network;P:password;;), contact info, etc.                                                                                             |
 | `svg-placeholder-generator` | Generate SVG placeholder               | `width?: number`, `height?: number`, `text?: string`, `backgroundColor?: string`, `textColor?: string`                                                                                                    |
@@ -157,25 +185,29 @@ Examples of using the IT Tools MCP server with VS Code Copilot Chat for secure p
 | `unix-timestamp-converter`  | Convert timestamps                     | `input: string`                                                                                                                                                                                           |
 | **Network & System**        |                                        |                                                                                                                                                                                                           |
 | `cat`                       | Display file content                   | `file: string`                                                                                                                                                                                            |
-| `curl`                      | HTTP client (GET, POST, etc.)             | `url: string`, `method?: string`, `headers?: Record<string, string>`, `body?: string` |
+| `curl`                      | HTTP client (GET, POST, etc.)         | `url: string`, `method?: string`, `headers?: Record<string, string>`, `body?: string`                                                                                                                     |
 | `dig`                       | DNS query (custom type)                | `target: string`, `type?: string`                                                                                                                                                                         |
 | `grep`                      | Search for pattern in file             | `file: string`, `pattern: string`                                                                                                                                                                         |
 | `head`                      | Show first N lines of file             | `file: string`, `lines?: number`                                                                                                                                                                          |
-| `iban-validate`             | Validate IBAN                          | `iban: string` |
+| `iban-validate`             | Validate IBAN                          | `iban: string`                                                                                                                                                                                            |
 | `ip-subnet-calculator`      | Calculate IPv4 subnet                  | `ip: string`, `cidr: number`                                                                                                                                                                              |
 | `ipv4-subnet-calc`          | Enhanced IPv4 subnet calc              | `cidr: string`                                                                                                                                                                                            |
 | `ipv6-ula-generator`        | Generate IPv6 ULA                      | `globalId?: string`                                                                                                                                                                                       |
-| `mac-address-generate`      | Generate MAC address                   | `prefix?: string`, `separator?: ':' \| '-'` |
+| `mac-address-generate`      | Generate MAC address                   | `prefix?: string`, `separator?: ':' \| '-'`                                                                                                                                                               |
 | `nslookup`                  | DNS lookup (A/AAAA/CNAME)              | `target: string`                                                                                                                                                                                          |
 | `ping`                      | Ping a host                            | `target: string`, `count?: number`                                                                                                                                                                        |
 | `ps`                        | List running processes                 | None                                                                                                                                                                                                      |
 | `random-port`               | Generate random ports                  | `count?: number`, `min?: number`, `max?: number`, `exclude?: number[]`                                                                                                                                    |
-| `scp`                       | Copy files to/from remote host (SFTP)   | `target: string`, `user: string`, `direction: 'upload'\|'download'`, `localPath: string`, `remotePath: string`, `privateKey?: string` |
+| `scp`                       | Copy files to/from remote host (SFTP) | `target: string`, `user: string`, `direction: 'upload'\|'download'`, `localPath: string`, `remotePath: string`, `privateKey?: string`                                                                  |
 | `ssh`                       | SSH command execution                  | `target: string`, `user: string`, `command: string`                                                                                                                                                       |
 | `tail`                      | Show last N lines of file              | `file: string`, `lines?: number`                                                                                                                                                                          |
 | `telnet`                    | Test TCP connectivity                  | `target: string`, `port: number`                                                                                                                                                                          |
 | `top`                       | Show top processes (by CPU)            | None                                                                                                                                                                                                      |
 | `url-parse`                 | Parse URL components                   | `url: string`                                                                                                                                                                                             |
+| **Physics**                 |                                        |                                                                                                                                                                                                           |
+| `angle-converter`           | Convert angle units                    | `value: number`, `from: 'degrees' \| 'radians' \| 'gradians'`, `to: 'degrees' \| 'radians' \| 'gradians'`                                                                                               |
+| `energy-converter`          | Convert energy units                   | `value: number`, `from: 'joules' \| 'calories' \| 'kwh' \| 'btu'`, `to: 'joules' \| 'calories' \| 'kwh' \| 'btu'`                                                                                       |
+| `power-converter`           | Convert power units                    | `value: number`, `from: 'watts' \| 'kilowatts' \| 'horsepower' \| 'btu_per_hour'`, `to: 'watts' \| 'kilowatts' \| 'horsepower' \| 'btu_per_hour'`                                                     |
 | **Security & Crypto**       |                                        |                                                                                                                                                                                                           |
 | `basic-auth-generator`      | Generate Basic Auth header             | `username: string`, `password: string`                                                                                                                                                                    |
 | `bcrypt-hash`               | Generate/verify bcrypt hash            | `password: string`, `rounds?: number`, `hash?: string`                                                                                                                                                    |
@@ -191,6 +223,7 @@ Examples of using the IT Tools MCP server with VS Code Copilot Chat for secure p
 | `token-generator`           | Generate secure token                  | `length?: number`, `charset?: 'alphanumeric' \| 'hex' \| 'base64' \| 'custom'`, `customChars?: string`                                                                                                    |
 | **Text Processing**         |                                        |                                                                                                                                                                                                           |
 | `ascii-art-text`            | Generate ASCII art                     | `text: string`, `font?: string` (supports 295+ figlet fonts)                                                                                                                                              |
+| `distinct-words`            | Extract unique words from text         | `text: string`, `caseSensitive?: boolean`                                                                                                                                                                 |
 | `emoji-search`              | Search emojis                          | `query: string`                                                                                                                                                                                           |
 | `lorem-ipsum-generator`     | Generate Lorem Ipsum                   | `type?: 'words' \| 'sentences' \| 'paragraphs'`, `count?: number`                                                                                                                                         |
 | `numeronym-generator`       | Generate numeronyms                    | `text: string`                                                                                                                                                                                            |
@@ -205,14 +238,16 @@ Examples of using the IT Tools MCP server with VS Code Copilot Chat for secure p
 | `text-snakecase`            | Convert to snake_case                  | `text: string`                                                                                                                                                                                            |
 | `text-stats`                | Get text statistics                    | `text: string`                                                                                                                                                                                            |
 | `text-to-nato-alphabet`     | Convert to NATO alphabet               | `text: string`                                                                                                                                                                                            |
+| `text-to-unicode-names`     | Convert text to Unicode character names | `text: string`                                                                                                                                                                                           |
 | `text-uppercase`            | Convert to uppercase                   | `text: string`                                                                                                                                                                                            |
 | **Utility Tools**           |                                        |                                                                                                                                                                                                           |
-| `color-hex-to-rgb`          | Convert HEX to RGB                     | `hex: string`                                                                                                                                                                                             |
-| `color-rgb-to-hex`          | Convert RGB to HEX                     | `r: number`, `g: number`, `b: number`                                                                                                                                                                     |
+| `css-prettifier`            | Format and prettify CSS                | `css: string`, `indent?: number`                                                                                                                                                                          |
 | `device-info`               | Get system information                 | None                                                                                                                                                                                                      |
 | `email-normalizer`          | Normalize email addresses              | `email: string`                                                                                                                                                                                           |
 | `http-status-codes`         | HTTP status reference                  | `code?: number`                                                                                                                                                                                           |
 | `mime-types`                | Look up MIME types                     | `input: string`, `lookupType?: 'extension-to-mime' \| 'mime-to-extension'`                                                                                                                                |
+| `port-numbers`              | Look up port number assignments        | `port?: number`, `service?: string`                                                                                                                                                                       |
+| `rem-px-converter`          | Convert between REM and PX units       | `value: number`, `conversion: 'rem-to-px' \| 'px-to-rem'`, `baseFontSize?: number`                                                                                                                        |
 
 ## 🏗️ Architecture & Development
 
@@ -223,14 +258,14 @@ Built with **TypeScript**, **Zod** validation, and **MCP SDK** for robust, type-
 This project was developed using **VS Code**, **Copilot Chat Agent**, **Playwright MCP**, and the **Claude Sonnet 4 Model**, demonstrating the power of AI-assisted software development:
 
 - **Intelligent Code Generation**: Claude Sonnet analyzed requirements and generated comprehensive tool implementations
-- **Schema Validation**: Automatically identified and resolved JSON schema validation issues across 75 tools
+- **Schema Validation**: Automatically identified and resolved JSON schema validation issues across 112 tools
 - **Docker Optimization**: Created production-ready Docker workflows and multi-stage builds
 - **Documentation**: Generated comprehensive README with examples and tool reference tables
 - **Testing**: Implemented robust error handling and validation throughout the codebase
 
 **Key AI Contributions:**
 
-- 🔧 **Tool Implementation**: All 75 tools designed and implemented with AI assistance
+- 🔧 **Tool Implementation**: All 112 tools designed and implemented with AI assistance
 - 📦 **Docker Setup**: Complete containerization with GitHub Actions CI/CD pipeline
 - 🔍 **Schema Cleanup**: Systematic removal of unsupported Zod keywords from all tool definitions
 - 📚 **Documentation**: Comprehensive README with usage examples and tool catalogs
@@ -240,25 +275,31 @@ This showcases how AI can accelerate development while maintaining code quality,
 
 ### Adding New Tools
 
-1. Choose/create a tool module in `src/tools/`
-2. Define tool with input schema using Zod
-3. Register in `src/index.ts`
+1. Create a tool directory in appropriate category under `src/tools/`
+2. Define tool with input schema using Zod in its `index.ts`
+3. Export registration function for dynamic loading
 4. Rebuild with `npm run build`
 
 ### Project Structure
 
 ```text
 src/
-├── index.ts              # Main MCP server
-└── tools/                # Tool modules by category
-    ├── encoding.ts       # Base64, URL, HTML encoding
-    ├── crypto.ts         # Hashing, JWT, passwords
-    ├── dataFormat.ts     # JSON, XML, YAML processing
-    ├── text.ts           # Text manipulation tools
-    ├── network.ts        # Network utilities
-    ├── math.ts           # Mathematical operations
-    ├── idGenerators.ts   # UUID, ULID, QR codes
-    └── utility.ts        # Color, MIME, HTTP tools
+├── index.ts              # Main MCP server with dynamic tool loading
+└── tools/                # Modular tool categories
+    ├── ansible/          # 5 Ansible automation tools
+    ├── color/            # 2 Color conversion tools
+    ├── crypto/           # 9 Cryptographic & security tools
+    ├── dataFormat/       # 12 Data format conversion tools
+    ├── development/      # 6 Development utilities
+    ├── docker/           # 5 Docker & containerization tools
+    ├── encoding/         # 8 Encoding/decoding tools
+    ├── forensic/         # 3 Digital forensics tools
+    ├── idGenerators/     # 4 ID & code generation tools
+    ├── math/             # 6 Mathematical operation tools
+    ├── network/          # 23 Network utilities
+    ├── physics/          # 3 Physics calculation tools
+    ├── text/             # 19 Text manipulation tools
+    └── utility/          # 7 General utility tools
 ```
 
 ## 🤝 Contributing
