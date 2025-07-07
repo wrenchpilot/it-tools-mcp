@@ -311,6 +311,7 @@ Contributions are welcome! Please follow the guidelines below:
 This project uses **Conventional Commits** for clear, consistent commit messages.
 
 **Version Management:**
+
 - 🔧 **Manual version bumping** - Update `package.json` when you want to release
 - 🤖 **Automatic publishing** - CI/CD detects changes and publishes automatically
 - 🏷️ **Git tags** - Created automatically based on package.json version
@@ -339,6 +340,7 @@ git push
 6. Submit a Pull Request
 
 The CI/CD pipeline will automatically:
+
 - ✅ Build and test your changes
 - 🏷️ Bump version based on commit messages (on merge to main)
 - 📦 Publish to Docker Hub and NPM
@@ -351,3 +353,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## 🔗 Related
 
 Inspired by [IT Tools](https://github.com/CorentinTh/it-tools) - online tools for developers.
+
+This project incorporates select tools from the [@sharevb fork](https://github.com/sharevb/it-tools) which extends IT Tools with additional utilities and enhancements.

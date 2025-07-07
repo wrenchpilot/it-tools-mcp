@@ -134,3 +134,4 @@ MIT License - see [LICENSE](https://github.com/wrenchpilot/it-tools-mcp/blob/mas
 - **GitHub Repository**: [wrenchpilot/it-tools-mcp](https://github.com/wrenchpilot/it-tools-mcp)
 - **Complete Documentation**: [GitHub README](https://github.com/wrenchpilot/it-tools-mcp#readme)
 - **Inspired by**: [IT Tools](https://github.com/CorentinTh/it-tools) - online tools for developers
+- **Enhanced by**: [sharevb fork](https://github.com/sharevb/it-tools) - incorporates select tools with additional utilities

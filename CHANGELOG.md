@@ -1,5 +1,32 @@
 # Changelog
 
+## 3.1.0 - 2025-07-07
+
+### Major Feature Enhancement: Incorporate Tools from @sharevb Fork
+
+- **Refactored entire codebase** to modular architecture with 112 tools organized under `src/tools/[category]/[tool]/`
+- **Added dynamic tool loading and registration system** for better maintainability and scalability
+- **Incorporated select tools from @sharevb fork** which extends IT Tools with additional utilities and enhancements
+- **Updated integration tests** to match new modular architecture and fixed argument mismatches
+- **Modernized curl tool** with native fetch API, improved timeout handling, and better error management
+- **Enhanced documentation**:
+  - Updated README.md and README.dockerhub.md with accurate tool counts (112 tools across 14 categories)
+  - Added sorted tool tables for better organization
+  - Updated project structure documentation to reflect modular organization
+  - Added proper attribution to sharevb fork in Related sections
+- **Restored missing hash tools** (hash-md5, hash-sha1, hash-sha512) that were accidentally removed
+- **Improved test coverage** with comprehensive integration testing for all tools
+- **Enhanced error handling** and validation throughout the codebase
+
+**Breaking Changes**: None - all existing tool names and APIs remain compatible
+
+**Technical Improvements**:
+
+- Modular file structure for better code organization
+- Dynamic tool registration eliminates manual tool list maintenance
+- Improved type safety with consistent Zod schema validation
+- Better separation of concerns with category-based organization
+
 ## 3.0.24 - 2025-07-02
 
 ### Bug Fixes & Test Reliability Improvements
