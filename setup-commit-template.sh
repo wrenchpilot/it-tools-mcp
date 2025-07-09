@@ -9,10 +9,13 @@ git config commit.template .gitmessage
 echo "✅ Commit template configured (use 'git commit' without -m to see template)"
 
 # Set up git hooks (optional)
-read -p "🪝 Do you want to install commit message validation hook? (y/n): " -n 1 -r
+read -p "🪝 Do you want to install git hooks (commit validation + auto-versioning)? (y/n): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "📁 Setting up git hooks directory..."
+    git config core.hooksPath .githooks
+    chmod +x .githooks/*
+    echo "✅ Git hooks installed (commit-msg validation, auto-versioning)"
     git config core.hooksPath .githooks
     echo "✅ Git hooks configured"
     echo "   - Commit messages will be validated against conventional commit format"

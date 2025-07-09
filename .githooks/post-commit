@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Get the last commit message
+COMMIT_MSG=$(git log --format=%B -n 1 HEAD)
+
+# Extract version bump type from commit message
+if [[ "$COMMIT_MSG" =~ ^(feat!|BREAKING CHANGE:|major:) ]]; then
+    VERSION_TYPE="major"
+elif [[ "$COMMIT_MSG" =~ ^feat: ]]; then
+    VERSION_TYPE="minor"
+elif [[ "$COMMIT_MSG" =~ ^(fix:|docs:|style:|refactor:|perf:|test:|build:|ci:|chore:) ]]; then
+    VERSION_TYPE="patch"
+else
+    # No conventional commit format, skip version bump
+    exit 0
+fi
+
+# Check if package.json was already updated in this commit
+if git show --name-only HEAD | grep -q "package.json"; then
+    echo "package.json already updated in this commit, skipping auto-version"
+    exit 0
+fi
+
+# Get current version
+CURRENT_VERSION=$(node -p "require('./package.json').version")
+echo "Current version: $CURRENT_VERSION"
+
+# Bump version without creating a commit
+case $VERSION_TYPE in
+    "major")
+        NEW_VERSION=$(npm version major --no-git-tag-version)
+        ;;
+    "minor")
+        NEW_VERSION=$(npm version minor --no-git-tag-version)
+        ;;
+    "patch")
+        NEW_VERSION=$(npm version patch --no-git-tag-version)
+        ;;
+esac
+
+if [ ! -z "$NEW_VERSION" ]; then
+    echo "Auto-bumped version to: $NEW_VERSION"
+    
+    # Add the updated files and amend the commit
+    git add package.json package-lock.json
+    git commit --amend --no-edit
+    
+    echo "Amended commit with version bump: $NEW_VERSION"
+fi
