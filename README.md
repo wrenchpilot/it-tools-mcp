@@ -30,8 +30,7 @@ Add to your VS Code `settings.json`:
       "it-tools": {
         "command": "npx",
         "args": [
-          "-y",
-          "wrenchpilot/it-tools-mcp"
+          "it-tools-mcp"
         ],
         "env": {}
       }
@@ -315,6 +314,7 @@ This project uses **Conventional Commits** for clear, consistent commit messages
 - 🏷️ **Git tags** - Created automatically based on package.json version
 
 **Examples:**
+
 ```bash
 git commit -m "feat: add new encryption tool"
 git commit -m "fix: resolve base64 decoding issue"

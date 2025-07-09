@@ -26,8 +26,7 @@ Add to your VS Code `settings.json`:
       "it-tools": {
         "command": "npx",
         "args": [
-          "-y",
-          "wrenchpilot/it-tools-mcp"
+          "it-tools-mcp"
         ],
         "env": {}
       }
