@@ -291,9 +291,7 @@ async function loadModularTools(server: McpServer, category: string) {
         ) as ((server: McpServer) => void) | undefined;
 
         if (registerFunction) {
-          console.time(`register:${category}:${toolDir}`);
           registerFunction(server);
-          console.timeEnd(`register:${category}:${toolDir}`);
         } else {
           console.warn(`No register function found in ${toolPath}`);
         }
@@ -316,9 +314,7 @@ async function registerAllTools(server: McpServer) {
   ];
 
   for (const category of categories) {
-    console.time(`register:${category}-modular`);
     await loadModularTools(server, category);
-    console.timeEnd(`register:${category}-modular`);
   }
 }
 
@@ -348,18 +344,15 @@ server.tool(
 
 // Run the server
 async function main() {
-  console.time("Tool registration");
   await registerAllTools(server);
-  console.timeEnd("Tool registration");
 
   const transport = new StdioServerTransport();
-  console.time("Server connect");
   await server.connect(transport);
-  console.timeEnd("Server connect");
 
-  // Log startup with resource info
-  console.error("IT Tools MCP Server running on stdio");
-  console.error("Resource usage:", JSON.stringify(getResourceUsage(), null, 2));
+  // Log startup (stderr only, no resource usage)
+  if (process.env.NODE_ENV === 'test') {
+    console.error("IT Tools MCP Server running on stdio");
+  }
   
   // Only start periodic monitoring in production, not in tests
   if (process.env.NODE_ENV !== 'test') {
@@ -371,10 +364,8 @@ async function main() {
       }
     }, 5 * 60 * 1000);
   }
-  console.timeEnd("Total startup");
 }
 
-console.time("Total startup");
 main().catch((error) => {
   console.error("Fatal error in main():", error);
   process.exit(1);
