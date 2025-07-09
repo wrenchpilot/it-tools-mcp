@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.1.1 - 2025-07-09
+
+### Fixed
+
+- MCP server now outputs only JSON-RPC responses to stdout; all logs and timing output are sent to stderr.
+- In test mode (`NODE_ENV=test`), the server exits cleanly after stdin closes, ensuring Docker/CI tests do not hang.
+- Docker/CI test script (`tests/test-docker-setup.sh`) now sends both `initialize` and `tools/list` requests, and checks for correct JSON-RPC output.
+- Fixed test script to set `NODE_ENV=test` for all docker runs and to robustly validate MCP protocol compliance.
+
+### Changed
+
+- Improved protocol compliance and robustness for Docker/CI environments.
+- All resource/timing logs removed from stdout for strict MCP protocol adherence.
+
 ## 3.1.0 - 2025-07-07
 
 ### Major Feature Enhancement: Incorporate Tools from @sharevb Fork
