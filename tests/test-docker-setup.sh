@@ -34,20 +34,24 @@ fi
 # Test 3: Test basic functionality
 echo
 echo "3️⃣  Testing basic MCP functionality..."
-TEST_OUTPUT=$(echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | docker run -i --rm wrenchpilot/it-tools-mcp:test 2>/dev/null || echo "FAILED")
+RAW_OUTPUT=$(docker run -i --rm -e NODE_ENV=test wrenchpilot/it-tools-mcp:test 2>/dev/null <<EOF
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0.0"}}}
+{"jsonrpc":"2.0","id":2,"method":"tools/list"}
+EOF
+)
 
-if [[ "$TEST_OUTPUT" == *"tools"* ]]; then
+if echo "$RAW_OUTPUT" | grep -q '"tools"'; then
     echo -e "${GREEN}✅ MCP server responds correctly${NC}"
 else
     echo -e "${RED}❌ MCP server test failed${NC}"
-    echo "Output: $TEST_OUTPUT"
+    echo "Output: $RAW_OUTPUT"
     exit 1
 fi
 
 # Test 4: Test specific tool
 echo
 echo "4️⃣  Testing UUID generation tool..."
-UUID_OUTPUT=$(echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"uuid-generate","arguments":{}}}' | docker run -i --rm wrenchpilot/it-tools-mcp:test 2>/dev/null || echo "FAILED")
+UUID_OUTPUT=$(echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"uuid-generate","arguments":{}}}' | docker run -i --rm -e NODE_ENV=test wrenchpilot/it-tools-mcp:test 2>/dev/null || echo "FAILED")
 
 # Check for UUID pattern (8-4-4-4-12 hex digits)
 if [[ "$UUID_OUTPUT" =~ [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12} ]]; then
@@ -61,7 +65,7 @@ fi
 # Test 5: Test Base64 encoding
 echo
 echo "5️⃣  Testing Base64 encoding..."
-B64_OUTPUT=$(echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"base64-encode","arguments":{"text":"Hello Docker!"}}}' | docker run -i --rm wrenchpilot/it-tools-mcp:test 2>/dev/null || echo "FAILED")
+B64_OUTPUT=$(echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"base64-encode","arguments":{"text":"Hello Docker!"}}}' | docker run -i --rm -e NODE_ENV=test wrenchpilot/it-tools-mcp:test 2>/dev/null || echo "FAILED")
 
 if [[ "$B64_OUTPUT" == *"SGVsbG8gRG9ja2VyIQ=="* ]]; then
     echo -e "${GREEN}✅ Base64 encoding works${NC}"

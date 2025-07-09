@@ -352,6 +352,10 @@ async function main() {
   // Log startup (stderr only, no resource usage)
   if (process.env.NODE_ENV === 'test') {
     console.error("IT Tools MCP Server running on stdio");
+    // Exit after stdin closes (for test automation)
+    process.stdin.on('end', () => {
+      setTimeout(() => process.exit(0), 100);
+    });
   }
   
   // Only start periodic monitoring in production, not in tests
