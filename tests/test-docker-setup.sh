@@ -34,7 +34,7 @@ fi
 # Test 3: Test basic functionality
 echo
 echo "3️⃣  Testing basic MCP functionality..."
-RAW_OUTPUT=$(docker run -i --rm -e NODE_ENV=test wrenchpilot/it-tools-mcp:test 2>/dev/null <<EOF
+RAW_OUTPUT=$(docker run -i --rm -e NODE_ENV=test -e MCP_TEST_MODE=true wrenchpilot/it-tools-mcp:test 2>/dev/null <<EOF
 {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0.0"}}}
 {"jsonrpc":"2.0","id":2,"method":"tools/list"}
 EOF
@@ -51,7 +51,7 @@ fi
 # Test 4: Test specific tool
 echo
 echo "4️⃣  Testing UUID generation tool..."
-UUID_OUTPUT=$(echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"uuid-generate","arguments":{}}}' | docker run -i --rm -e NODE_ENV=test wrenchpilot/it-tools-mcp:test 2>/dev/null || echo "FAILED")
+UUID_OUTPUT=$(echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"uuid-generate","arguments":{}}}' | docker run -i --rm -e NODE_ENV=test -e MCP_TEST_MODE=true wrenchpilot/it-tools-mcp:test 2>/dev/null || echo "FAILED")
 
 # Check for UUID pattern (8-4-4-4-12 hex digits)
 if [[ "$UUID_OUTPUT" =~ [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12} ]]; then

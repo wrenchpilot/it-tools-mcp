@@ -350,7 +350,7 @@ async function main() {
   await server.connect(transport);
 
   // Log startup (stderr only, no resource usage)
-  if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === 'test' && process.env.MCP_TEST_MODE === 'true') {
     console.error("IT Tools MCP Server running on stdio");
     // Exit after stdin closes (for test automation)
     process.stdin.on('end', () => {

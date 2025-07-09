@@ -1,6 +1,17 @@
 # Changelog
 
-## 3.1.1 - 2025-07-09
+## [3.1.2] - 2025-07-09
+### Fixed
+- Fixed VS Code MCP server initialization hanging by making test mode exit logic more specific.
+- Test mode exit now only occurs when `MCP_TEST_MODE=true` environment variable is set, not just `NODE_ENV=test`.
+- VS Code and other MCP clients can now properly initialize and maintain persistent connections.
+- Updated test scripts to use the new `MCP_TEST_MODE=true` flag for proper automated test behavior.
+
+### Changed
+- Improved MCP server lifecycle management for better compatibility with different MCP client environments.
+- Test automation now uses explicit `MCP_TEST_MODE` flag for cleaner separation between test and production behavior.
+
+## [3.1.1] - 2025-07-09
 
 ### Fixed
 

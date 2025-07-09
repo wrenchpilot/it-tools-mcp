@@ -72,7 +72,7 @@ async function testServer() {
   
   const server = spawn('node', ['build/index.js'], {
     stdio: ['pipe', 'pipe', 'pipe'],
-    env: { ...process.env, NODE_ENV: 'test' }
+    env: { ...process.env, NODE_ENV: 'test', MCP_TEST_MODE: 'true' }
   });
 
   let output = '';
