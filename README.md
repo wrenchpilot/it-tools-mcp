@@ -309,20 +309,20 @@ This project uses **Conventional Commits** for clear, consistent commit messages
 
 **Version Management:**
 
-- 🔧 **Manual version bumping** - Update `package.json` when you want to release
+- 🤖 **Automatic version bumping** - Git hooks automatically bump versions based on commit message types
 - 🤖 **Automatic publishing** - CI/CD detects changes and publishes automatically
-- 🏷️ **Git tags** - Created automatically based on package.json version
+- 🏷️ **Git tags** - Created automatically based on conventional commit messages
 
 **Examples:**
 
 ```bash
-git commit -m "feat: add new encryption tool"
-git commit -m "fix: resolve base64 decoding issue"
-git commit -m "docs: improve README examples"
+git commit -m "feat: add new encryption tool"    # → minor version bump
+git commit -m "fix: resolve base64 decoding issue"  # → patch version bump
+git commit -m "docs: improve README examples"   # → patch version bump
+git commit -m "feat!: breaking API change"      # → major version bump
 
-# When ready to release, update package.json:
-npm version patch  # or minor, major
-git commit -m "chore: bump version to v1.2.3"
+# Version is automatically bumped and committed by git hooks
+# No manual npm version commands needed!
 git push
 ```
 

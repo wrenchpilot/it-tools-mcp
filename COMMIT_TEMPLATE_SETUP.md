@@ -4,10 +4,18 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/) f
 
 ## Version Management
 
-**Version bumping is done manually** by updating `package.json`. The CI/CD pipeline automatically detects changes and:
+**Version bumping is done automatically** via git hooks based on your commit message type. When you commit, the hooks:
+
+- 🤖 Automatically bump version in `package.json` based on commit type:
+  - `feat:` → minor version bump (e.g., 1.0.0 → 1.1.0)
+  - `fix:`, `docs:`, `style:`, `refactor:`, `test:`, `chore:` → patch version bump (e.g., 1.0.0 → 1.0.1)
+  - `feat!:` or `BREAKING CHANGE:` → major version bump (e.g., 1.0.0 → 2.0.0)
+- ✅ Add the updated `package.json` to your commit automatically
+- ✅ Create git tags based on the new version
+
+The CI/CD pipeline then automatically detects changes and:
 
 - ✅ Builds and tests your code
-- ✅ Creates git tags based on package.json version
 - ✅ Publishes to Docker Hub and NPM when code changes
 - ✅ Creates GitHub releases
 
