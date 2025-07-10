@@ -1,6 +1,32 @@
 # Changelog
 
+## [3.2.1] - 2025-07-09
+
+### Fixed
+
+- Updated README documentation to use correct npm package name `it-tools-mcp` instead of GitHub reference `wrenchpilot/it-tools-mcp`.
+- Fixed VS Code MCP configuration examples to use the published npm package.
+- Removed unnecessary `-y` flag from npx commands in installation instructions.
+
+### Documentation
+
+- Improved installation instructions consistency across README.md and README.dockerhub.md.
+- Fixed markdown linting issues with proper code block spacing.
+
+## [3.2.0] - 2025-07-09
+
+### Added
+
+- Git hooks for automated version bumping based on Conventional Commit messages.
+- Pre-commit hook that automatically bumps version (major/minor/patch) based on commit message type.
+- Commit message template setup script for standardized commit formatting.
+
+### Changed
+
+- Enhanced development workflow with automated versioning based on commit message conventions.
+
 ## [3.1.2] - 2025-07-09
+
 ### Fixed
 - Fixed VS Code MCP server initialization hanging by making test mode exit logic more specific.
 - Test mode exit now only occurs when `MCP_TEST_MODE=true` environment variable is set, not just `NODE_ENV=test`.
