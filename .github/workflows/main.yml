@@ -364,8 +364,7 @@ jobs:
           echo "      \"it-tools\": {" >> release_notes.md
           echo "        \"command\": \"npx\"," >> release_notes.md
           echo "        \"args\": [" >> release_notes.md
-          echo "          \"-y\"," >> release_notes.md
-          echo "          \"wrenchpilot/it-tools-mcp\"" >> release_notes.md
+          echo "          \"it-tools-mcp\"" >> release_notes.md
           echo "        ]," >> release_notes.md
           echo "        \"env\": {}" >> release_notes.md
           echo "      }" >> release_notes.md

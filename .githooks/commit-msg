@@ -12,12 +12,18 @@ Your commit message must follow the Conventional Commits specification:
 
 Valid types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, major, feature, bug, hotfix
 
+Version bumping (automatic):
+  🔴 MAJOR: feat!, major:, BREAKING CHANGE:
+  🟡 MINOR: feat:
+  🟢 PATCH: fix:, docs:, style:, refactor:, perf:, test:, build:, ci:, chore:
+  ⚪ NONE:  revert:, feature:, bug:, hotfix:
+
 Examples:
-  ✅ feat: add new password generator tool
-  ✅ fix: resolve base64 encoding issue  
-  ✅ feat!: change API structure (breaking change)
-  ✅ major: restructure tool organization
-  ✅ BREAKING CHANGE: remove deprecated functions
+  ✅ feat: add new password generator tool    (minor bump)
+  ✅ fix: resolve base64 encoding issue       (patch bump)
+  ✅ docs: update README examples             (patch bump)
+  ✅ feat!: change API structure              (major bump)
+  ✅ revert: undo previous feature            (no bump)
 
 For more info, see: COMMIT_TEMPLATE_SETUP.md
 "
@@ -46,16 +52,16 @@ fi
 # Additional check for BREAKING CHANGE in footer
 if echo "$commit_message" | grep -qE "BREAKING CHANGE:"; then
     echo "✅ Breaking change detected - will trigger MAJOR version bump"
-elif echo "$commit_message" | grep -qE "^(feat|feature|minor):"; then
-    echo "✅ Feature detected - will trigger MINOR version bump"
-elif echo "$commit_message" | grep -qE "^(fix|patch|bug|hotfix):"; then
-    echo "✅ Fix detected - will trigger PATCH version bump"
-elif echo "$commit_message" | grep -qE "^major:"; then
+elif echo "$commit_message" | grep -qE "^(feat!|major):"; then
     echo "✅ Major change detected - will trigger MAJOR version bump"
+elif echo "$commit_message" | grep -qE "^feat:"; then
+    echo "✅ Feature detected - will trigger MINOR version bump"
+elif echo "$commit_message" | grep -qE "^(fix|docs|style|refactor|perf|test|build|ci|chore):"; then
+    echo "✅ Patch change detected - will trigger PATCH version bump"
 elif echo "$commit_message" | grep -qE "!:"; then
     echo "✅ Breaking change detected - will trigger MAJOR version bump"
 else
-    echo "✅ Other change detected - will trigger PATCH version bump"
+    echo "✅ No version bump - commit type not recognized for versioning"
 fi
 
 exit 0
