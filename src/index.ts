@@ -1044,4 +1044,10 @@ function extractReadmeSection(content: string, heading: string): string {
   return sectionLines.join('\n');
 }
 
-// ...existing code...
+// Start the server if this file is executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((error) => {
+    console.error("Fatal error starting MCP server:", error);
+    process.exit(1);
+  });
+}
