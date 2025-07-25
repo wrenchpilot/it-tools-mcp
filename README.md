@@ -20,6 +20,8 @@ A comprehensive Model Context Protocol (MCP) server that provides access to 112 
 
 ### Using with VS Code
 
+[![Install IT Tools](https://img.shields.io/badge/Install%20in%20VS%20Code-blue?logo=visual-studio-code)](vscode:mcp/install?%7B%22name%22%3A%22it-tools-mcp%22%2C%22gallery%22%3Atrue%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22it-tools-mcp%22%5D%7D)
+
 Add to your VS Code `settings.json`:
 
 #### Node
@@ -96,7 +98,7 @@ This MCP server provides **112 tools** across **14 categories**:
 - **🐳 Docker Tools** (5 tools): Compose validation, conversion tools, Traefik generator, reference
 - **🔧 Encoding & Decoding** (8 tools): Base64, URL, HTML entities, text-to-binary
 - **🔍 Forensic Tools** (3 tools): File type identification, safelink decoding, URL fanger
-- **🆔 ID & Code Generators** (4 tools): UUID, ULID, QR codes, SVG placeholders
+- **🆔 ID & Code Generators** (4 tools: UUID, ULID, QR codes, SVG placeholders
 - **🔢 Math & Calculations** (6 tools): Expression evaluation, base conversion, temperature, percentages, Unix timestamps, Roman numerals
 - **🌐 Network & System** (23 tools): IPv4/IPv6 subnets, URL parsing, MAC addresses, ps, top, cat, head, tail, grep, ping, nslookup, telnet, dig, ssh, scp, curl, IBAN validation
 - **⚡ Physics** (3 tools): Angle, energy, and power unit conversions
