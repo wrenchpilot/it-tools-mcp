@@ -576,7 +576,9 @@ async function loadModularTools(server: McpServer, category: string) {
   const toolsDir = path.join(__dirname, 'tools', category);
   
   if (!fs.existsSync(toolsDir)) {
-    console.warn(`Category directory does not exist: ${toolsDir}`);
+    if (isDevelopment) {
+      console.warn(`Category directory does not exist: ${toolsDir}`);
+    }
     return;
   }
 
@@ -599,20 +601,31 @@ async function loadModularTools(server: McpServer, category: string) {
         if (registerFunction) {
           try {
             registerFunction(server);
-            console.error(`Loaded tool: ${category}/${toolDir}`);
+            // Only log tool loading in development mode
+            if (isDevelopment) {
+              console.error(`Loaded tool: ${category}/${toolDir}`);
+            }
           } catch (regError) {
+            // Always log errors
             console.error(`Failed to register tool ${category}/${toolDir}:`, 
               regError instanceof Error ? regError.message : 'Unknown registration error');
           }
         } else {
-          console.warn(`No register function found in ${toolPath}`);
+          // Only warn in development mode
+          if (isDevelopment) {
+            console.warn(`No register function found in ${toolPath}`);
+          }
         }
       } catch (error) {
+        // Always log errors
         console.error(`Failed to load tool ${category}/${toolDir}:`, 
           error instanceof Error ? error.message : 'Unknown error');
       }
     } else {
-      console.warn(`Tool index file does not exist: ${toolPath}`);
+      // Only warn in development mode
+      if (isDevelopment) {
+        console.warn(`Tool index file does not exist: ${toolPath}`);
+      }
     }
   }
 }
@@ -726,7 +739,9 @@ async function registerAllTools(server: McpServer) {
   const toolsBaseDir = path.join(__dirname, 'tools');
   
   if (!fs.existsSync(toolsBaseDir)) {
-    console.warn('Tools directory does not exist:', toolsBaseDir);
+    if (isDevelopment) {
+      console.warn('Tools directory does not exist:', toolsBaseDir);
+    }
     return;
   }
 
@@ -931,7 +946,6 @@ server.registerResource(
 async function main() {
   try {
     // VS Code MCP Compliance: Dev Mode Support
-    const isDevelopment = process.env.NODE_ENV === 'development' || process.env.MCP_DEV_MODE === 'true';
     const isTest = process.env.NODE_ENV === 'test' && process.env.MCP_TEST_MODE === 'true';
     
     if (isDevelopment) {
