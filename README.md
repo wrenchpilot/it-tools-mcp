@@ -20,11 +20,18 @@ A comprehensive Model Context Protocol (MCP) server that provides access to 112 
 
 ### Using with VS Code
 
-**[Install IT Tools MCP in VS Code](vscode:mcp/install?%7B%22name%22%3A%22it-tools-mcp%22%2C%22gallery%22%3Atrue%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22it-tools-mcp%22%5D%7D)**
+**Quick Install:**
 
-*Click the link above in VS Code to install the IT Tools MCP server.*
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=it-tools&config=%7B%22command%22%3A%20%22npx%22%2C%22args%22%3A%20%5B%22it-tools-mcp%22%5D%7D) [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install_Server-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=it-tools&config=%7B%22command%22%3A%20%22npx%22%2C%22args%22%3A%20%5B%22it-tools-mcp%22%5D%7D&quality=insiders)
 
-Add to your VS Code `settings.json`:
+**Install:**
+
+1. Open VS Code
+2. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
+3. Type "MCP" and select "MCP: Add Server"
+4. Choose "NPM Package" and enter: `it-tools-mcp`
+
+**Or manually add to your VS Code `settings.json`:**
 
 #### Node
 
