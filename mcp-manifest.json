@@ -1,8 +1,8 @@
 {
   "name": "it-tools-mcp",
   "displayName": "IT Tools MCP Server",
-  "description": "VS Code MCP-compliant server providing 116+ IT tools and utilities for developers - encoding, crypto, network tools, and more",
-  "version": "4.1.8",
+  "description": "Full MCP 2025-06-18 compliant server with 121+ IT tools, logging, ping, progress tracking, cancellation, and sampling utilities",
+  "version": "4.1.11",
   "author": "wrenchpilot",
   "license": "MIT",
   "homepage": "https://github.com/wrenchpilot/it-tools-mcp#readme",
