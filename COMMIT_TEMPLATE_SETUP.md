@@ -65,6 +65,7 @@ git commit -m "docs: update README with new tool examples"
 ## Commit Types
 
 ### Standard Types
+
 - **feat**: New features (MINOR version bump)
 - **fix**: Bug fixes (PATCH version bump)
 - **docs**: Documentation changes
@@ -77,6 +78,7 @@ git commit -m "docs: update README with new tool examples"
 - **chore**: Other maintenance tasks
 
 ### Breaking Changes (MAJOR version bump)
+
 - **BREAKING CHANGE**: In footer of commit message
 - **feat!**: Feature with breaking change
 - **fix!**: Fix with breaking change
@@ -85,6 +87,7 @@ git commit -m "docs: update README with new tool examples"
 ## Examples
 
 ### Feature Addition (Minor Version Bump)
+
 ```
 feat: add password strength validator
 
@@ -95,6 +98,7 @@ Closes #45
 ```
 
 ### Bug Fix (Patch Version Bump)
+
 ```
 fix: resolve Unicode handling in text converter
 
@@ -105,6 +109,7 @@ Fixes #123
 ```
 
 ### Breaking Change (Major Version Bump)
+
 ```
 feat!: restructure API response format
 
@@ -120,17 +125,21 @@ Closes #67
 ## Editor Configuration
 
 ### VS Code
+
 Install the "Conventional Commits" extension for better commit message support:
+
 ```bash
 code --install-extension vivaxy.vscode-conventional-commits
 ```
 
 ### Git Hooks (Optional)
+
 For stricter enforcement, you can add a commit-msg hook to validate format.
 
 ## Automated Versioning
 
 Once set up, pushing to main/master will:
+
 1. Parse your commit messages
 2. Automatically bump the version (patch/minor/major)
 3. Update CHANGELOG.md

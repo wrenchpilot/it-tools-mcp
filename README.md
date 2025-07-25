@@ -1,5 +1,6 @@
 # IT Tools MCP Server
 
+[![CI/CD Pipeline](https://github.com/wrenchpilot/it-tools-mcp/actions/workflows/main.yml/badge.svg)](https://github.com/wrenchpilot/it-tools-mcp/actions/workflows/main.yml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/wrenchpilot/it-tools-mcp?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
 [![Docker Image Size](https://img.shields.io/docker/image-size/wrenchpilot/it-tools-mcp/latest?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
 [![NPM Version](https://img.shields.io/npm/v/it-tools-mcp?color=blue)](https://www.npmjs.com/package/it-tools-mcp)
