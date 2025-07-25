@@ -247,18 +247,28 @@ export const SECURITY_HEADERS = {
 } as const;
 
 // Helper to read version from package.json at runtime (ESM compatible)
-function getPackageVersion() {
-  // Use import.meta.url to get the directory in ESM
+// Get package metadata for enhanced server info
+function getPackageMetadata() {
   const __dirname = path.dirname(new URL(import.meta.url).pathname);
   const pkgPath = path.resolve(__dirname, '../package.json');
   const pkgRaw = fs.readFileSync(pkgPath, 'utf-8');
-  return JSON.parse(pkgRaw).version;
+  const pkg = JSON.parse(pkgRaw);
+  return {
+    name: pkg.name,
+    version: pkg.version,
+    description: pkg.description,
+    keywords: pkg.keywords,
+    author: pkg.author,
+    repository: pkg.repository,
+    homepage: pkg.homepage
+  };
 }
 
-// Create server instance
+// Create server instance with enhanced metadata
+const packageInfo = getPackageMetadata();
 const server = new McpServer({
   name: "it-tools-mcp",
-  version: getPackageVersion(),
+  version: packageInfo.version,
   capabilities: {
     resources: {},
     tools: {},
@@ -304,14 +314,207 @@ async function loadModularTools(server: McpServer, category: string) {
   }
 }
 
-// Register all tool modules (dynamically for faster startup, with per-module timing)
+// Dynamic tool discovery and metadata generation
+async function discoverTools() {
+  const toolsBaseDir = path.join(__dirname, 'tools');
+  
+  if (!fs.existsSync(toolsBaseDir)) {
+    return { toolCategories: {}, totalToolCount: 0 };
+  }
+
+  // Discover categories dynamically from the filesystem
+  const categories = fs.readdirSync(toolsBaseDir, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name)
+    .sort(); // Sort for consistent ordering
+
+  const toolCategories: Record<string, { description: string; tools: string[] }> = {};
+  let totalToolCount = 0;
+
+  for (const category of categories) {
+    const toolsDir = path.join(toolsBaseDir, category);
+    
+    const toolDirs = fs.readdirSync(toolsDir, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory())
+      .map(dirent => dirent.name)
+      .sort(); // Sort tools within category
+
+    if (toolDirs.length > 0) {
+      toolCategories[category] = {
+        description: await getCategoryDescription(category, toolDirs),
+        tools: toolDirs
+      };
+      totalToolCount += toolDirs.length;
+    }
+  }
+
+  return { toolCategories, totalToolCount };
+}
+
+// Generate category description by examining actual tool metadata
+async function getCategoryDescription(category: string, toolNames: string[]): Promise<string> {
+  const toolsDir = path.join(__dirname, 'tools', category);
+  const toolDescriptions: string[] = [];
+  
+  // Try to extract descriptions from a few sample tools in the category
+  const samplesToCheck = Math.min(3, toolNames.length); // Check up to 3 tools for description
+  
+  for (let i = 0; i < samplesToCheck; i++) {
+    const toolDir = toolNames[i];
+    const toolPath = path.join(toolsDir, toolDir, 'index.js');
+    
+    if (fs.existsSync(toolPath)) {
+      try {
+        const toolModule = await import(`./${path.relative(__dirname, toolPath).replace(/\\/g, '/')}`);
+        
+        // Look for description in the tool registration
+        const registerFunction = Object.values(toolModule).find(
+          (fn: any) => typeof fn === 'function' && fn.name.startsWith('register')
+        ) as any;
+        
+        if (registerFunction) {
+          // Create a mock server to capture the tool registration
+          const mockServer = {
+            registerTool: (name: string, config: any) => {
+              if (config.description && typeof config.description === 'string') {
+                toolDescriptions.push(config.description);
+              }
+            }
+          };
+          
+          try {
+            registerFunction(mockServer as any);
+          } catch (error) {
+            // Ignore errors in mock registration
+          }
+        }
+      } catch (error) {
+        // Continue if we can't load a tool
+      }
+    }
+  }
+  
+  // Generate category description based on collected tool descriptions
+  if (toolDescriptions.length > 0) {
+    // Create a summary from the actual tool descriptions
+    const uniqueDescriptions = [...new Set(toolDescriptions)];
+    
+    if (uniqueDescriptions.length === 1) {
+      // If all tools have the same description, use it directly
+      return uniqueDescriptions[0];
+    } else if (uniqueDescriptions.length <= 3) {
+      // If we have 2-3 unique descriptions, combine them
+      return `${category.charAt(0).toUpperCase() + category.slice(1)} tools: ${uniqueDescriptions.join(', ')}`;
+    } else {
+      // If we have many descriptions, provide a generic summary
+      return `${category.charAt(0).toUpperCase() + category.slice(1)} category with ${toolNames.length} tools including: ${uniqueDescriptions.slice(0, 2).join(', ')} and more`;
+    }
+  }
+  
+  // Fallback: generate description from category name and tool count
+  const categoryTitle = category.charAt(0).toUpperCase() + category.slice(1);
+  return `${categoryTitle} tools and utilities (${toolNames.length} tools available)`;
+}
+
+// Register server info tool with dynamic metadata
+server.registerTool("server-info", {
+  description: "Get comprehensive information about the IT Tools MCP server, including available tool categories, version, and capabilities",
+  inputSchema: {
+    include_tools: z.boolean().optional().describe("Include detailed information about all available tools"),
+    category: z.string().optional().describe("Get information about a specific category (dynamically discovered)")
+  }
+}, async (args) => {
+  const { include_tools = false, category } = args;
+  
+  // Discover tools dynamically
+  const { toolCategories, totalToolCount } = await discoverTools();
+  
+  // Get system info
+  const systemInfo = {
+    timestamp: new Date().toISOString(),
+    platform: process.platform,
+    nodeVersion: process.version,
+    memoryUsage: process.memoryUsage(),
+    uptime: process.uptime()
+  };
+
+  // Server metadata from package.json
+  const serverMetadata = {
+    name: "IT Tools MCP Server",
+    version: packageInfo.version,
+    description: packageInfo.description,
+    author: packageInfo.author,
+    repository: packageInfo.repository?.url,
+    homepage: packageInfo.homepage,
+    keywords: packageInfo.keywords,
+    protocol: "Model Context Protocol (MCP)",
+    transport: "stdio"
+  };
+
+  const baseResult = {
+    server: serverMetadata,
+    system: systemInfo,
+    categories: Object.keys(toolCategories).length,
+    totalTools: totalToolCount,
+    installation: {
+      vscode: "Use VS Code install button in README or manual configuration",
+      claude: "Add to claude_desktop_config.json",
+      npm: `npm install -g ${packageInfo.name}`
+    }
+  };
+
+  let result: any = baseResult;
+
+  // Add category-specific information
+  if (category && toolCategories[category]) {
+    result = {
+      ...result,
+      categoryDetails: {
+        name: category,
+        ...toolCategories[category]
+      }
+    };
+  } else if (!category) {
+    result = {
+      ...result,
+      availableCategories: toolCategories
+    };
+  }
+
+  // Include detailed tool information if requested
+  if (include_tools) {
+    result = {
+      ...result,
+      toolsBreakdown: Object.entries(toolCategories).map(([cat, info]) => ({
+        category: cat,
+        count: info.tools.length,
+        tools: info.tools
+      }))
+    };
+  }
+
+  return {
+    content: [{
+      type: "text",
+      text: JSON.stringify(result, null, 2)
+    }]
+  };
+});
+
+// Register all tools dynamically by discovering categories from filesystem
 async function registerAllTools(server: McpServer) {
-  // All categories to load modularly
-  const categories = [
-    'docker', 'ansible', 'color', 'encoding', 'idGenerators',
-    'crypto', 'dataFormat', 'text', 'network', 'math', 
-    'utility', 'development', 'forensic', 'physics'
-  ];
+  const toolsBaseDir = path.join(__dirname, 'tools');
+  
+  if (!fs.existsSync(toolsBaseDir)) {
+    console.warn('Tools directory does not exist:', toolsBaseDir);
+    return;
+  }
+
+  // Discover categories dynamically from the filesystem
+  const categories = fs.readdirSync(toolsBaseDir, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name)
+    .sort(); // Sort for consistent ordering
 
   for (const category of categories) {
     await loadModularTools(server, category);
@@ -331,7 +534,7 @@ server.tool(
           type: "text",
           text: JSON.stringify({
             server: "IT Tools MCP Server",
-            version: getPackageVersion(),
+            version: packageInfo.version,
             uptime: `${Math.floor(usage.uptimeSeconds)} seconds`,
             memory: usage.memory,
             timestamp: new Date().toISOString(),

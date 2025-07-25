@@ -1,8 +1,37 @@
 # Changelog
 
+## [3.2.12] - 2025-07-25
+
+### Added in 3.2.12
+
+- **Dynamic Tool Discovery System**: Completely removed hardcoded tool categories and metadata in favor of filesystem-based discovery.
+- **Enhanced Server Metadata**: Added comprehensive package.json integration for server information including version, author, repository, and keywords.
+- **Intelligent Category Descriptions**: Category descriptions are now generated dynamically by examining actual tool implementations and their descriptions.
+- **Comprehensive Server-Info Tool**: Enhanced `server-info` tool with detailed metadata, system information, and tool breakdown capabilities.
+
+### Updated
+
+- **Fully Dynamic Architecture**: Tool categories, counts, and descriptions are now discovered automatically from the filesystem structure.
+- **Zero Hardcoded Values**: Eliminated all hardcoded category lists, tool counts, and descriptions for better maintainability.
+- **Self-Describing System**: The server now introspects its own capabilities and provides accurate metadata without manual updates.
+- **Improved VS Code Integration**: Enhanced MCP server metadata for better integration with VS Code and other MCP clients.
+
+### Technical Improvements
+
+- `discoverTools()` function dynamically scans filesystem for tool categories and tools
+- `getCategoryDescription()` extracts descriptions from actual tool implementations
+- `getPackageMetadata()` reads comprehensive information from package.json at runtime
+- Enhanced `server-info` tool with category filtering and detailed tool breakdown
+- Completely async tool discovery with proper error handling
+- Future-proof architecture that automatically adapts to new tools and categories
+
+### Breaking Changes
+
+None - all existing tool names and APIs remain fully compatible.
+
 ## [3.2.1] - 2025-07-09
 
-### Fixed
+### Bug Fixes
 
 - Updated README documentation to use correct npm package name `it-tools-mcp` instead of GitHub reference `wrenchpilot/it-tools-mcp`.
 - Fixed VS Code MCP configuration examples to use the published npm package.
@@ -21,19 +50,21 @@
 - Pre-commit hook that automatically bumps version (major/minor/patch) based on commit message type.
 - Commit message template setup script for standardized commit formatting.
 
-### Changed
+### Updated Workflow
 
 - Enhanced development workflow with automated versioning based on commit message conventions.
 
 ## [3.1.2] - 2025-07-09
 
 ### Fixed
+
 - Fixed VS Code MCP server initialization hanging by making test mode exit logic more specific.
 - Test mode exit now only occurs when `MCP_TEST_MODE=true` environment variable is set, not just `NODE_ENV=test`.
 - VS Code and other MCP clients can now properly initialize and maintain persistent connections.
 - Updated test scripts to use the new `MCP_TEST_MODE=true` flag for proper automated test behavior.
 
 ### Changed
+
 - Improved MCP server lifecycle management for better compatibility with different MCP client environments.
 - Test automation now uses explicit `MCP_TEST_MODE` flag for cleaner separation between test and production behavior.
 

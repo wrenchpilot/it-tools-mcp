@@ -11,7 +11,7 @@
 [![Docker Platform](https://img.shields.io/badge/platform-linux%2Famd64%20%7C%20linux%2Farm64-blue)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
 [![GitHub Stars](https://img.shields.io/github/stars/wrenchpilot/it-tools-mcp?style=social)](https://github.com/wrenchpilot/it-tools-mcp/stargazers)
 
-A comprehensive Model Context Protocol (MCP) server that provides access to **112 IT tools and utilities** commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to over **100 IT tools and utilities** commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 ## Using with VS Code
 
@@ -62,7 +62,7 @@ Add to your VS Code `settings.json`:
 }
 ```
 
-See the complete list of all 112 tools with detailed parameters on [GitHub](https://github.com/wrenchpilot/it-tools-mcp#available-tools)
+See the complete list of tools with detailed parameters on [GitHub](https://github.com/wrenchpilot/it-tools-mcp#available-tools)
 
 ## 📸 Examples in Action
 

@@ -14,7 +14,7 @@
 
 > **📝 Note**: A condensed version of this README is automatically synced to [Docker Hub](https://hub.docker.com/r/wrenchpilot/it-tools-mcp) due to character limits.
 
-A comprehensive Model Context Protocol (MCP) server that provides access to 112 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 ## 📦 Installation & Setup
 
@@ -96,7 +96,7 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"base64-enc
 
 ## 🛠️ Tool Categories
 
-This MCP server provides **112 tools** across **14 categories**:
+This MCP server provides over **100 tools** across **14 categories**:
 
 - **� Ansible Tools** (5 tools): Vault encryption/decryption, inventory parser, playbook validator, reference
 - **🎨 Color Tools** (2 tools): Hex ↔ RGB conversion
@@ -265,14 +265,14 @@ Built with **TypeScript**, **Zod** validation, and **MCP SDK** for robust, type-
 This project was developed using **VS Code**, **Copilot Chat Agent**, **Playwright MCP**, and the **Claude Sonnet 4 Model**, demonstrating the power of AI-assisted software development:
 
 - **Intelligent Code Generation**: Claude Sonnet analyzed requirements and generated comprehensive tool implementations
-- **Schema Validation**: Automatically identified and resolved JSON schema validation issues across 112 tools
+- **Schema Validation**: Automatically identified and resolved JSON schema validation issues across tools
 - **Docker Optimization**: Created production-ready Docker workflows and multi-stage builds
 - **Documentation**: Generated comprehensive README with examples and tool reference tables
 - **Testing**: Implemented robust error handling and validation throughout the codebase
 
 **Key AI Contributions:**
 
-- 🔧 **Tool Implementation**: All 112 tools designed and implemented with AI assistance
+- 🔧 **Tool Implementation**: All tools designed and implemented with AI assistance
 - 📦 **Docker Setup**: Complete containerization with GitHub Actions CI/CD pipeline
 - 🔍 **Schema Cleanup**: Systematic removal of unsupported Zod keywords from all tool definitions
 - 📚 **Documentation**: Comprehensive README with usage examples and tool catalogs
