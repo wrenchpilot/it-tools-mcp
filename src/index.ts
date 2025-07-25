@@ -256,7 +256,8 @@ function getPackageMetadata() {
     keywords: pkg.keywords,
     author: pkg.author,
     repository: pkg.repository,
-    homepage: pkg.homepage
+    homepage: pkg.homepage,
+    license: pkg.license
   };
 }
 
@@ -271,6 +272,11 @@ const isTest = process.env.NODE_ENV === 'test';
 const server = new McpServer({
   name: "it-tools-mcp", 
   version: packageInfo.version,
+  description: "A comprehensive Model Context Protocol (MCP) server that provides access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.",
+  author: packageInfo.author,
+  homepage: packageInfo.homepage,
+  repository: packageInfo.repository,
+  license: packageInfo.license,
 }, {
   capabilities: {
     tools: {},
@@ -284,6 +290,35 @@ const server = new McpServer({
 });
 
 // VS Code MCP Compliance: Implement Resources
+server.registerResource(
+  "server-manifest",
+  new ResourceTemplate("manifest://{type}", {
+    list: async () => ({
+      resources: [
+        { name: "manifest://info", description: "Server information and capabilities", uri: "manifest://info" },
+        { name: "manifest://tools", description: "Complete list of available tools", uri: "manifest://tools" },
+        { name: "manifest://categories", description: "Tool categories and descriptions", uri: "manifest://categories" }
+      ]
+    })
+  }),
+  {
+    title: "Server Manifest",
+    description: "Comprehensive server information, capabilities, and tool catalog",
+    mimeType: "application/json"
+  },
+  async (uri: URL, params: any) => {
+    const type = params.type as string;
+    const manifestContent = await getManifestContent(type);
+    return {
+      contents: [{
+        uri: uri.href,
+        text: JSON.stringify(manifestContent, null, 2),
+        mimeType: "application/json"
+      }]
+    };
+  }
+);
+
 server.registerResource(
   "system-logs",
   new ResourceTemplate("logs://{type}", { 
@@ -441,6 +476,63 @@ async function getLogContent(type: string): Promise<string> {
   };
   
   return logs[type as keyof typeof logs] || "Log type not found";
+}
+
+async function getManifestContent(type: string): Promise<any> {
+  const { toolCategories } = await discoverTools();
+  const toolCount = Object.keys(toolCategories).reduce((total, category) => {
+    return total + toolCategories[category].tools.length;
+  }, 0);
+
+  const manifests = {
+    info: {
+      name: packageInfo.name,
+      displayName: "IT Tools MCP Server",
+      description: packageInfo.description,
+      version: packageInfo.version,
+      author: packageInfo.author,
+      license: packageInfo.license,
+      homepage: packageInfo.homepage,
+      repository: packageInfo.repository,
+      capabilities: {
+        tools: toolCount,
+        categories: Object.keys(toolCategories).length,
+        resources: true,
+        prompts: true
+      },
+      features: [
+        `${toolCount}+ IT tools and utilities`,
+        `${Object.keys(toolCategories).length} tool categories`,
+        "Encoding/Decoding tools",
+        "Cryptographic functions", 
+        "Network utilities",
+        "Text processing tools",
+        "JSON/XML/YAML formatting",
+        "Docker integration",
+        "Security focused design",
+        "Type-safe implementation"
+      ],
+      installation: {
+        npm: "npx it-tools-mcp",
+        docker: "docker run -i --rm wrenchpilot/it-tools-mcp:latest"
+      }
+    },
+    tools: Object.keys(toolCategories).reduce((acc, category) => {
+      acc[category] = {
+        description: toolCategories[category].description,
+        tools: toolCategories[category].tools
+      };
+      return acc;
+    }, {} as any),
+    categories: Object.keys(toolCategories).map(category => ({
+      name: category,
+      description: toolCategories[category].description,
+      toolCount: toolCategories[category].tools.length,
+      tools: toolCategories[category].tools
+    }))
+  };
+  
+  return manifests[type as keyof typeof manifests] || { error: "Manifest type not found" };
 }
 
 async function getToolDocumentation(category: string, tool?: string): Promise<string> {
@@ -799,6 +891,37 @@ ${context ? `Context: ${context}` : ''}`;
   };
 });
 
+// Add a README resource for VS Code
+server.registerResource(
+  "readme",
+  new ResourceTemplate("readme://{section}", {
+    list: async () => ({
+      resources: [
+        { name: "readme://full", description: "Complete README documentation", uri: "readme://full" },
+        { name: "readme://installation", description: "Installation instructions", uri: "readme://installation" },
+        { name: "readme://tools", description: "Available tools overview", uri: "readme://tools" },
+        { name: "readme://examples", description: "Usage examples", uri: "readme://examples" }
+      ]
+    })
+  }),
+  {
+    title: "Documentation",
+    description: "Server documentation and usage guide",
+    mimeType: "text/markdown"
+  },
+  async (uri: URL, params: any) => {
+    const section = params.section as string;
+    const readmeContent = await getReadmeContent(section);
+    return {
+      contents: [{
+        uri: uri.href,
+        text: readmeContent,
+        mimeType: "text/markdown"
+      }]
+    };
+  }
+);
+
 // Run the server
 async function main() {
   try {
@@ -883,7 +1006,42 @@ async function getCategoryCount(): Promise<number> {
   return Object.keys(toolCategories).length;
 }
 
-main().catch((error) => {
-  console.error("Fatal error in main():", error);
-  process.exit(1);
-});
+async function getReadmeContent(section: string): Promise<string> {
+  const readmePath = path.resolve(__dirname, '../README.md');
+  
+  try {
+    const fullReadme = fs.readFileSync(readmePath, 'utf-8');
+    
+    const sections = {
+      full: fullReadme,
+      installation: extractReadmeSection(fullReadme, '## 📦 Installation & Setup'),
+      tools: extractReadmeSection(fullReadme, '## Available Tools'),
+      examples: extractReadmeSection(fullReadme, '## 📸 Screenshot Examples')
+    };
+    
+    return sections[section as keyof typeof sections] || `# ${section}\n\nSection not found in README.`;
+  } catch (error) {
+    return `# Error\n\nCould not read README.md: ${error}`;
+  }
+}
+
+function extractReadmeSection(content: string, heading: string): string {
+  const lines = content.split('\n');
+  const startIndex = lines.findIndex(line => line.startsWith(heading));
+  
+  if (startIndex === -1) {
+    return `# Section Not Found\n\nThe section "${heading}" was not found in the README.`;
+  }
+  
+  const endIndex = lines.findIndex((line, index) => 
+    index > startIndex && line.startsWith('## ') && !line.startsWith(heading)
+  );
+  
+  const sectionLines = endIndex === -1 
+    ? lines.slice(startIndex) 
+    : lines.slice(startIndex, endIndex);
+  
+  return sectionLines.join('\n');
+}
+
+// ...existing code...

@@ -14,7 +14,7 @@
 
 > **📝 Note**: A condensed version of this README is automatically synced to [Docker Hub](https://hub.docker.com/r/wrenchpilot/it-tools-mcp) due to character limits.
 
-A comprehensive Model Context Protocol (MCP) server that provides access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to over 116 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 ## 📦 Installation & Setup
 
@@ -22,7 +22,7 @@ A comprehensive Model Context Protocol (MCP) server that provides access to over
 
 **Quick Install:**
 
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=it-tools&config=%7B%22command%22%3A%20%22npx%22%2C%22args%22%3A%20%5B%22it-tools-mcp%22%5D%7D) [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install_Server-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=it-tools&config=%7B%22command%22%3A%20%22npx%22%2C%22args%22%3A%20%5B%22it-tools-mcp%22%5D%7D&quality=insiders)
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode:mcp/install?%7B%22name%22%3A%22it-tools%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22it-tools-mcp%22%5D%7D) [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install_Server-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect?url=vscode-insiders:mcp/install?%7B%22name%22%3A%22it-tools%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22it-tools-mcp%22%5D%7D)
 
 **Install:**
 
@@ -96,7 +96,7 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"encode_bas
 
 ## 🛠️ Tool Categories
 
-This MCP server provides over **100 tools** across **14 categories**:
+This MCP server provides over **116 tools** across **14 categories**:
 
 - **� Ansible Tools** (5 tools): Vault encryption/decryption, inventory parser, playbook validator, reference
 - **🎨 Color Tools** (2 tools): Hex ↔ RGB conversion

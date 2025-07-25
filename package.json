@@ -1,7 +1,7 @@
 {
   "name": "it-tools-mcp",
-  "version": "3.7.2",
-  "description": "VS Code MCP-compliant server providing 115+ IT tools and utilities for developers - encoding, crypto, network tools, and more",
+  "version": "4.0.0",
+  "description": "VS Code MCP-compliant server providing 116+ IT tools and utilities for developers - encoding, crypto, network tools, and more",
   "type": "module",
   "main": "./build/index.js",
   "bin": {
@@ -72,7 +72,7 @@
       "sampling",
       "roots"
     ],
-    "toolCount": 115,
+    "toolCount": 116,
     "categories": [
       "ansible",
       "color",
