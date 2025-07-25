@@ -597,8 +597,13 @@ async function loadModularTools(server: McpServer, category: string) {
         ) as ((server: McpServer) => void) | undefined;
 
         if (registerFunction) {
-          registerFunction(server);
-          console.error(`Loaded tool: ${category}/${toolDir}`);
+          try {
+            registerFunction(server);
+            console.error(`Loaded tool: ${category}/${toolDir}`);
+          } catch (regError) {
+            console.error(`Failed to register tool ${category}/${toolDir}:`, 
+              regError instanceof Error ? regError.message : 'Unknown registration error');
+          }
         } else {
           console.warn(`No register function found in ${toolPath}`);
         }
@@ -936,6 +941,16 @@ async function main() {
       console.error("   - Debug information available");
     }
     
+    // Add error handling for unhandled rejections
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    });
+    
+    process.on('uncaughtException', (error) => {
+      console.error('Uncaught Exception:', error);
+      process.exit(1);
+    });
+    
     await registerAllTools(server);
 
     const transport = new StdioServerTransport();
@@ -953,6 +968,9 @@ async function main() {
       console.error(`📊 Loaded ${await getToolCount()} tools across ${await getCategoryCount()} categories`);
       console.error(`🔗 Protocol: Model Context Protocol (MCP) via stdio`);
       console.error(`📦 Version: ${packageInfo.version}`);
+    } else {
+      // Production mode - simple ready message
+      console.error(`IT Tools MCP Server v${packageInfo.version} ready - ${await getToolCount()} tools loaded`);
     }
     
     // Enhanced monitoring in development mode
