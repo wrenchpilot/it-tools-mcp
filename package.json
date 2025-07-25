@@ -1,6 +1,6 @@
 {
   "name": "it-tools-mcp",
-  "version": "4.1.2",
+  "version": "4.1.5",
   "description": "VS Code MCP-compliant server providing 116+ IT tools and utilities for developers - encoding, crypto, network tools, and more",
   "type": "module",
   "main": "./build/index.js",
@@ -15,6 +15,8 @@
     "dev:build": "NODE_ENV=development tsc",
     "test": "clear;node tests/test-server.mjs",
     "test:all": "clear;node tests/all-tools-test.mjs",
+    "sync:manifest": "node scripts/sync-manifest.cjs",
+    "setup:hooks": "chmod +x .git/hooks/pre-commit",
     "docker:build": "docker buildx build --platform linux/amd64,linux/arm64 --provenance=true --sbom=true -t it-tools-mcp .",
     "docker:build:local": "docker build -t it-tools-mcp .",
     "docker:run": "docker-compose up --build",
