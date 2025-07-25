@@ -15,6 +15,12 @@ export function registerPing(server: McpServer) {
   inputSchema: {
       target: z.string().describe("Host to ping"),
       count: z.number().default(4).describe("Number of ping attempts")
+    },
+    // VS Code compliance annotations
+    annotations: {
+      title: "Ping",
+      description: "Test network connectivity to a host",
+      readOnlyHint: false
     }
 }, async ({ target, count }) => {
       try {

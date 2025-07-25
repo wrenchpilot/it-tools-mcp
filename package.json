@@ -1,7 +1,7 @@
 {
   "name": "it-tools-mcp",
-  "version": "3.6.0",
-  "description": "MCP server providing access to various IT tools and utilities for developers",
+  "version": "3.7.2",
+  "description": "VS Code MCP-compliant server providing 115+ IT tools and utilities for developers - encoding, crypto, network tools, and more",
   "type": "module",
   "main": "./build/index.js",
   "bin": {
@@ -11,7 +11,8 @@
     "build": "tsc && chmod +x build/index.js",
     "start": "docker-compose up --build",
     "start:node": "node build/index.js",
-    "dev": "tsc && node build/index.js",
+    "dev": "NODE_ENV=development MCP_DEV_MODE=true tsc && node build/index.js",
+    "dev:build": "NODE_ENV=development tsc",
     "test": "clear;node tests/test-server.mjs",
     "test:all": "clear;node tests/all-tools-test.mjs",
     "docker:build": "docker buildx build --platform linux/amd64,linux/arm64 --provenance=true --sbom=true -t it-tools-mcp .",
@@ -22,19 +23,31 @@
     "deploy:prod": "npm run deploy:build && docker-compose up -d"
   },
   "files": [
-    "build"
+    "build",
+    "README.md",
+    "LICENSE"
   ],
   "keywords": [
     "mcp",
     "model-context-protocol",
+    "vscode",
+    "vscode-mcp",
     "it-tools",
     "developer-tools",
     "utilities",
-    "docker",
     "encoding",
+    "crypto",
     "hashing",
+    "network-tools",
     "text-processing",
-    "network-tools"
+    "json-tools",
+    "base64",
+    "uuid",
+    "jwt",
+    "docker-tools",
+    "development-utilities",
+    "typescript",
+    "cli-tools"
   ],
   "author": "wrenchpilot",
   "license": "MIT",
@@ -45,6 +58,37 @@
   "homepage": "https://github.com/wrenchpilot/it-tools-mcp#readme",
   "bugs": {
     "url": "https://github.com/wrenchpilot/it-tools-mcp/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "mcp": {
+    "mcpVersion": "2024-11-05",
+    "transport": "stdio",
+    "capabilities": [
+      "tools",
+      "resources",
+      "prompts",
+      "sampling",
+      "roots"
+    ],
+    "toolCount": 115,
+    "categories": [
+      "ansible",
+      "color",
+      "crypto",
+      "data_format",
+      "development",
+      "docker",
+      "encoding",
+      "forensic",
+      "id_generators",
+      "math",
+      "network",
+      "physics",
+      "text",
+      "utility"
+    ]
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

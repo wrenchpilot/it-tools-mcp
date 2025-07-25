@@ -15,6 +15,12 @@ export function registerHead(server: McpServer) {
   inputSchema: {
       file: z.string().describe("File path"),
       lines: z.number().default(10).describe("Number of lines")
+    },
+    // VS Code compliance annotations
+    annotations: {
+      title: "Head",
+      description: "Display the beginning of a file",
+      readOnlyHint: false
     }
 }, async ({ file, lines }) => {
       try {

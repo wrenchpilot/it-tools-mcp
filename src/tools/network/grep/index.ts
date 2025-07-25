@@ -15,6 +15,12 @@ export function registerGrep(server: McpServer) {
   inputSchema: {
       pattern: z.string().describe("Pattern to search for"),
       file: z.string().describe("File path")
+    },
+    // VS Code compliance annotations
+    annotations: {
+      title: "Grep",
+      description: "Search for patterns in files",
+      readOnlyHint: false
     }
 }, async ({ pattern, file }) => {
       try {

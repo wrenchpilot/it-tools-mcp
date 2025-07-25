@@ -12,7 +12,13 @@ import os from "os";
 export function registerTop(server: McpServer) {
   server.registerTool("top", {
   description: "Display system processes (snapshot)",
-  inputSchema: {}
+  inputSchema: {},
+    // VS Code compliance annotations
+    annotations: {
+      title: "Top",
+      description: "Display system processes (snapshot)",
+      readOnlyHint: false
+    }
 }, async () => {
       try {
         const processes = await psList();

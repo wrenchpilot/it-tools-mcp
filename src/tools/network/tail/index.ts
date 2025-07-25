@@ -15,6 +15,12 @@ export function registerTail(server: McpServer) {
   inputSchema: {
       file: z.string().describe("File path"),
       lines: z.number().default(10).describe("Number of lines")
+    },
+    // VS Code compliance annotations
+    annotations: {
+      title: "Tail",
+      description: "Display the end of a file",
+      readOnlyHint: false
     }
 }, async ({ file, lines }) => {
       try {

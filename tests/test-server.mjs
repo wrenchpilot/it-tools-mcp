@@ -25,13 +25,13 @@ const testMessages = [
     id: 2,
     method: "tools/list"
   },
-  // Test base64 encode
+    // Test base64 encode
   {
     jsonrpc: "2.0",
     id: 3,
     method: "tools/call",
     params: {
-      name: "base64-encode",
+      name: "encode_base64",
       arguments: { text: "Hello World" }
     }
   },
@@ -41,8 +41,8 @@ const testMessages = [
     id: 4,
     method: "tools/call",
     params: {
-      name: "json-format",
-      arguments: { json: '{"name":"test","value":123}', indent: 2 }
+      name: "format_json",
+      arguments: { json: '{"name":"test","value":123}' }
     }
   },
   // Test UUID generation
@@ -51,18 +51,18 @@ const testMessages = [
     id: 5,
     method: "tools/call",
     params: {
-      name: "uuid-generate",
+      name: "generate_uuid",
       arguments: {}
     }
   },
-  // Test ASCII Art
+  // Test ASCII art
   {
     jsonrpc: "2.0",
     id: 6,
     method: "tools/call",
     params: {
-      name: "ascii-art-text",
-      arguments: { text: "HELLO", font: "standard" }
+      name: "generate_ascii_art",
+      arguments: { text: "Hi" }
     }
   }
 ];

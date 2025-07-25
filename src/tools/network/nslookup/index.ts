@@ -14,6 +14,12 @@ export function registerNslookup(server: McpServer) {
   description: "Perform DNS lookup on a hostname or IP address",
   inputSchema: {
       target: z.string().describe("Hostname or IP address")
+    },
+    // VS Code compliance annotations
+    annotations: {
+      title: "Nslookup",
+      description: "Perform DNS lookup on a hostname or IP address",
+      readOnlyHint: false
     }
 }, async ({ target }) => {
       return new Promise((resolve) => {

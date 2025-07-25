@@ -12,7 +12,13 @@ import os from "os";
 export function registerPs(server: McpServer) {
   server.registerTool("ps", {
   description: "List running processes",
-  inputSchema: {}
+  inputSchema: {},
+    // VS Code compliance annotations
+    annotations: {
+      title: "Ps",
+      description: "List running processes",
+      readOnlyHint: false
+    }
 }, async () => {
       try {
         const processes = await psList();

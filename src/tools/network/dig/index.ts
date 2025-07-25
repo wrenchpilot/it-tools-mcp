@@ -15,6 +15,12 @@ export function registerDig(server: McpServer) {
   inputSchema: {
       target: z.string().describe("Hostname or IP address"),
       type: z.string().default("A").describe("DNS record type")
+    },
+    // VS Code compliance annotations
+    annotations: {
+      title: "Dig",
+      description: "Perform DNS lookup with dig command",
+      readOnlyHint: false
     }
 }, async ({ target, type }) => {
       return new Promise((resolve) => {

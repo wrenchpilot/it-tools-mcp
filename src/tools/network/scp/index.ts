@@ -55,6 +55,12 @@ export function registerScp(server: McpServer) {
       localPath: z.string().describe("Local file path (source for upload, destination for download)"),
       remotePath: z.string().describe("Remote file path (destination for upload, source for download)"),
       privateKey: z.string().optional().describe("Private key for authentication (PEM format, optional, or path to key file)")
+    },
+    // VS Code compliance annotations
+    annotations: {
+      title: "Scp",
+      description: "Copy files to or from a remote host using SFTP (SCP-like)",
+      readOnlyHint: false
     }
 }, async ({ target, user, direction, localPath, remotePath, privateKey }) => {
       try {

@@ -1,5 +1,127 @@
 # Changelog
 
+## [3.7.2] - 2025-07-25
+
+### Fixed - Duplicate Tool Registration
+
+- **🔧 Resolved Duplicate Tool Registration**: Fixed duplicate tool registration issue
+  - Removed duplicate `convert_to_camelcase/` folder that was conflicting with `convert_text_to_camelcase/`
+  - Eliminated all "Failed to load tool" and "Tool already registered" errors during server startup
+  - Ensured clean tool loading with no registration conflicts
+
+### Verified - Clean Tool Loading
+
+- **✅ All Tools Load Successfully**: Confirmed all 115+ tools load without conflicts or duplicate registrations
+- **🔍 No Remaining Kebab-case**: Verified complete elimination of all kebab-case folder names
+- **📦 Build Verification**: TypeScript compilation successful with clean tool registration
+
+## [3.7.1] - 2025-07-25
+
+### Fixed - Complete Tool Naming Compliance
+
+- **🔧 Tool Naming Convention Compliance**: Completed comprehensive migration to snake_case naming
+  - **All Tool Names**: Fixed remaining kebab-case tool names in registerTool calls
+    - `ansible-inventory-generator` → `generate_ansible_inventory`
+    - `ansible-inventory-parser` → `parse_ansible_inventory`
+    - `ipv4-subnet-calc` → `calculate_ipv4_subnet`
+    - `ip-range-to-cidr` → `convert_ip_range_to_cidr`
+    - `cidr-to-ip-range` → `convert_cidr_to_ip_range`
+    - `random-port` → `generate_random_port`
+    - `iban-validate` → `validate_iban`
+    - `ip-subnet-calculator` → `calculate_ip_subnet`
+    - `ipv6-subnet-calculator` → `calculate_ipv6_subnet`
+    - `url-parse` → `parse_url`
+    - `mac-address-generate` → `generate_mac_address`
+    - `ipv6-ula-generator` → `generate_ipv6_ula`
+    - `unix-timestamp-converter` → `convert_unix_timestamp`
+    - `json-format` → `format_json`
+    - `json-minify` → `minify_json`
+    - `docker-compose-validator` → `validate_docker_compose`
+    - `base64-decode` → `decode_base64`
+    - `ulid-generate` → `generate_ulid`
+    - `ascii-art-text` → `generate_ascii_art`
+    - `text-camelcase` → `convert_to_camelcase`
+
+  - **Folder Structure**: Renamed all remaining kebab-case folders to match snake_case tool names
+  - **Duplicate Categories**: Resolved duplicate folder issues (dataFormat/data_format, idGenerators/id_generators)
+  - **Documentation**: Updated README.md and CHANGELOG.md to reflect compliant tool names
+  - **Build Verification**: Confirmed TypeScript compilation successful with all naming changes
+
+### Changed - Documentation Updates
+
+- **📚 README.md**: Updated all tool names in documentation table to match snake_case convention
+- **📝 CHANGELOG.md**: Added comprehensive record of all tool naming changes
+- **🔍 Package.json**: Corrected category names to eliminate duplicates
+
+## [3.7.0] - 2025-07-25
+
+### Added - VS Code MCP Compliance Implementation
+
+- **✅ Full VS Code MCP Compliance**: Implemented all 9 VS Code MCP requirements for gallery readiness
+  - **Tool Annotations**: Added comprehensive VS Code compliance annotations to all 115+ tools
+  - **Resources**: Implemented MCP resources for system logs, tool documentation, and workspace configuration
+  - **Prompts**: Added guided workflow prompts with completable arguments for IT tasks and security analysis
+  - **Sampling Support**: Declared sampling capability in server configuration
+  - **Workspace Roots**: Implemented listChanged capability for workspace root management
+  - **Development Mode**: Enhanced development mode with detailed logging and monitoring
+  - **VS Code Gallery Metadata**: Updated package.json with comprehensive MCP metadata section
+
+### Changed - Tool Naming Convention Overhaul
+
+- **🔧 Complete Tool Naming Convention Update**: Migrated from kebab-case to snake_case for consistency
+  - **Folder Structure**: Renamed all tool folders to match actual tool names (e.g., `bip39_generate` → `generate_bip39`)
+  - **Tool Names**: Updated all 115+ tools to use consistent snake_case naming
+  - **Import Paths**: Fixed all server imports to match new folder structure
+  - **Documentation**: Updated README.md with correct tool names throughout
+  - **Categories**: Renamed main categories (`dataFormat` → `data_format`, `idGenerators` → `id_generators`)
+
+### Enhanced - MCP Protocol Implementation
+
+- **📦 Enhanced Package Metadata**: Updated to v3.7.0 with comprehensive VS Code gallery information
+  - Added MCP capabilities section with tools, resources, prompts, sampling, and roots
+  - Enhanced keywords and description for better discoverability
+  - Added tool count and categories metadata
+
+- **🔍 Resource System**: Implemented dynamic resource templates with completable parameters
+  - System logs with filterable types (system, error, debug)
+  - Tool documentation by category with auto-completion
+  - Workspace configuration with environment details
+
+- **🤖 Prompt System**: Added intelligent workflow assistance
+  - IT workflow guidance with task-specific recommendations
+  - Security analysis prompts with completable data types
+  - Context-aware workflow generation
+
+  - **⚙️ Development Mode Features**:
+  - Enhanced logging with startup information and resource usage monitoring
+  - Hot reload capabilities indication
+  - Debug information availability
+  - Periodic memory and CPU usage monitoring
+
+### Technical Implementation Details
+
+- **Type Safety**: All new features implemented with full TypeScript support
+- **Error Handling**: Comprehensive error handling for all MCP operations
+- **Performance**: Optimized server startup and tool discovery
+- **Validation**: Enhanced input validation with Zod schemas
+- **Documentation**: Generated dynamic tool documentation from actual implementations
+
+### Breaking Changes
+
+- **Tool Names**: All tool names now use snake_case instead of kebab-case
+  - Old: `generate-uuid`, `base64-encode`, `bip39-generate`
+  - New: `generate_uuid`, `encode_base64`, `generate_bip39`
+- **Folder Structure**: Tool folders renamed to match tool names exactly
+- **Categories**: Main category names updated (`dataFormat` → `data_format`, `idGenerators` → `id_generators`)
+
+### Migration Guide
+
+For existing implementations using this MCP server:
+
+1. Update tool names from kebab-case to snake_case in your scripts
+2. Use the new naming convention: `action_object` format (e.g., `generate_uuid`, `encode_base64`)
+3. Category references should use `data_format` and `id_generators`
+
 ## [3.2.12] - 2025-07-25
 
 ### Added in 3.2.12

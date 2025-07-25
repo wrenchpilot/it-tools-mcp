@@ -15,6 +15,12 @@ export function registerTelnet(server: McpServer) {
   inputSchema: {
       target: z.string().describe("Host to connect to"),
       port: z.number().describe("Port number")
+    },
+    // VS Code compliance annotations
+    annotations: {
+      title: "Telnet",
+      description: "Test TCP connectivity to a host and port",
+      readOnlyHint: false
     }
 }, async ({ target, port }) => {
       return new Promise(async (resolve) => {

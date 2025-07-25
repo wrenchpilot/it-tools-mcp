@@ -9,6 +9,12 @@ export function registerCurl(server: McpServer) {
       method: z.enum(["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"]).default("GET").describe("HTTP method"),
       headers: z.record(z.string()).optional().describe("Request headers (object of key-value pairs)"),
       body: z.string().optional().describe("Request body (for POST/PUT/PATCH)")
+    },
+    // VS Code compliance annotations
+    annotations: {
+      title: "Curl",
+      description: "Make HTTP requests to web endpoints",
+      readOnlyHint: false
     }
 }, async ({ url, method, headers, body }) => {
       try {

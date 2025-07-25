@@ -53,6 +53,12 @@ export function registerSsh(server: McpServer) {
       user: z.string().describe("Username"),
       command: z.string().describe("Command to run on remote host"),
       privateKey: z.string().optional().describe("Private key for authentication (PEM format, optional, or path to key file)")
+    },
+    // VS Code compliance annotations
+    annotations: {
+      title: "Ssh",
+      description: "Connect to a target via SSH",
+      readOnlyHint: false
     }
 }, async ({ target, user, command, privateKey }) => {
       return new Promise((resolve) => {
