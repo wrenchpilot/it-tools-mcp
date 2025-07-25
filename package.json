@@ -1,6 +1,6 @@
 {
   "name": "it-tools-mcp",
-  "version": "4.1.13",
+  "version": "4.1.14",
   "description": "Full MCP 2025-06-18 compliant server with 121+ IT tools, logging, ping, progress tracking, cancellation, and sampling utilities",
   "type": "module",
   "main": "./build/index.js",
@@ -8,7 +8,8 @@
     "it-tools-mcp": "build/index.js"
   },
   "scripts": {
-    "build": "npm run sync:manifest && tsc && chmod +x build/index.js",
+    "build": "npm run sync:manifest || true && tsc && chmod +x build/index.js",
+    "build:docker": "tsc && chmod +x build/index.js",
     "start": "docker-compose up --build",
     "start:node": "node build/index.js",
     "dev": "NODE_ENV=development MCP_DEV_MODE=true tsc && node build/index.js",

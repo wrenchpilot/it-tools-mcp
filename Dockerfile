@@ -13,8 +13,8 @@ RUN npm ci
 # Copy source code (this layer will be cached unless source changes)
 COPY src/ ./src/
 
-# Build the application
-RUN npm run build
+# Build the application (Docker-safe build without manifest sync)
+RUN npm run build:docker
 
 # Production stage
 FROM node:lts-alpine AS production
