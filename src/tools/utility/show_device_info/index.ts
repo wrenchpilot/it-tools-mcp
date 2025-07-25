@@ -1,6 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
-import mimeTypes from 'mime-types';
 
 export function registerDeviceInfo(server: McpServer) {
   server.registerTool("show_device_info", {

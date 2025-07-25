@@ -1,6 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import mimeTypes from 'mime-types';
 
 function getStatusCategory(code: number): string {
   if (code >= 100 && code < 200) return '1xx Informational';

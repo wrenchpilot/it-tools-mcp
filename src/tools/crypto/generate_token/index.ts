@@ -1,8 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { createHash, createHmac } from "crypto";
-import bcryptjs from "bcryptjs";
-import * as bip39 from "bip39";
-import speakeasy from "speakeasy";
 import { z } from "zod";
 
 export function registerGenerateToken(server: McpServer) {

@@ -1,6 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { CronExpressionParser } from 'cron-parser';
 
 export function registerPrettifyJavascript(server: McpServer) {
   server.registerTool("format_javascript", {

@@ -1,6 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import mimeTypes from 'mime-types';
 
 export function registerPortNumbers(server: McpServer) {
   server.registerTool("lookup_port_numbers", {

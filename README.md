@@ -14,7 +14,7 @@
 
 > **📝 Note**: A condensed version of this README is automatically synced to [Docker Hub](https://hub.docker.com/r/wrenchpilot/it-tools-mcp) due to character limits.
 
-A comprehensive Model Context Protocol (MCP) server that provides access to over 116 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
+A comprehensive Model Context Protocol (MCP) server that provides access to over 121 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
 ## 📦 Installation & Setup
 
@@ -94,9 +94,97 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"encode_bas
   docker run -i --rm wrenchpilot/it-tools-mcp:latest
 ```
 
-## 🛠️ Tool Categories
+## � MCP Logging Capabilities
 
-This MCP server provides over **116 tools** across **14 categories**:
+This server includes full MCP logging support with the following features:
+
+### Log Levels
+
+- **debug** (0): Detailed debug information
+- **info** (1): General information messages  
+- **notice** (2): Normal but significant events
+- **warning** (3): Warning conditions
+- **error** (4): Error conditions
+- **critical** (5): Critical conditions
+- **alert** (6): Action must be taken immediately
+- **emergency** (7): System is unusable
+
+### Logging Tools
+
+- **`logging_setLevel`**: Change the minimum logging level at runtime
+- **`logging_status`**: View current logging configuration and available levels
+
+### Environment-Aware Behavior
+
+- **Development Mode**: Debug level by default, enhanced console output
+- **Production Mode**: Info level by default, clean output for MCP compliance
+- **Automatic Fallback**: Console logging when MCP transport isn't ready
+
+### Usage Examples
+
+```bash
+# Check current logging status
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"logging_status","arguments":{}}}' | npx it-tools-mcp
+
+# Change log level to debug
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"logging_setLevel","arguments":{"level":"debug"}}}' | npx it-tools-mcp
+
+# Change log level to error (only show errors and above)
+echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"logging_setLevel","arguments":{"level":"error"}}}' | npx it-tools-mcp
+```
+
+## 🔧 MCP Protocol Utilities
+
+This server implements the complete MCP 2025-06-18 specification including advanced utilities:
+
+### Ping Utility
+
+- **Health Checking**: Use `ping` requests to verify connection status
+- **Automatic Response**: Server responds promptly with empty result per MCP spec
+- **Connection Monitoring**: Implement periodic health checks
+
+### Progress Tracking
+
+- **Long-Running Operations**: Receive progress updates for time-consuming tasks
+- **Progress Tokens**: Include `_meta.progressToken` in requests to enable progress notifications
+- **Notifications**: Server sends `notifications/progress` with current status
+
+### Request Cancellation
+
+- **Graceful Cancellation**: Send `notifications/cancelled` to abort in-progress requests
+- **Resource Cleanup**: Server properly frees resources when requests are cancelled
+- **Race Condition Handling**: Robust handling of timing edge cases
+
+### Sampling Support
+
+- **LLM Integration**: Server can request LLM completions from clients using `sampling/createMessage`
+- **Model Preferences**: Support for model selection hints and capability priorities (cost, speed, intelligence)
+- **Content Types**: Support for text, image, and audio content in sampling requests
+- **Agentic Workflows**: Enable AI-powered tool operations through nested LLM calls
+- **Client Control**: Clients maintain full control over model access and user approval
+
+### Protocol Examples
+
+```bash
+# Test connection health with ping
+echo '{"jsonrpc":"2.0","id":1,"method":"ping"}' | npx it-tools-mcp
+
+# Request with progress tracking
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"some_tool","arguments":{},"_meta":{"progressToken":"track123"}}}' | npx it-tools-mcp
+
+# Cancel a request (send as notification)
+echo '{"jsonrpc":"2.0","method":"notifications/cancelled","params":{"requestId":"2","reason":"User cancelled"}}' | npx it-tools-mcp
+
+# Test sampling capabilities
+echo '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"mcp_sampling_demo","arguments":{"message":"What is the capital of France?","modelPreference":"claude","systemPrompt":"You are a helpful assistant.","maxTokens":100}}}' | npx it-tools-mcp
+
+# Demo MCP utilities
+echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"mcp_utilities_demo","arguments":{"operation":"ping"}}}' | npx it-tools-mcp
+```
+
+## �🛠️ Tool Categories
+
+This MCP server provides over **121 tools** across **14 categories**:
 
 - **� Ansible Tools** (5 tools): Vault encryption/decryption, inventory parser, playbook validator, reference
 - **🎨 Color Tools** (2 tools): Hex ↔ RGB conversion

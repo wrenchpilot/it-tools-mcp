@@ -1,11 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { Client as SSHClient } from "ssh2";
-import ping from "ping";
-import dns from "dns";
-import psList from "ps-list";
 import fs from "fs";
-import readLastLines from "read-last-lines";
 import path from "path";
 import os from "os";
 

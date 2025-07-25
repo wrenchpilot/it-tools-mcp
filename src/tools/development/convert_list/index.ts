@@ -1,6 +1,5 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { CronExpressionParser } from 'cron-parser';
 
 export function registerConvertList(server: McpServer) {
   server.registerTool("convert_list", {
