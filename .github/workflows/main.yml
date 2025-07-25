@@ -80,6 +80,17 @@ jobs:
             exit 0
           fi
           
+          # Check commit message type - skip build/release for docs commits
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          echo "Commit message: $COMMIT_MSG"
+          if [[ "$COMMIT_MSG" =~ ^docs(\(.+\))?: ]]; then
+            echo "Documentation-only commit detected, skipping build/release"
+            echo "has-code-changes=false" >> $GITHUB_OUTPUT
+            echo "has-readme-changes=true" >> $GITHUB_OUTPUT
+            echo "package-json-changed=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
           # For push events, check what files changed
           CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || echo "")
           echo "Changed files: $CHANGED_FILES"
@@ -115,6 +126,15 @@ jobs:
         run: |
           SHOULD_PUBLISH=false
           SHOULD_RELEASE=false
+          
+          # Check if this is a docs-only commit
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          if [[ "$COMMIT_MSG" =~ ^docs(\(.+\))?: ]]; then
+            echo "Documentation-only commit - skipping publish and release"
+            echo "should-publish=false" >> $GITHUB_OUTPUT
+            echo "should-release=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
           
           # Only publish and release if we have actual code changes OR package.json version changed
           if [[ "${{ steps.changes.outputs.has-code-changes }}" == "true" ]]; then
