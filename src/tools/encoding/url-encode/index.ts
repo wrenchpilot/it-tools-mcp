@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerUrlEncode(server: McpServer) {
-  server.tool(
-    "url-encode",
-    "URL encode text",
-    {
+  server.registerTool("url-encode", {
+  description: "URL encode text",
+  inputSchema: {
       text: z.string().describe("Text to URL encode"),
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       const encoded = encodeURIComponent(text);
       return {
         content: [

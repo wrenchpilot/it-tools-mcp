@@ -10,11 +10,10 @@ import path from "path";
 import os from "os";
 
 export function registerPs(server: McpServer) {
-  server.tool(
-    "ps",
-    "List running processes",
-    {},
-    async () => {
+  server.registerTool("ps", {
+  description: "List running processes",
+  inputSchema: {}
+}, async () => {
       try {
         const processes = await psList();
         // Defensive: handle missing properties and filter out bad entries

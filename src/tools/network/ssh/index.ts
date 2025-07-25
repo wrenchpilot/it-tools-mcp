@@ -46,16 +46,15 @@ function resolvePrivateKey(privateKeyArg?: string): string | undefined {
 }
 
 export function registerSsh(server: McpServer) {
-  server.tool(
-    "ssh",
-    "Connect to a target via SSH",
-    {
+  server.registerTool("ssh", {
+  description: "Connect to a target via SSH",
+  inputSchema: {
       target: z.string().describe("Target host"),
       user: z.string().describe("Username"),
       command: z.string().describe("Command to run on remote host"),
       privateKey: z.string().optional().describe("Private key for authentication (PEM format, optional, or path to key file)")
-    },
-    async ({ target, user, command, privateKey }) => {
+    }
+}, async ({ target, user, command, privateKey }) => {
       return new Promise((resolve) => {
         let resolvedKey: string | undefined;
         try {

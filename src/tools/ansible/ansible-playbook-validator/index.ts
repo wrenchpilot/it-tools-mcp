@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerAnsiblePlaybookValidator(server: McpServer) {
-  server.tool(
-    "ansible-playbook-validator",
-    "Validate Ansible playbook syntax and structure",
-    {
+  server.registerTool("ansible-playbook-validator", {
+  description: "Validate Ansible playbook syntax and structure",
+  inputSchema: {
       playbook: z.string().describe("Ansible playbook YAML content"),
-    },
-    async ({ playbook }) => {
+    }
+}, async ({ playbook }) => {
       if (!playbook?.trim()) {
         return {
           content: [

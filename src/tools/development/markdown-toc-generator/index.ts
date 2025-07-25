@@ -3,15 +3,14 @@ import { z } from "zod";
 import { CronExpressionParser } from 'cron-parser';
 
 export function registerMarkdownTocGenerator(server: McpServer) {
-  server.tool(
-    "markdown-toc-generator",
-    "Generate a table of contents from Markdown headers",
-    {
+  server.registerTool("markdown-toc-generator", {
+  description: "Generate a table of contents from Markdown headers",
+  inputSchema: {
       markdown: z.string().describe("Markdown content to generate TOC from"),
       maxLevel: z.number().optional().default(6).describe("Maximum header level to include (1-6)"),
       generateAnchors: z.boolean().optional().default(true).describe("Whether to generate anchor links")
-    },
-    async ({ markdown, maxLevel, generateAnchors }) => {
+    }
+}, async ({ markdown, maxLevel, generateAnchors }) => {
       // Extract headers from markdown
       const headerRegex = /^(#{1,6})\s+(.+)$/gm;
       const headers: Array<{ level: number; text: string; anchor: string }> = [];

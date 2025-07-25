@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerEmojiSearch(server: McpServer) {
-  server.tool(
-    "emoji-search",
-    "Search for emojis by name or category",
-    {
+  server.registerTool("emoji-search", {
+  description: "Search for emojis by name or category",
+  inputSchema: {
       query: z.string().describe("Search term for emoji (name, category, or keyword)"),
-    },
-    async ({ query }) => {
+    }
+}, async ({ query }) => {
       try {
         // Basic emoji database (simplified)
         const emojis: Record<string, string[]> = {

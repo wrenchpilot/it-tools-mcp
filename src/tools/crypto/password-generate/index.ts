@@ -6,17 +6,16 @@ import speakeasy from "speakeasy";
 import { z } from "zod";
 
 export function registerPasswordGenerate(server: McpServer) {
-  server.tool(
-    "password-generate",
-    "Generate a secure password",
-    {
+  server.registerTool("password-generate", {
+  description: "Generate a secure password",
+  inputSchema: {
       length: z.number().describe("Password length").optional(),
       includeUppercase: z.boolean().describe("Include uppercase letters").optional(),
       includeLowercase: z.boolean().describe("Include lowercase letters").optional(),
       includeNumbers: z.boolean().describe("Include numbers").optional(),
       includeSymbols: z.boolean().describe("Include symbols").optional(),
-    },
-    async ({ length = 16, includeUppercase = true, includeLowercase = true, includeNumbers = true, includeSymbols = true }) => {
+    }
+}, async ({ length = 16, includeUppercase = true, includeLowercase = true, includeNumbers = true, includeSymbols = true }) => {
       if (length < 4 || length > 128) {
         return {
           content: [

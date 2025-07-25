@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerTextToUnicodeNames(server: McpServer) {
-  server.tool(
-    "text-to-unicode-names",
-    "Convert text to Unicode character names",
-    {
+  server.registerTool("text-to-unicode-names", {
+  description: "Convert text to Unicode character names",
+  inputSchema: {
       text: z.string().describe("Text to convert to Unicode names")
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       const unicodeNames = [...text].map(char => {
         const codePoint = char.codePointAt(0);
         if (!codePoint) return char;

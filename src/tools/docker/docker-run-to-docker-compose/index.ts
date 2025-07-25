@@ -3,13 +3,12 @@ import { z } from "zod";
 import yaml from "js-yaml";
 
 export function registerDockerRunToCompose(server: McpServer) {
-  server.tool(
-    "docker-run-to-docker-compose",
-    "Convert docker run commands to Docker Compose format",
-    {
+  server.registerTool("docker-run-to-docker-compose", {
+  description: "Convert docker run commands to Docker Compose format",
+  inputSchema: {
       commands: z.string().describe("Docker run commands to convert (one per line)"),
-    },
-    async ({ commands }) => {
+    }
+}, async ({ commands }) => {
       if (!commands?.trim()) {
         return {
           content: [

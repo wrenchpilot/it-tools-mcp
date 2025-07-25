@@ -3,17 +3,16 @@ import { z } from "zod";
 import yaml from "js-yaml";
 
 export function registerTraefikComposeGenerator(server: McpServer) {
-  server.tool(
-    "traefik-compose-generator",
-    "Generate Traefik Docker Compose configuration",
-    {
+  server.registerTool("traefik-compose-generator", {
+  description: "Generate Traefik Docker Compose configuration",
+  inputSchema: {
       domain: z.string().optional().describe("Domain for Traefik services (default: example.com)"),
       email: z.string().optional().describe("Email for Let's Encrypt (default: admin@example.com)"),
       network: z.string().optional().describe("Docker network name (default: traefik)"),
       serviceName: z.string().optional().describe("Example service name (default: webapp)"),
       serviceImage: z.string().optional().describe("Example service image (default: nginx:latest)"),
-    },
-    async ({ domain = 'example.com', email = 'admin@example.com', network = 'traefik', serviceName = 'webapp', serviceImage = 'nginx:latest' }) => {
+    }
+}, async ({ domain = 'example.com', email = 'admin@example.com', network = 'traefik', serviceName = 'webapp', serviceImage = 'nginx:latest' }) => {
       try {
         const compose = {
           version: '3.8',

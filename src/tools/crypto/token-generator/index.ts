@@ -6,15 +6,14 @@ import speakeasy from "speakeasy";
 import { z } from "zod";
 
 export function registerTokenGenerator(server: McpServer) {
-  server.tool(
-    "token-generator",
-    "Generate secure random tokens",
-    {
+  server.registerTool("token-generator", {
+  description: "Generate secure random tokens",
+  inputSchema: {
       length: z.number().describe("Token length").optional(),
       charset: z.enum(["alphanumeric", "hex", "base64", "custom"]).describe("Character set to use").optional(),
       customChars: z.string().optional().describe("Custom characters (required if charset is 'custom')"),
-    },
-    async ({ length = 32, charset = "alphanumeric", customChars }) => {
+    }
+}, async ({ length = 32, charset = "alphanumeric", customChars }) => {
       try {
         if (length < 8 || length > 256) {
           return {

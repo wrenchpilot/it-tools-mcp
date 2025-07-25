@@ -10,11 +10,10 @@ import path from "path";
 import os from "os";
 
 export function registerTop(server: McpServer) {
-  server.tool(
-    "top",
-    "Display system processes (snapshot)",
-    {},
-    async () => {
+  server.registerTool("top", {
+  description: "Display system processes (snapshot)",
+  inputSchema: {}
+}, async () => {
       try {
         const processes = await psList();
         const sorted = processes.sort((a, b) => (b.cpu || 0) - (a.cpu || 0)).slice(0, 10);

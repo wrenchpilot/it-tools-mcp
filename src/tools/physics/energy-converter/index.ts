@@ -2,10 +2,9 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerEnergyConverter(server: McpServer) {
-  server.tool(
-    "energy-converter",
-    "Convert between different energy units",
-    {
+  server.registerTool("energy-converter", {
+  description: "Convert between different energy units",
+  inputSchema: {
       value: z.number().describe("Energy value to convert"),
       fromUnit: z.enum([
         "joule", "kilojoule", "calorie", "kilocalorie", "btu", 
@@ -15,8 +14,8 @@ export function registerEnergyConverter(server: McpServer) {
         "joule", "kilojoule", "calorie", "kilocalorie", "btu", 
         "watt-hour", "kilowatt-hour", "electronvolt", "foot-pound"
       ]).describe("Target energy unit")
-    },
-    async ({ value, fromUnit, toUnit }) => {
+    }
+}, async ({ value, fromUnit, toUnit }) => {
       try {
         // Conversion factors to joules
         const toJoules: Record<string, number> = {

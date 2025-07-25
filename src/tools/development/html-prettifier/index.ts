@@ -3,14 +3,13 @@ import { z } from "zod";
 import { CronExpressionParser } from 'cron-parser';
 
 export function registerHtmlPrettifier(server: McpServer) {
-  server.tool(
-    "html-prettifier",
-    "Format and beautify HTML code",
-    {
+  server.registerTool("html-prettifier", {
+  description: "Format and beautify HTML code",
+  inputSchema: {
       html: z.string().describe("HTML code to prettify"),
       indentSize: z.number().optional().default(2).describe("Number of spaces for indentation")
-    },
-    async ({ html, indentSize }) => {
+    }
+}, async ({ html, indentSize }) => {
       try {
         // Simple HTML prettifier
         let formatted = html;

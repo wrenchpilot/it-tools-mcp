@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerBase64Decode(server: McpServer) {
-  server.tool(
-    "base64-decode",
-    "Decode Base64 text",
-    {
-      text: z.string().describe("Base64 text to decode"),
-    },
-    async ({ text }) => {
+  server.registerTool("base64-decode", {
+  description: 'Decode Base64 text back to original text. Example: "SGVsbG8gV29ybGQ=" → "Hello World"',
+  inputSchema: {
+      text: z.string().min(1).regex(/^[A-Za-z0-9+/]*={0,2}$/, "Invalid Base64 format").describe("Base64 text to decode"),
+    }
+}, async ({ text }) => {
       try {
         const decoded = Buffer.from(text, 'base64').toString('utf-8');
         return {
@@ -21,6 +20,7 @@ export function registerBase64Decode(server: McpServer) {
         };
       } catch (error) {
         return {
+          isError: true,
           content: [
             {
               type: "text",

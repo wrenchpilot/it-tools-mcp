@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerJsonToCsv(server: McpServer) {
-  server.tool(
-    "json-to-csv",
-    "Convert JSON to CSV format",
-    {
+  server.registerTool("json-to-csv", {
+  description: "Convert JSON to CSV format",
+  inputSchema: {
       json: z.string().describe("JSON string to convert to CSV"),
       delimiter: z.string().describe("CSV delimiter").optional(),
-    },
-    async ({ json, delimiter = "," }) => {
+    }
+}, async ({ json, delimiter = "," }) => {
       try {
         const Papa = (await import("papaparse")).default;
         const data = JSON.parse(json);

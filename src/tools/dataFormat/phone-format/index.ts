@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerPhoneFormat(server: McpServer) {
-  server.tool(
-    "phone-format",
-    "Parse and format phone numbers",
-    {
+  server.registerTool("phone-format", {
+  description: "Parse and format phone numbers",
+  inputSchema: {
       phoneNumber: z.string().describe("Phone number to parse and format"),
       countryCode: z.string().optional().describe("Country code (e.g., 'US', 'GB', 'FR')"),
-    },
-    async ({ phoneNumber, countryCode }) => {
+    }
+}, async ({ phoneNumber, countryCode }) => {
       try {
         const { isValidPhoneNumber, parsePhoneNumber } = await import("libphonenumber-js");
 

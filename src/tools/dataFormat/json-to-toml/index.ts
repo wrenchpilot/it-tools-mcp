@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerJsonToToml(server: McpServer) {
-  server.tool(
-    "json-to-toml",
-    "Convert JSON to TOML format",
-    {
+  server.registerTool("json-to-toml", {
+  description: "Convert JSON to TOML format",
+  inputSchema: {
       json: z.string().describe("JSON string to convert"),
-    },
-    async ({ json }) => {
+    }
+}, async ({ json }) => {
       try {
         const toml = await import("@iarna/toml");
         const data = JSON.parse(json);

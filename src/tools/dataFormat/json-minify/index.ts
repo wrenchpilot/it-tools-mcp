@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerJsonMinify(server: McpServer) {
-  server.tool(
-    "json-minify",
-    "Minify JSON by removing whitespace",
-    {
+  server.registerTool("json-minify", {
+  description: "Minify JSON by removing whitespace",
+  inputSchema: {
       json: z.string().describe("JSON string to minify"),
-    },
-    async ({ json }) => {
+    }
+}, async ({ json }) => {
       try {
         const parsed = JSON.parse(json);
         const minified = JSON.stringify(parsed);

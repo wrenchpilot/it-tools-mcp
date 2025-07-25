@@ -3,13 +3,12 @@ import { z } from "zod";
 import yaml from "js-yaml";
 
 export function registerDockerComposeToRun(server: McpServer) {
-  server.tool(
-    "docker-compose-to-docker-run",
-    "Convert Docker Compose files to docker run commands",
-    {
+  server.registerTool("docker-compose-to-docker-run", {
+  description: "Convert Docker Compose files to docker run commands",
+  inputSchema: {
       content: z.string().describe("Docker Compose file content to convert"),
-    },
-    async ({ content }) => {
+    }
+}, async ({ content }) => {
       if (!content?.trim()) {
         return {
           content: [

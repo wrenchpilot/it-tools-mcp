@@ -46,18 +46,17 @@ function resolvePrivateKey(privateKeyArg?: string): string | undefined {
 }
 
 export function registerScp(server: McpServer) {
-  server.tool(
-    "scp",
-    "Copy files to or from a remote host using SFTP (SCP-like)",
-    {
+  server.registerTool("scp", {
+  description: "Copy files to or from a remote host using SFTP (SCP-like)",
+  inputSchema: {
       target: z.string().describe("Target host"),
       user: z.string().describe("Username"),
       direction: z.enum(["upload", "download"]).describe("Direction: upload (local to remote) or download (remote to local)"),
       localPath: z.string().describe("Local file path (source for upload, destination for download)"),
       remotePath: z.string().describe("Remote file path (destination for upload, source for download)"),
       privateKey: z.string().optional().describe("Private key for authentication (PEM format, optional, or path to key file)")
-    },
-    async ({ target, user, direction, localPath, remotePath, privateKey }) => {
+    }
+}, async ({ target, user, direction, localPath, remotePath, privateKey }) => {
       try {
         const { Client } = await import("ssh2");
         const fs = await import("fs");

@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerTextDiff(server: McpServer) {
-  server.tool(
-    "text-diff",
-    "Compare two texts and show differences",
-    {
+  server.registerTool("text-diff", {
+  description: "Compare two texts and show differences",
+  inputSchema: {
       text1: z.string().describe("First text to compare"),
       text2: z.string().describe("Second text to compare"),
-    },
-    async ({ text1, text2 }) => {
+    }
+}, async ({ text1, text2 }) => {
       try {
         // Simple diff implementation
         const lines1 = text1.split('\n');

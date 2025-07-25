@@ -10,13 +10,12 @@ import path from "path";
 import os from "os";
 
 export function registerIpv4SubnetCalc(server: McpServer) {
-  server.tool(
-    "ipv4-subnet-calc",
-    "Calculate IPv4 subnet information",
-    {
+  server.registerTool("ipv4-subnet-calc", {
+  description: "Calculate IPv4 subnet information",
+  inputSchema: {
       cidr: z.string().describe("IPv4 CIDR notation (e.g., 192.168.1.0/24)"),
-    },
-    async ({ cidr }) => {
+    }
+}, async ({ cidr }) => {
       try {
         const [ip, prefixLength] = cidr.split('/');
         const prefix = parseInt(prefixLength);

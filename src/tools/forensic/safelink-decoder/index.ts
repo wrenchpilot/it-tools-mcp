@@ -3,13 +3,12 @@ import { z } from "zod";
 import { Buffer } from 'buffer';
 
 export function registerSafelinkDecoder(server: McpServer) {
-  server.tool(
-    "safelink-decoder",
-    "Decode Microsoft Outlook SafeLink URLs",
-    {
+  server.registerTool("safelink-decoder", {
+  description: "Decode Microsoft Outlook SafeLink URLs",
+  inputSchema: {
       safelink: z.string().describe("SafeLink URL to decode")
-    },
-    async ({ safelink }) => {
+    }
+}, async ({ safelink }) => {
       try {
         const url = new URL(safelink);
         

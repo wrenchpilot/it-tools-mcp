@@ -10,14 +10,13 @@ import path from "path";
 import os from "os";
 
 export function registerGrep(server: McpServer) {
-  server.tool(
-    "grep",
-    "Search for patterns in files",
-    {
+  server.registerTool("grep", {
+  description: "Search for patterns in files",
+  inputSchema: {
       pattern: z.string().describe("Pattern to search for"),
       file: z.string().describe("File path")
-    },
-    async ({ pattern, file }) => {
+    }
+}, async ({ pattern, file }) => {
       try {
         const data = fs.readFileSync(file, "utf8");
         const lines = data.split("\n");

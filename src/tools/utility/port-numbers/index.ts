@@ -3,13 +3,12 @@ import { z } from "zod";
 import mimeTypes from 'mime-types';
 
 export function registerPortNumbers(server: McpServer) {
-  server.tool(
-    "port-numbers",
-    "Look up common TCP/UDP port numbers and their services",
-    {
+  server.registerTool("port-numbers", {
+  description: "Look up common TCP/UDP port numbers and their services",
+  inputSchema: {
       query: z.string().describe("Port number or service name to look up")
-    },
-    async ({ query }) => {
+    }
+}, async ({ query }) => {
       try {
         const ports = {
           // Well-known ports (0-1023)

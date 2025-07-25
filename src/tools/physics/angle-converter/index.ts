@@ -2,10 +2,9 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerAngleConverter(server: McpServer) {
-  server.tool(
-    "angle-converter",
-    "Convert between different angle units",
-    {
+  server.registerTool("angle-converter", {
+  description: "Convert between different angle units",
+  inputSchema: {
       value: z.number().describe("Angle value to convert"),
       fromUnit: z.enum([
         "degree", "radian", "gradian", "turn", "arcminute", "arcsecond"
@@ -13,8 +12,8 @@ export function registerAngleConverter(server: McpServer) {
       toUnit: z.enum([
         "degree", "radian", "gradian", "turn", "arcminute", "arcsecond"
       ]).describe("Target angle unit")
-    },
-    async ({ value, fromUnit, toUnit }) => {
+    }
+}, async ({ value, fromUnit, toUnit }) => {
       try {
         // Conversion factors to degrees
         const toDegrees: Record<string, number> = {

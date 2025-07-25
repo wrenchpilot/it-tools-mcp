@@ -10,14 +10,13 @@ import path from "path";
 import os from "os";
 
 export function registerMacAddressGenerate(server: McpServer) {
-  server.tool(
-    "mac-address-generate",
-    "Generate random MAC address",
-    {
+  server.registerTool("mac-address-generate", {
+  description: "Generate random MAC address",
+  inputSchema: {
       prefix: z.string().optional().describe("MAC address prefix (e.g., '00:1B:44')"),
       separator: z.enum([":", "-"]).describe("Separator character").optional(),
-    },
-    async ({ prefix, separator = ":" }) => {
+    }
+}, async ({ prefix, separator = ":" }) => {
       try {
         let macParts = [];
 

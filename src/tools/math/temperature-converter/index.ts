@@ -2,15 +2,14 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerTemperatureConverter(server: McpServer) {
-  server.tool(
-    "temperature-converter",
-    "Convert temperatures between Celsius, Fahrenheit, and Kelvin",
-    {
+  server.registerTool("temperature-converter", {
+  description: "Convert temperatures between Celsius, Fahrenheit, and Kelvin",
+  inputSchema: {
       temperature: z.number().describe("Temperature value to convert"),
       from: z.enum(["celsius", "fahrenheit", "kelvin"]).describe("Source temperature unit"),
       to: z.enum(["celsius", "fahrenheit", "kelvin"]).describe("Target temperature unit")
-    },
-    async ({ temperature, from, to }) => {
+    }
+}, async ({ temperature, from, to }) => {
       try {
         // Convert to Celsius first
         let celsius: number;

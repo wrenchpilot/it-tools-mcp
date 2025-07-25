@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerStringObfuscator(server: McpServer) {
-  server.tool(
-    "string-obfuscator",
-    "Obfuscate text by replacing characters with their HTML entities or other representations",
-    {
+  server.registerTool("string-obfuscator", {
+  description: "Obfuscate text by replacing characters with their HTML entities or other representations",
+  inputSchema: {
       text: z.string().describe("Text to obfuscate"),
       method: z.enum(["html-entities", "unicode", "base64"]).describe("Obfuscation method").optional(),
-    },
-    async ({ text, method = "html-entities" }) => {
+    }
+}, async ({ text, method = "html-entities" }) => {
       try {
         let result = '';
 

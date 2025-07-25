@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerMathEvaluate(server: McpServer) {
-  server.tool(
-    "math-evaluate",
-    "Safely evaluate mathematical expressions",
-    {
+  server.registerTool("math-evaluate", {
+  description: "Safely evaluate mathematical expressions",
+  inputSchema: {
       expression: z.string().describe("Mathematical expression to evaluate (e.g., '2 + 3 * 4')")
-    },
-    async ({ expression }) => {
+    }
+}, async ({ expression }) => {
       try {
         // @ts-ignore: Ignore missing type declarations for mathjs
         const { compile } = await import("mathjs");

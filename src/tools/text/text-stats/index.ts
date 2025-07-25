@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerTextStats(server: McpServer) {
-  server.tool(
-    "text-stats",
-    "Get statistics about text (character count, word count, etc.)",
-    {
+  server.registerTool("text-stats", {
+  description: "Get statistics about text (character count, word count, etc.)",
+  inputSchema: {
       text: z.string().describe("Text to analyze"),
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       const lines = text.split('\n');
       const words = text.trim().split(/\s+/).filter(word => word.length > 0);
       const characters = text.length;

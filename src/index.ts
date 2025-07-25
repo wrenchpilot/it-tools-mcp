@@ -237,16 +237,8 @@ export function getResourceUsage() {
 }
 
 /**
- * Security headers for responses (if applicable)
+ * Input validation and security utilities
  */
-export const SECURITY_HEADERS = {
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'X-XSS-Protection': '1; mode=block',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-} as const;
-
-// Helper to read version from package.json at runtime (ESM compatible)
 // Get package metadata for enhanced server info
 function getPackageMetadata() {
   const __dirname = path.dirname(new URL(import.meta.url).pathname);
@@ -272,6 +264,8 @@ const server = new McpServer({
   capabilities: {
     resources: {},
     tools: {},
+    prompts: {},
+    logging: {}
   },
 });
 
@@ -302,11 +296,13 @@ async function loadModularTools(server: McpServer, category: string) {
 
         if (registerFunction) {
           registerFunction(server);
+          console.error(`Loaded tool: ${category}/${toolDir}`);
         } else {
           console.warn(`No register function found in ${toolPath}`);
         }
       } catch (error) {
-        console.error(`Failed to load tool ${category}/${toolDir}:`, error);
+        console.error(`Failed to load tool ${category}/${toolDir}:`, 
+          error instanceof Error ? error.message : 'Unknown error');
       }
     } else {
       console.warn(`Tool index file does not exist: ${toolPath}`);
@@ -416,9 +412,31 @@ async function getCategoryDescription(category: string, toolNames: string[]): Pr
   return `${categoryTitle} tools and utilities (${toolNames.length} tools available)`;
 }
 
-// Register server info tool with dynamic metadata
-server.registerTool("server-info", {
-  description: "Get comprehensive information about the IT Tools MCP server, including available tool categories, version, and capabilities",
+
+
+// Register all tools dynamically by discovering categories from filesystem
+async function registerAllTools(server: McpServer) {
+  const toolsBaseDir = path.join(__dirname, 'tools');
+  
+  if (!fs.existsSync(toolsBaseDir)) {
+    console.warn('Tools directory does not exist:', toolsBaseDir);
+    return;
+  }
+
+  // Discover categories dynamically from the filesystem
+  const categories = fs.readdirSync(toolsBaseDir, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name)
+    .sort(); // Sort for consistent ordering
+
+  for (const category of categories) {
+    await loadModularTools(server, category);
+  }
+}
+
+// Add comprehensive system and server information tool
+server.registerTool("system-info", {
+  description: "Get comprehensive system information, server details, available tool categories, and resource usage",
   inputSchema: {
     include_tools: z.boolean().optional().describe("Include detailed information about all available tools"),
     category: z.string().optional().describe("Get information about a specific category (dynamically discovered)")
@@ -429,13 +447,15 @@ server.registerTool("server-info", {
   // Discover tools dynamically
   const { toolCategories, totalToolCount } = await discoverTools();
   
-  // Get system info
+  // Get comprehensive system info
+  const usage = getResourceUsage();
   const systemInfo = {
     timestamp: new Date().toISOString(),
     platform: process.platform,
     nodeVersion: process.version,
     memoryUsage: process.memoryUsage(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    resourceUsage: usage
   };
 
   // Server metadata from package.json
@@ -501,75 +521,45 @@ server.registerTool("server-info", {
   };
 });
 
-// Register all tools dynamically by discovering categories from filesystem
-async function registerAllTools(server: McpServer) {
-  const toolsBaseDir = path.join(__dirname, 'tools');
-  
-  if (!fs.existsSync(toolsBaseDir)) {
-    console.warn('Tools directory does not exist:', toolsBaseDir);
-    return;
-  }
-
-  // Discover categories dynamically from the filesystem
-  const categories = fs.readdirSync(toolsBaseDir, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name)
-    .sort(); // Sort for consistent ordering
-
-  for (const category of categories) {
-    await loadModularTools(server, category);
-  }
-}
-
-// Add resource monitoring tool
-server.tool(
-  "system-info",
-  "Get system resource usage and server information",
-  {},
-  async () => {
-    const usage = getResourceUsage();
-    return {
-      content: [
-        {
-          type: "text",
-          text: JSON.stringify({
-            server: "IT Tools MCP Server",
-            version: packageInfo.version,
-            uptime: `${Math.floor(usage.uptimeSeconds)} seconds`,
-            memory: usage.memory,
-            timestamp: new Date().toISOString(),
-          }, null, 2),
-        },
-      ],
-    };
-  }
-);
-
 // Run the server
 async function main() {
-  await registerAllTools(server);
+  try {
+    await registerAllTools(server);
 
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
 
-  // Log startup (stderr only, no resource usage)
-  if (process.env.NODE_ENV === 'test' && process.env.MCP_TEST_MODE === 'true') {
-    console.error("IT Tools MCP Server running on stdio");
-    // Exit after stdin closes (for test automation)
-    process.stdin.on('end', () => {
-      setTimeout(() => process.exit(0), 100);
-    });
-  }
-  
-  // Only start periodic monitoring in production, not in tests
-  if (process.env.NODE_ENV !== 'test') {
-    // Periodic resource monitoring (every 5 minutes)
-    setInterval(() => {
-      const usage = getResourceUsage();
-      if (usage.memory.heapUsedBytes > 200 * 1024 * 1024) { // Alert if using more than 200MB
-        console.error("High memory usage detected:", usage.memory);
-      }
-    }, 5 * 60 * 1000);
+    // Log startup (stderr only, no resource usage)
+    if (process.env.NODE_ENV === 'test' && process.env.MCP_TEST_MODE === 'true') {
+      console.error("IT Tools MCP Server running on stdio");
+      // Exit after stdin closes (for test automation)
+      process.stdin.on('end', () => {
+        setTimeout(() => process.exit(0), 100);
+      });
+    }
+    
+    // Only start periodic monitoring in production, not in tests
+    if (process.env.NODE_ENV !== 'test') {
+      // Periodic resource monitoring (every 5 minutes)
+      setInterval(() => {
+        const usage = getResourceUsage();
+        if (usage.memory.heapUsedBytes > 200 * 1024 * 1024) { // Alert if using more than 200MB
+          console.error("High memory usage detected:", usage.memory);
+        }
+      }, 5 * 60 * 1000);
+    }
+
+    // Handle graceful shutdown
+    const shutdown = () => {
+      console.error("Shutting down IT Tools MCP Server...");
+      process.exit(0);
+    };
+
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
+  } catch (error) {
+    console.error("Failed to start MCP server:", error);
+    process.exit(1);
   }
 }
 

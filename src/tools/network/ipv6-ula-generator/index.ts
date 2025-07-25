@@ -10,13 +10,12 @@ import path from "path";
 import os from "os";
 
 export function registerIpv6UlaGenerator(server: McpServer) {
-  server.tool(
-    "ipv6-ula-generator",
-    "Generate IPv6 Unique Local Address (ULA) prefix",
-    {
+  server.registerTool("ipv6-ula-generator", {
+  description: "Generate IPv6 Unique Local Address (ULA) prefix",
+  inputSchema: {
       globalId: z.string().optional().describe("Global ID (40 bits in hex, auto-generated if not provided)"),
-    },
-    async ({ globalId }) => {
+    }
+}, async ({ globalId }) => {
       try {
         // Generate random 40-bit Global ID if not provided
         let gid = globalId;

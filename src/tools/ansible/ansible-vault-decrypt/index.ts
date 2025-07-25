@@ -3,14 +3,13 @@ import { z } from "zod";
 import { pbkdf2Sync } from "crypto";
 
 export function registerAnsibleVaultDecrypt(server: McpServer) {
-  server.tool(
-    "ansible-vault-decrypt",
-    "Decrypt Ansible Vault encrypted text",
-    {
+  server.registerTool("ansible-vault-decrypt", {
+  description: "Decrypt Ansible Vault encrypted text",
+  inputSchema: {
       encryptedText: z.string().describe("Ansible Vault encrypted text to decrypt"),
       password: z.string().describe("Password for decryption"),
-    },
-    async ({ encryptedText, password }) => {
+    }
+}, async ({ encryptedText, password }) => {
       if (!encryptedText?.trim()) {
         return {
           content: [

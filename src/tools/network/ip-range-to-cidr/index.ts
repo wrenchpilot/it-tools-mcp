@@ -10,14 +10,13 @@ import path from "path";
 import os from "os";
 
 export function registerIpRangeToCidr(server: McpServer) {
-  server.tool(
-    "ip-range-to-cidr",
-    "Convert IP address range to CIDR notation(s)",
-    {
+  server.registerTool("ip-range-to-cidr", {
+  description: "Convert IP address range to CIDR notation(s)",
+  inputSchema: {
       startIP: z.string().describe("Starting IP address"),
       endIP: z.string().describe("Ending IP address")
-    },
-    async ({ startIP, endIP }) => {
+    }
+}, async ({ startIP, endIP }) => {
       try {
         // Parse IP addresses
         const parseIP = (ip: string): number => {

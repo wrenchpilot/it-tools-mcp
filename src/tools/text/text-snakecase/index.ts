@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerTextSnakecase(server: McpServer) {
-  server.tool(
-    "text-snakecase",
-    "Convert text to snake_case",
-    {
+  server.registerTool("text-snakecase", {
+  description: "Convert text to snake_case",
+  inputSchema: {
       text: z.string().describe("Text to convert to snake_case"),
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       const snakeCase = text
         .replace(/([a-z])([A-Z])/g, '$1_$2')
         .replace(/[^a-zA-Z0-9]+/g, '_')

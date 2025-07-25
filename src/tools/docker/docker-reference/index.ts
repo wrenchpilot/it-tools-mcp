@@ -1,11 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 export function registerDockerReference(server: McpServer) {
-  server.tool(
-    "docker-reference",
-    "Get Docker commands reference and cheatsheet",
-    {},
-    async () => {
+  server.registerTool("docker-reference", {
+  description: "Get Docker commands reference and cheatsheet",
+  inputSchema: {}
+}, async () => {
       const reference = `# Docker Quick Reference
 
 ## Installation & Setup

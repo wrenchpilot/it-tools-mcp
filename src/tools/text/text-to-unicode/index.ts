@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerTextToUnicode(server: McpServer) {
-  server.tool(
-    "text-to-unicode",
-    "Convert text to Unicode code points and vice versa",
-    {
+  server.registerTool("text-to-unicode", {
+  description: "Convert text to Unicode code points and vice versa",
+  inputSchema: {
       input: z.string().describe("Text to convert to Unicode or Unicode to convert to text"),
       operation: z.enum(["encode", "decode"]).describe("Operation: encode text to Unicode or decode Unicode to text"),
-    },
-    async ({ input, operation }) => {
+    }
+}, async ({ input, operation }) => {
       try {
         if (operation === "encode") {
           const unicode = input

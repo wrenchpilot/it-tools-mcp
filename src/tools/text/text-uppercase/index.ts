@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerTextUppercase(server: McpServer) {
-  server.tool(
-    "text-uppercase",
-    "Convert text to uppercase",
-    {
+  server.registerTool("text-uppercase", {
+  description: "Convert text to uppercase",
+  inputSchema: {
       text: z.string().describe("Text to convert to uppercase"),
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       return {
         content: [
           {

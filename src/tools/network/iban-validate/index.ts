@@ -10,13 +10,12 @@ import path from "path";
 import os from "os";
 
 export function registerIbanValidate(server: McpServer) {
-  server.tool(
-    "iban-validate",
-    "Validate and parse IBAN (International Bank Account Number)",
-    {
+  server.registerTool("iban-validate", {
+  description: "Validate and parse IBAN (International Bank Account Number)",
+  inputSchema: {
       iban: z.string().describe("IBAN to validate and parse"),
-    },
-    async ({ iban }) => {
+    }
+}, async ({ iban }) => {
       try {
         const IBAN = (await import("iban")).default;
 

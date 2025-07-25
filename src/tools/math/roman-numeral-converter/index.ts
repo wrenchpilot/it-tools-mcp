@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerRomanNumeralConverter(server: McpServer) {
-  server.tool(
-    "roman-numeral-converter",
-    "Convert between Arabic numbers and Roman numerals",
-    {
+  server.registerTool("roman-numeral-converter", {
+  description: "Convert between Arabic numbers and Roman numerals",
+  inputSchema: {
       input: z.string().describe("Number to convert (Arabic number 1-3999 or Roman numeral)")
-    },
-    async ({ input }) => {
+    }
+}, async ({ input }) => {
       try {
         // Auto-detect if input is a number or Roman numeral
         const isNumber = /^\d+$/.test(input.trim());

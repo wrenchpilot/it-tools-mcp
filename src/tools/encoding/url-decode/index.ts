@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerUrlDecode(server: McpServer) {
-  server.tool(
-    "url-decode",
-    "URL decode text",
-    {
+  server.registerTool("url-decode", {
+  description: "URL decode text",
+  inputSchema: {
       text: z.string().describe("URL encoded text to decode"),
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       try {
         const decoded = decodeURIComponent(text);
         return {

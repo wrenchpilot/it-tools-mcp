@@ -32,14 +32,13 @@ function getMimeDescription(mimeType: string): string {
 }
 
 export function registerMimeTypes(server: McpServer) {
-  server.tool(
-    "mime-types",
-    "Look up MIME types for file extensions",
-    {
+  server.registerTool("mime-types", {
+  description: "Look up MIME types for file extensions",
+  inputSchema: {
       input: z.string().describe("File extension (e.g., 'txt') or MIME type (e.g., 'text/plain')"),
       lookupType: z.enum(["extension-to-mime", "mime-to-extension"]).describe("Lookup direction").optional(),
-    },
-    async ({ input, lookupType = "extension-to-mime" }) => {
+    }
+}, async ({ input, lookupType = "extension-to-mime" }) => {
       try {
 
         if (lookupType === "extension-to-mime") {

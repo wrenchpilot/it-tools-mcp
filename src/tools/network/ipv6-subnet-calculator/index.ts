@@ -10,14 +10,13 @@ import path from "path";
 import os from "os";
 
 export function registerIpv6SubnetCalculator(server: McpServer) {
-  server.tool(
-    "ipv6-subnet-calculator",
-    "Calculate IPv6 subnet information",
-    {
+  server.registerTool("ipv6-subnet-calculator", {
+  description: "Calculate IPv6 subnet information",
+  inputSchema: {
       ipv6: z.string().describe("IPv6 address and prefix (e.g., 2001:db8::/32)"),
       newPrefix: z.number().optional().describe("New prefix length for subnetting")
-    },
-    async ({ ipv6, newPrefix }) => {
+    }
+}, async ({ ipv6, newPrefix }) => {
       try {
         const [address, prefixStr] = ipv6.split('/');
         if (!address || !prefixStr) {

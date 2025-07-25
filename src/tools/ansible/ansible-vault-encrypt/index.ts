@@ -3,15 +3,14 @@ import { z } from "zod";
 import { pbkdf2Sync, randomBytes } from "crypto";
 
 export function registerAnsibleVaultEncrypt(server: McpServer) {
-  server.tool(
-    "ansible-vault-encrypt",
-    "Encrypt text using Ansible Vault format",
-    {
+  server.registerTool("ansible-vault-encrypt", {
+  description: "Encrypt text using Ansible Vault format",
+  inputSchema: {
       text: z.string().describe("Text to encrypt"),
       password: z.string().describe("Password for encryption"),
       vaultId: z.string().optional().describe("Vault ID for the encrypted content (optional)"),
-    },
-    async ({ text, password, vaultId }) => {
+    }
+}, async ({ text, password, vaultId }) => {
       if (!text?.trim()) {
         return {
           content: [

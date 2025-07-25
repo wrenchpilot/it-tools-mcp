@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerJsonDiff(server: McpServer) {
-  server.tool(
-    "json-diff",
-    "Compare two JSON objects and show differences",
-    {
+  server.registerTool("json-diff", {
+  description: "Compare two JSON objects and show differences",
+  inputSchema: {
       json1: z.string().describe("First JSON object"),
       json2: z.string().describe("Second JSON object"),
-    },
-    async ({ json1, json2 }) => {
+    }
+}, async ({ json1, json2 }) => {
       try {
         const obj1 = JSON.parse(json1);
         const obj2 = JSON.parse(json2);

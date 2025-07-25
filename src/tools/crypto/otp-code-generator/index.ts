@@ -6,15 +6,14 @@ import speakeasy from "speakeasy";
 import { z } from "zod";
 
 export function registerOtpCodeGenerator(server: McpServer) {
-  server.tool(
-    "otp-code-generator",
-    "Generate Time-based One-Time Password (TOTP) codes",
-    {
+  server.registerTool("otp-code-generator", {
+  description: "Generate Time-based One-Time Password (TOTP) codes",
+  inputSchema: {
       secret: z.string().describe("Base32 encoded secret key"),
       digits: z.number().describe("Number of digits in the code").optional(),
       period: z.number().describe("Time period in seconds").optional(),
-    },
-    async ({ secret, digits = 6, period = 30 }) => {
+    }
+}, async ({ secret, digits = 6, period = 30 }) => {
       try {
         if (digits < 4 || digits > 10) {
           return {

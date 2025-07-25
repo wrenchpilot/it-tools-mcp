@@ -3,13 +3,12 @@ import { createHash } from "crypto";
 import { z } from "zod";
 
 export function registerHashMd5(server: McpServer) {
-  server.tool(
-    "hash-md5",
-    "Generate MD5 hash",
-    {
+  server.registerTool("hash-md5", {
+  description: "Generate MD5 hash",
+  inputSchema: {
       text: z.string().describe("Text to hash with MD5"),
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       const hash = createHash('md5');
       hash.update(text);
       const result = hash.digest('hex');

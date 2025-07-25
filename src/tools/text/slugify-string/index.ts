@@ -2,15 +2,14 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerSlugifyString(server: McpServer) {
-  server.tool(
-    "slugify-string",
-    "Convert text to URL-friendly slug format",
-    {
+  server.registerTool("slugify-string", {
+  description: "Convert text to URL-friendly slug format",
+  inputSchema: {
       text: z.string().describe("Text to convert to slug"),
       separator: z.string().describe("Character to use as separator").optional(),
       lowercase: z.boolean().describe("Convert to lowercase").optional(),
-    },
-    async ({ text, separator = "-", lowercase = true }) => {
+    }
+}, async ({ text, separator = "-", lowercase = true }) => {
       try {
         let slug = text
           .normalize('NFD')

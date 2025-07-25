@@ -3,14 +3,13 @@ import { z } from "zod";
 import { Buffer } from 'buffer';
 
 export function registerFileTypeIdentifier(server: McpServer) {
-  server.tool(
-    "file-type-identifier",
-    "Identify file type based on magic numbers/file signatures",
-    {
+  server.registerTool("file-type-identifier", {
+  description: "Identify file type based on magic numbers/file signatures",
+  inputSchema: {
       data: z.string().describe("Hex data or base64 data of file header"),
       format: z.enum(["hex", "base64"]).describe("Format of the input data")
-    },
-    async ({ data, format }) => {
+    }
+}, async ({ data, format }) => {
       try {
         let buffer: Buffer;
         

@@ -6,13 +6,12 @@ import speakeasy from "speakeasy";
 import { z } from "zod";
 
 export function registerBip39Generate(server: McpServer) {
-  server.tool(
-    "bip39-generate",
-    "Generate BIP39 mnemonic phrases",
-    {
+  server.registerTool("bip39-generate", {
+  description: "Generate BIP39 mnemonic phrases",
+  inputSchema: {
       wordCount: z.enum(["12", "15", "18", "21", "24"]).describe("Number of words in the mnemonic").optional(),
-    },
-    async ({ wordCount = "12" }) => {
+    }
+}, async ({ wordCount = "12" }) => {
       try {
         const count = parseInt(wordCount);
         

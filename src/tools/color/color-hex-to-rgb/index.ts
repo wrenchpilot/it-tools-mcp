@@ -3,13 +3,12 @@ import Color from "color";
 import { z } from "zod";
 
 export function registerColorHexToRgb(server: McpServer) {
-  server.tool(
-    "color-hex-to-rgb",
-    "Convert HEX color to RGB",
-    {
+  server.registerTool("color-hex-to-rgb", {
+  description: "Convert HEX color to RGB",
+  inputSchema: {
       hex: z.string().describe("HEX color code (e.g., #FF5733 or FF5733)"),
-    },
-    async ({ hex }) => {
+    }
+}, async ({ hex }) => {
       try {
         const rgb = Color(hex).rgb().array();
         return {

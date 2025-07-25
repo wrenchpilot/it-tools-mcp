@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerUnixTimestampConverter(server: McpServer) {
-  server.tool(
-    "unix-timestamp-converter",
-    "Convert between Unix timestamps and human-readable dates",
-    {
+  server.registerTool("unix-timestamp-converter", {
+  description: "Convert between Unix timestamps and human-readable dates",
+  inputSchema: {
       input: z.string().describe("Unix timestamp (seconds) or ISO date string")
-    },
-    async ({ input }) => {
+    }
+}, async ({ input }) => {
       try {
         // Auto-detect if input is a timestamp or date string
         const isTimestamp = /^\d+$/.test(input.trim());

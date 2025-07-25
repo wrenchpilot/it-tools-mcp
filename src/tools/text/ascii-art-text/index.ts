@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerAsciiArtText(server: McpServer) {
-  server.tool(
-    "ascii-art-text",
-    "Generate ASCII art text",
-    {
+  server.registerTool("ascii-art-text", {
+  description: "Generate ASCII art text",
+  inputSchema: {
       text: z.string().describe("Text to convert to ASCII art, or use 'LIST_FONTS' to get all available font names"),
       font: z.string().describe("ASCII art font style. Supports all 295+ figlet fonts. Use 'standard' if unsure.").optional(),
-    },
-    async ({ text, font = "standard" }) => {
+    }
+}, async ({ text, font = "standard" }) => {
       try {
         // Generate ASCII art using figlet
         const figlet = await import('figlet');

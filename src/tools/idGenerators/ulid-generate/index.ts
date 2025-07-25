@@ -1,11 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 export function registerUlidGenerate(server: McpServer) {
-  server.tool(
-    "ulid-generate",
-    "Generate Universally Unique Lexicographically Sortable Identifier",
-    {},
-    async () => {
+  server.registerTool("ulid-generate", {
+  description: "Generate Universally Unique Lexicographically Sortable Identifier",
+  inputSchema: {}
+}, async () => {
       try {
         // Simplified ULID implementation
         const timestamp = Date.now();

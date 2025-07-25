@@ -3,13 +3,12 @@ import { z } from "zod";
 import yaml from "js-yaml";
 
 export function registerDockerComposeValidator(server: McpServer) {
-  server.tool(
-    "docker-compose-validator",
-    "Validate Docker Compose files for syntax and compatibility",
-    {
+  server.registerTool("docker-compose-validator", {
+  description: "Validate Docker Compose files for syntax and compatibility",
+  inputSchema: {
       content: z.string().describe("Docker Compose file content to validate"),
-    },
-    async ({ content }) => {
+    }
+}, async ({ content }) => {
       if (!content?.trim()) {
         return {
           content: [

@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerJsonFormat(server: McpServer) {
-  server.tool(
-    "json-format",
-    "Format and validate JSON",
-    {
+  server.registerTool("json-format", {
+  description: 'Format and prettify JSON with proper indentation. Example: {"a":1,"b":2} → formatted JSON',
+  inputSchema: {
       json: z.string().describe("JSON string to format"),
       indent: z.number().describe("Number of spaces for indentation").optional(),
-    },
-    async ({ json, indent = 2 }) => {
+    }
+}, async ({ json, indent = 2 }) => {
       try {
         if (indent < 0 || indent > 10) {
           return {
@@ -93,6 +92,7 @@ Examples of supported formats:
         }
       } catch (error) {
         return {
+          isError: true,
           content: [
             {
               type: "text",

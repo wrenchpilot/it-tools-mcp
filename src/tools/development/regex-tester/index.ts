@@ -3,15 +3,14 @@ import { z } from "zod";
 import { CronExpressionParser } from 'cron-parser';
 
 export function registerRegexTester(server: McpServer) {
-  server.tool(
-    "regex-tester",
-    "Test regular expressions against text",
-    {
+  server.registerTool("regex-tester", {
+  description: "Test regular expressions against text",
+  inputSchema: {
       pattern: z.string().describe("Regular expression pattern"),
       text: z.string().describe("Text to test against the regex"),
       flags: z.string().optional().describe("Regex flags (g, i, m, s, u, y)"),
-    },
-    async ({ pattern, text, flags }) => {
+    }
+}, async ({ pattern, text, flags }) => {
       try {
         const regex = new RegExp(pattern, flags);
         const matches = text.match(regex);

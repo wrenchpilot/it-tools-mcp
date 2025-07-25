@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerHtmlToMarkdown(server: McpServer) {
-  server.tool(
-    "html-to-markdown",
-    "Convert HTML to Markdown",
-    {
+  server.registerTool("html-to-markdown", {
+  description: "Convert HTML to Markdown",
+  inputSchema: {
       html: z.string().describe("HTML content to convert to Markdown"),
-    },
-    async ({ html }) => {
+    }
+}, async ({ html }) => {
       try {
         const TurndownService = (await import("turndown")).default;
         const turndownService = new TurndownService({

@@ -6,15 +6,14 @@ import speakeasy from "speakeasy";
 import { z } from "zod";
 
 export function registerBcryptHash(server: McpServer) {
-  server.tool(
-    "bcrypt-hash",
-    "Generate bcrypt hash or verify password against hash",
-    {
+  server.registerTool("bcrypt-hash", {
+  description: "Generate bcrypt hash or verify password against hash",
+  inputSchema: {
       password: z.string().describe("Password to hash or verify"),
       rounds: z.number().describe("Number of salt rounds (4-12, default 10)").optional(),
       hash: z.string().optional().describe("Existing hash to verify against (for verification)"),
-    },
-    async ({ password, rounds = 10, hash }) => {
+    }
+}, async ({ password, rounds = 10, hash }) => {
       try {
         if (rounds < 4 || rounds > 12) {
           return {

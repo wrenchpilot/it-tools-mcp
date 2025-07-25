@@ -1,11 +1,10 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 export function registerAnsibleReference(server: McpServer) {
-  server.tool(
-    "ansible-reference",
-    "Get Ansible commands reference and cheatsheet",
-    {},
-    async () => {
+  server.registerTool("ansible-reference", {
+  description: "Get Ansible commands reference and cheatsheet",
+  inputSchema: {}
+}, async () => {
       const reference = `# Ansible Quick Reference
 
 ## Installation

@@ -2,15 +2,14 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerNumberBaseConverter(server: McpServer) {
-  server.tool(
-    "number-base-converter",
-    "Convert numbers between different bases (binary, octal, decimal, hexadecimal)",
-    {
+  server.registerTool("number-base-converter", {
+  description: "Convert numbers between different bases (binary, octal, decimal, hexadecimal)",
+  inputSchema: {
       number: z.string().describe("Number to convert"),
       fromBase: z.number().describe("Source base (2-36)"),
       toBase: z.number().describe("Target base (2-36)")
-    },
-    async ({ number, fromBase, toBase }) => {
+    }
+}, async ({ number, fromBase, toBase }) => {
       try {
         if (fromBase < 2 || fromBase > 36 || toBase < 2 || toBase > 36) {
           return {

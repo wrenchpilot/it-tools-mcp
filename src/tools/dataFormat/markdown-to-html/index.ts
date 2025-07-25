@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerMarkdownToHtml(server: McpServer) {
-  server.tool(
-    "markdown-to-html",
-    "Convert Markdown to HTML",
-    {
+  server.registerTool("markdown-to-html", {
+  description: "Convert Markdown to HTML",
+  inputSchema: {
       markdown: z.string().describe("Markdown content to convert to HTML"),
-    },
-    async ({ markdown }) => {
+    }
+}, async ({ markdown }) => {
       try {
         const { marked } = await import("marked");
         const html = marked(markdown, {

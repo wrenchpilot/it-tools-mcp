@@ -3,11 +3,10 @@ import { z } from "zod";
 import mimeTypes from 'mime-types';
 
 export function registerDeviceInfo(server: McpServer) {
-  server.tool(
-    "device-info",
-    "Get basic device/system information",
-    {},
-    async () => {
+  server.registerTool("device-info", {
+  description: "Get basic device/system information",
+  inputSchema: {}
+}, async () => {
       try {
         const info = {
           platform: process.platform,

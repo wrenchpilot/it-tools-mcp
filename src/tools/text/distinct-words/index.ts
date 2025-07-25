@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerDistinctWords(server: McpServer) {
-  server.tool(
-    "distinct-words",
-    "Count distinct words in text and show their frequency",
-    {
+  server.registerTool("distinct-words", {
+  description: "Count distinct words in text and show their frequency",
+  inputSchema: {
       text: z.string().describe("Text to analyze for distinct words")
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       // Remove punctuation and split into words
       const cleanedText = text.replace(/[^\w\s]/g, ' ').toLowerCase();
       const words = cleanedText.split(/\s+/).filter(word => word.length > 0);

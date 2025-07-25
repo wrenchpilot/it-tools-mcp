@@ -10,16 +10,15 @@ import path from "path";
 import os from "os";
 
 export function registerRandomPort(server: McpServer) {
-  server.tool(
-    "random-port",
-    "Generate random port numbers",
-    {
+  server.registerTool("random-port", {
+  description: "Generate random port numbers",
+  inputSchema: {
       count: z.number().describe("Number of ports to generate").optional(),
       min: z.number().describe("Minimum port number").optional(),
       max: z.number().describe("Maximum port number").optional(),
       exclude: z.array(z.number()).optional().describe("Ports to exclude"),
-    },
-    async ({ count = 1, min = 1024, max = 65535, exclude = [] }) => {
+    }
+}, async ({ count = 1, min = 1024, max = 65535, exclude = [] }) => {
       try {
         const ports: number[] = [];
         const excludeSet = new Set(exclude);

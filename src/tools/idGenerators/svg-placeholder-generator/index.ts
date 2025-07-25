@@ -2,17 +2,16 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerSvgPlaceholderGenerator(server: McpServer) {
-  server.tool(
-    "svg-placeholder-generator",
-    "Generate SVG placeholder images",
-    {
+  server.registerTool("svg-placeholder-generator", {
+  description: "Generate SVG placeholder images",
+  inputSchema: {
       width: z.number().describe("Width in pixels").optional(),
       height: z.number().describe("Height in pixels").optional(),
       backgroundColor: z.string().describe("Background color (hex)").optional(),
       textColor: z.string().describe("Text color (hex)").optional(),
       text: z.string().optional().describe("Custom text (default: dimensions)"),
-    },
-    async ({ width = 300, height = 200, backgroundColor = "#cccccc", textColor = "#666666", text }) => {
+    }
+}, async ({ width = 300, height = 200, backgroundColor = "#cccccc", textColor = "#666666", text }) => {
       try {
         if (width < 1 || width > 2000 || height < 1 || height > 2000) {
           return {

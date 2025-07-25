@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerTextToNatoAlphabet(server: McpServer) {
-  server.tool(
-    "text-to-nato-alphabet",
-    "Convert text to NATO phonetic alphabet",
-    {
+  server.registerTool("text-to-nato-alphabet", {
+  description: "Convert text to NATO phonetic alphabet",
+  inputSchema: {
       text: z.string().describe("Text to convert to NATO phonetic alphabet"),
       language: z.string().optional().default("International").describe("Language/country variant (International, France, Germany, etc.)")
-    },
-    async ({ text, language }) => {
+    }
+}, async ({ text, language }) => {
       // NATO phonetic alphabet mappings
       const natoAlphabets: Record<string, Record<string, string>> = {
         International: {

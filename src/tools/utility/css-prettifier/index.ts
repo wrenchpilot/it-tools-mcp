@@ -3,14 +3,13 @@ import { z } from "zod";
 import mimeTypes from 'mime-types';
 
 export function registerCssPrettifier(server: McpServer) {
-  server.tool(
-    "css-prettifier",
-    "Format and prettify CSS code",
-    {
+  server.registerTool("css-prettifier", {
+  description: "Format and prettify CSS code",
+  inputSchema: {
       css: z.string().describe("CSS code to format"),
       indentSize: z.number().optional().describe("Number of spaces for indentation (default: 2)")
-    },
-    async ({ css, indentSize = 2 }) => {
+    }
+}, async ({ css, indentSize = 2 }) => {
       try {
         // Basic CSS prettifier implementation
         let formatted = css

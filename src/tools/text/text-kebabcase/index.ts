@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerTextKebabcase(server: McpServer) {
-  server.tool(
-    "text-kebabcase",
-    "Convert text to kebab-case",
-    {
+  server.registerTool("text-kebabcase", {
+  description: "Convert text to kebab-case",
+  inputSchema: {
       text: z.string().describe("Text to convert to kebab-case"),
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       const kebabCase = text
         .replace(/([a-z])([A-Z])/g, '$1-$2')
         .replace(/[^a-zA-Z0-9]+/g, '-')

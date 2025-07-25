@@ -3,16 +3,15 @@ import { z } from "zod";
 import { CronExpressionParser } from 'cron-parser';
 
 export function registerListConverter(server: McpServer) {
-  server.tool(
-    "list-converter",
-    "Convert between different list formats (comma-separated, line-separated, etc.)",
-    {
+  server.registerTool("list-converter", {
+  description: "Convert between different list formats (comma-separated, line-separated, etc.)",
+  inputSchema: {
       list: z.string().describe("Input list to convert"),
       inputFormat: z.enum(["comma", "semicolon", "newline", "space", "pipe"]).describe("Input format"),
       outputFormat: z.enum(["comma", "semicolon", "newline", "space", "pipe", "json", "quoted"]).describe("Output format"),
       trim: z.boolean().describe("Trim whitespace from items").optional(),
-    },
-    async ({ list, inputFormat, outputFormat, trim = true }) => {
+    }
+}, async ({ list, inputFormat, outputFormat, trim = true }) => {
       try {
         const separators = {
           comma: ',',

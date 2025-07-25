@@ -10,14 +10,13 @@ import path from "path";
 import os from "os";
 
 export function registerIpSubnetCalculator(server: McpServer) {
-  server.tool(
-    "ip-subnet-calculator",
-    "Calculate subnet information for IPv4",
-    {
+  server.registerTool("ip-subnet-calculator", {
+  description: "Calculate subnet information for IPv4",
+  inputSchema: {
       ip: z.string().describe("IPv4 address (e.g., 192.168.1.1)"),
       cidr: z.number().describe("CIDR notation (e.g., 24)"),
-    },
-    async ({ ip, cidr }) => {
+    }
+}, async ({ ip, cidr }) => {
       try {
         if (cidr < 1 || cidr > 32) {
           return {

@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerAnsibleInventoryParser(server: McpServer) {
-  server.tool(
-    "ansible-inventory-parser",
-    "Parse and validate Ansible inventory files",
-    {
+  server.registerTool("ansible-inventory-parser", {
+  description: "Parse and validate Ansible inventory files",
+  inputSchema: {
       inventory: z.string().describe("Ansible inventory content (INI or YAML format)"),
-    },
-    async ({ inventory }) => {
+    }
+}, async ({ inventory }) => {
       if (!inventory?.trim()) {
         return {
           content: [

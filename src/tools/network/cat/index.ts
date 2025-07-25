@@ -10,13 +10,12 @@ import path from "path";
 import os from "os";
 
 export function registerCat(server: McpServer) {
-  server.tool(
-    "cat",
-    "Display content of a file",
-    {
+  server.registerTool("cat", {
+  description: "Display content of a file",
+  inputSchema: {
       file: z.string().describe("File path")
-    },
-    async ({ file }) => {
+    }
+}, async ({ file }) => {
       try {
         const data = fs.readFileSync(file, "utf8");
         return { content: [{ type: "text", text: data }] };

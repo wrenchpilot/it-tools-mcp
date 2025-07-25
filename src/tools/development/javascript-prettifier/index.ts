@@ -3,15 +3,14 @@ import { z } from "zod";
 import { CronExpressionParser } from 'cron-parser';
 
 export function registerJavascriptPrettifier(server: McpServer) {
-  server.tool(
-    "javascript-prettifier",
-    "Format and beautify JavaScript/CSS code",
-    {
+  server.registerTool("javascript-prettifier", {
+  description: "Format and beautify JavaScript/CSS code",
+  inputSchema: {
       code: z.string().describe("JavaScript or CSS code to prettify"),
       type: z.enum(["javascript", "css"]).describe("Type of code to format"),
       indentSize: z.number().optional().default(2).describe("Number of spaces for indentation")
-    },
-    async ({ code, type, indentSize }) => {
+    }
+}, async ({ code, type, indentSize }) => {
       try {
         let formatted = code;
         const indent = ' '.repeat(indentSize);

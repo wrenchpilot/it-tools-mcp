@@ -6,14 +6,13 @@ import speakeasy from "speakeasy";
 import { z } from "zod";
 
 export function registerBasicAuthGenerator(server: McpServer) {
-  server.tool(
-    "basic-auth-generator",
-    "Generate HTTP Basic Authentication header",
-    {
+  server.registerTool("basic-auth-generator", {
+  description: "Generate HTTP Basic Authentication header",
+  inputSchema: {
       username: z.string().describe("Username"),
       password: z.string().describe("Password"),
-    },
-    async ({ username, password }) => {
+    }
+}, async ({ username, password }) => {
       try {
         const credentials = `${username}:${password}`;
         const encoded = Buffer.from(credentials, 'utf-8').toString('base64');

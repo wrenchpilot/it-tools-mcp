@@ -10,14 +10,13 @@ import path from "path";
 import os from "os";
 
 export function registerDig(server: McpServer) {
-  server.tool(
-    "dig",
-    "Perform DNS lookup with dig command",
-    {
+  server.registerTool("dig", {
+  description: "Perform DNS lookup with dig command",
+  inputSchema: {
       target: z.string().describe("Hostname or IP address"),
       type: z.string().default("A").describe("DNS record type")
-    },
-    async ({ target, type }) => {
+    }
+}, async ({ target, type }) => {
       return new Promise((resolve) => {
         dns.resolve(target, type, (err, addresses) => {
           if (err) {

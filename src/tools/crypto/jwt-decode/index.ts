@@ -6,13 +6,12 @@ import speakeasy from "speakeasy";
 import { z } from "zod";
 
 export function registerJwtDecode(server: McpServer) {
-  server.tool(
-    "jwt-decode",
-    "Decode JWT token (header and payload only)",
-    {
+  server.registerTool("jwt-decode", {
+  description: "Decode JWT token (header and payload only)",
+  inputSchema: {
       token: z.string().describe("JWT token to decode"),
-    },
-    async ({ token }) => {
+    }
+}, async ({ token }) => {
       try {
         const parts = token.split('.');
         if (parts.length !== 3) {

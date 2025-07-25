@@ -1,17 +1,15 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import mimeTypes from 'mime-types';
 
 export function registerRemPxConverter(server: McpServer) {
-  server.tool(
-    "rem-px-converter",
-    "Convert between REM and PX units for CSS",
-    {
-      value: z.number().describe("Value to convert"),
-      fromUnit: z.enum(["rem", "px"]).describe("Source unit"),
-      rootFontSize: z.number().optional().describe("Root font size in pixels (default: 16)")
-    },
-    async ({ value, fromUnit, rootFontSize = 16 }) => {
+  server.registerTool("rem-px-converter", {
+    description: "Convert between REM and PX units for CSS. Example: Convert 1.5rem to pixels, or 24px to rem units.",
+    inputSchema: {
+      value: z.number().min(0).describe("Value to convert (e.g., 1.5 for 1.5rem or 24 for 24px)"),
+      fromUnit: z.enum(["rem", "px"]).describe("Source unit - either 'rem' or 'px'"),
+      rootFontSize: z.number().min(1).max(100).default(16).describe("Root font size in pixels (default: 16px - standard browser default)")
+    }
+  }, async ({ value, fromUnit, rootFontSize = 16 }) => {
       try {
         let result: number;
         let explanation: string;
@@ -61,6 +59,7 @@ Notes:
           };
       } catch (error) {
         return {
+          isError: true,
           content: [{
             type: "text",
             text: `Error converting REM/PX: ${error instanceof Error ? error.message : 'Unknown error'}`

@@ -10,13 +10,12 @@ import path from "path";
 import os from "os";
 
 export function registerNslookup(server: McpServer) {
-  server.tool(
-    "nslookup",
-    "Perform DNS lookup on a hostname or IP address",
-    {
+  server.registerTool("nslookup", {
+  description: "Perform DNS lookup on a hostname or IP address",
+  inputSchema: {
       target: z.string().describe("Hostname or IP address")
-    },
-    async ({ target }) => {
+    }
+}, async ({ target }) => {
       return new Promise((resolve) => {
         dns.lookup(target, (err, address, family) => {
           if (err) {

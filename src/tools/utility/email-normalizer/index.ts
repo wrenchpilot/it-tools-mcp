@@ -3,13 +3,12 @@ import { z } from "zod";
 import mimeTypes from 'mime-types';
 
 export function registerEmailNormalizer(server: McpServer) {
-  server.tool(
-    "email-normalizer",
-    "Normalize email addresses (remove dots, plus aliases, etc.)",
-    {
+  server.registerTool("email-normalizer", {
+  description: "Normalize email addresses (remove dots, plus aliases, etc.)",
+  inputSchema: {
       email: z.string().describe("Email address to normalize"),
-    },
-    async ({ email }) => {
+    }
+}, async ({ email }) => {
       try {
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

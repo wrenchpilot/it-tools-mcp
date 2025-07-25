@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerQrGenerate(server: McpServer) {
-  server.tool(
-    "qr-generate",
-    "Generate QR code for any text including URLs, WiFi networks, contact info, etc.",
-    {
+  server.registerTool("qr-generate", {
+  description: "Generate QR code for any text including URLs, WiFi networks, contact info, etc.",
+  inputSchema: {
       text: z.string().describe("Text to encode in QR code (URLs, WiFi: WIFI:T:WPA;S:network;P:password;;, contact info, etc.)"),
       size: z.number().describe("Size multiplier (1-3)").optional(),
-    },
-    async ({ text, size = 1 }) => {
+    }
+}, async ({ text, size = 1 }) => {
       try {
         const QRCode = (await import("qrcode")).default;
 

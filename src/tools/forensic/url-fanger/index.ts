@@ -3,14 +3,13 @@ import { z } from "zod";
 import { Buffer } from 'buffer';
 
 export function registerUrlFanger(server: McpServer) {
-  server.tool(
-    "url-fanger",
-    "Defang or refang URLs for safe sharing (security analysis)",
-    {
+  server.registerTool("url-fanger", {
+  description: "Defang or refang URLs for safe sharing (security analysis)",
+  inputSchema: {
       text: z.string().describe("Text containing URLs to fang/defang"),
       operation: z.enum(["defang", "refang"]).describe("Whether to defang (make safe) or refang (restore) URLs")
-    },
-    async ({ text, operation }) => {
+    }
+}, async ({ text, operation }) => {
       try {
         let result = text;
         

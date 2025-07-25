@@ -21,13 +21,12 @@ function getUsageHint(code: number): string {
 }
 
 export function registerHttpStatusCodes(server: McpServer) {
-  server.tool(
-    "http-status-codes",
-    "Get information about HTTP status codes",
-    {
+  server.registerTool("http-status-codes", {
+  description: "Get information about HTTP status codes",
+  inputSchema: {
       code: z.number().optional().describe("HTTP status code to look up (optional)"),
-    },
-    async ({ code }) => {
+    }
+}, async ({ code }) => {
       try {
         const statusCodes: Record<number, string> = {
           // 1xx Informational

@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerTextCapitalize(server: McpServer) {
-  server.tool(
-    "text-capitalize",
-    "Capitalize first letter of each word",
-    {
+  server.registerTool("text-capitalize", {
+  description: "Capitalize first letter of each word",
+  inputSchema: {
       text: z.string().describe("Text to capitalize"),
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       const capitalized = text.replace(/\b\w/g, l => l.toUpperCase());
       return {
         content: [

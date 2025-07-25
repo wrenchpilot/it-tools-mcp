@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerHtmlDecode(server: McpServer) {
-  server.tool(
-    "html-decode",
-    "Decode HTML entities",
-    {
+  server.registerTool("html-decode", {
+  description: "Decode HTML entities",
+  inputSchema: {
       text: z.string().describe("HTML encoded text to decode"),
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       const decoded = text
         .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')

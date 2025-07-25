@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerLoremIpsumGenerator(server: McpServer) {
-  server.tool(
-    "lorem-ipsum-generator",
-    "Generate Lorem Ipsum placeholder text",
-    {
+  server.registerTool("lorem-ipsum-generator", {
+  description: "Generate Lorem Ipsum placeholder text",
+  inputSchema: {
       count: z.number().describe("Number of items to generate").optional(),
       type: z.enum(["words", "sentences", "paragraphs"]).describe("Type of content to generate").optional(),
-    },
-    async ({ count = 5, type = "sentences" }) => {
+    }
+}, async ({ count = 5, type = "sentences" }) => {
       try {
         if (count < 1 || count > 100) {
           return {

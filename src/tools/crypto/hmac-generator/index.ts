@@ -6,15 +6,14 @@ import speakeasy from "speakeasy";
 import { z } from "zod";
 
 export function registerHmacGenerator(server: McpServer) {
-  server.tool(
-    "hmac-generator",
-    "Generate HMAC (Hash-based Message Authentication Code)",
-    {
+  server.registerTool("hmac-generator", {
+  description: "Generate HMAC (Hash-based Message Authentication Code)",
+  inputSchema: {
       message: z.string().describe("Message to authenticate"),
       key: z.string().describe("Secret key for HMAC"),
       algorithm: z.enum(["sha1", "sha256", "sha512"]).describe("Hash algorithm").optional(),
-    },
-    async ({ message, key, algorithm = "sha256" }) => {
+    }
+}, async ({ message, key, algorithm = "sha256" }) => {
       try {
         const hmac = createHmac(algorithm, key);
         hmac.update(message);

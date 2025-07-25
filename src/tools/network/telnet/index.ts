@@ -10,14 +10,13 @@ import path from "path";
 import os from "os";
 
 export function registerTelnet(server: McpServer) {
-  server.tool(
-    "telnet",
-    "Test TCP connectivity to a host and port",
-    {
+  server.registerTool("telnet", {
+  description: "Test TCP connectivity to a host and port",
+  inputSchema: {
       target: z.string().describe("Host to connect to"),
       port: z.number().describe("Port number")
-    },
-    async ({ target, port }) => {
+    }
+}, async ({ target, port }) => {
       return new Promise(async (resolve) => {
         try {
           const net = (await import('net')).default;

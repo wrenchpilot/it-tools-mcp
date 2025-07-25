@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerXmlFormat(server: McpServer) {
-  server.tool(
-    "xml-format",
-    "Format and prettify XML",
-    {
+  server.registerTool("xml-format", {
+  description: "Format and prettify XML",
+  inputSchema: {
       xml: z.string().describe("XML string to format"),
       indent: z.number().describe("Number of spaces for indentation").optional(),
-    },
-    async ({ xml, indent = 2 }) => {
+    }
+}, async ({ xml, indent = 2 }) => {
       try {
         const formatXML = (await import("xml-formatter")).default;
         const formatted = formatXML(xml, {

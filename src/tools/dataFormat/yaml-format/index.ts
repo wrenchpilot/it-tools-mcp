@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerYamlFormat(server: McpServer) {
-  server.tool(
-    "yaml-format",
-    "Format and prettify YAML",
-    {
+  server.registerTool("yaml-format", {
+  description: "Format and prettify YAML",
+  inputSchema: {
       yaml: z.string().describe("YAML string to format"),
-    },
-    async ({ yaml }) => {
+    }
+}, async ({ yaml }) => {
       try {
         const YAML = await import("js-yaml");
         // Parse YAML to validate and then dump with proper formatting

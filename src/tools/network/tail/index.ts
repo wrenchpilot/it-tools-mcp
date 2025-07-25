@@ -10,14 +10,13 @@ import path from "path";
 import os from "os";
 
 export function registerTail(server: McpServer) {
-  server.tool(
-    "tail",
-    "Display the end of a file",
-    {
+  server.registerTool("tail", {
+  description: "Display the end of a file",
+  inputSchema: {
       file: z.string().describe("File path"),
       lines: z.number().default(10).describe("Number of lines")
-    },
-    async ({ file, lines }) => {
+    }
+}, async ({ file, lines }) => {
       try {
         const out = await readLastLines.read(file, lines);
         return { content: [{ type: "text", text: out }] };

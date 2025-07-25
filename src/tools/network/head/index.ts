@@ -10,14 +10,13 @@ import path from "path";
 import os from "os";
 
 export function registerHead(server: McpServer) {
-  server.tool(
-    "head",
-    "Display the beginning of a file",
-    {
+  server.registerTool("head", {
+  description: "Display the beginning of a file",
+  inputSchema: {
       file: z.string().describe("File path"),
       lines: z.number().default(10).describe("Number of lines")
-    },
-    async ({ file, lines }) => {
+    }
+}, async ({ file, lines }) => {
       try {
         const data = fs.readFileSync(file, "utf8");
         const out = data.split("\n").slice(0, lines).join("\n");

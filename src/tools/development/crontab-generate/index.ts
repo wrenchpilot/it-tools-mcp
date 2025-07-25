@@ -3,17 +3,16 @@ import { z } from "zod";
 import { CronExpressionParser } from 'cron-parser';
 
 export function registerCrontabGenerate(server: McpServer) {
-  server.tool(
-    "crontab-generate",
-    "Generate crontab expressions",
-    {
+  server.registerTool("crontab-generate", {
+  description: "Generate crontab expressions",
+  inputSchema: {
       minute: z.string().describe("Minute (0-59, *, */n, n-m)").optional(),
       hour: z.string().describe("Hour (0-23, *, */n, n-m)").optional(),
       dayOfMonth: z.string().describe("Day of month (1-31, *, */n, n-m)").optional(),
       month: z.string().describe("Month (1-12, *, */n, n-m)").optional(),
       dayOfWeek: z.string().describe("Day of week (0-7, *, */n, n-m)").optional(),
-    },
-    async ({ minute = "*", hour = "*", dayOfMonth = "*", month = "*", dayOfWeek = "*" }) => {
+    }
+}, async ({ minute = "*", hour = "*", dayOfMonth = "*", month = "*", dayOfWeek = "*" }) => {
       try {
         const cronExpression = `${minute} ${hour} ${dayOfMonth} ${month} ${dayOfWeek}`;
 

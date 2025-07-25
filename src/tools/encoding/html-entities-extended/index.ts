@@ -2,14 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerHtmlEntitiesExtended(server: McpServer) {
-  server.tool(
-    "html-entities-extended",
-    "Extended HTML entity encoding/decoding",
-    {
+  server.registerTool("html-entities-extended", {
+  description: "Extended HTML entity encoding/decoding",
+  inputSchema: {
       text: z.string().describe("Text to encode or decode"),
       operation: z.enum(["encode", "decode"]).describe("Operation to perform"),
-    },
-    async ({ text, operation }) => {
+    }
+}, async ({ text, operation }) => {
       try {
         if (operation === "encode") {
           const encoded = text

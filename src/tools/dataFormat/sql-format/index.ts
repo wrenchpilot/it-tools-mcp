@@ -2,16 +2,15 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerSqlFormat(server: McpServer) {
-  server.tool(
-    "sql-format",
-    "Format and prettify SQL queries",
-    {
+  server.registerTool("sql-format", {
+  description: "Format and prettify SQL queries",
+  inputSchema: {
       sql: z.string().describe("SQL query to format"),
       dialect: z.string().optional().describe(
         "SQL dialect to use for formatting (e.g., 'sql', 'mysql', 'postgresql', 'sqlite', 'mariadb', 'db2', 'plsql', 'n1ql', 'redshift', 'spark', 'tsql', 'trino', 'bigquery'). Default is 'sql'."
       ),
-    },
-    async ({ sql, dialect = "sql" }) => {
+    }
+}, async ({ sql, dialect = "sql" }) => {
       try {
         const { format: formatSQL } = await import("sql-formatter");
         // Validate dialect and cast to correct type

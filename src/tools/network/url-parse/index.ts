@@ -10,13 +10,12 @@ import path from "path";
 import os from "os";
 
 export function registerUrlParse(server: McpServer) {
-  server.tool(
-    "url-parse",
-    "Parse URL into components",
-    {
+  server.registerTool("url-parse", {
+  description: "Parse URL into components",
+  inputSchema: {
       url: z.string().describe("URL to parse"),
-    },
-    async ({ url }) => {
+    }
+}, async ({ url }) => {
       try {
         const urlObj = new URL(url);
 

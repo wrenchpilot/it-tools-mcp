@@ -2,15 +2,14 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerPercentageCalculator(server: McpServer) {
-  server.tool(
-    "percentage-calculator",
-    "Calculate percentages, percentage of a number, or percentage change",
-    {
+  server.registerTool("percentage-calculator", {
+  description: "Calculate percentages, percentage of a number, or percentage change",
+  inputSchema: {
       operation: z.enum(["percentage-of", "what-percentage", "percentage-change"]).describe("Type of percentage calculation"),
       value1: z.number().describe("First value"),
       value2: z.number().describe("Second value")
-    },
-    async ({ operation, value1, value2 }) => {
+    }
+}, async ({ operation, value1, value2 }) => {
       try {
         let result: number;
         let explanation: string;

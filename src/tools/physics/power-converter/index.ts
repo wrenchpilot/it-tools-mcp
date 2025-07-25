@@ -2,10 +2,9 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerPowerConverter(server: McpServer) {
-  server.tool(
-    "power-converter",
-    "Convert between different power units",
-    {
+  server.registerTool("power-converter", {
+  description: "Convert between different power units",
+  inputSchema: {
       value: z.number().describe("Power value to convert"),
       fromUnit: z.enum([
         "watt", "kilowatt", "megawatt", "horsepower", "metric-horsepower",
@@ -15,8 +14,8 @@ export function registerPowerConverter(server: McpServer) {
         "watt", "kilowatt", "megawatt", "horsepower", "metric-horsepower",
         "btu-per-hour", "calorie-per-second", "foot-pound-per-second"
       ]).describe("Target power unit")
-    },
-    async ({ value, fromUnit, toUnit }) => {
+    }
+}, async ({ value, fromUnit, toUnit }) => {
       try {
         // Conversion factors to watts
         const toWatts: Record<string, number> = {

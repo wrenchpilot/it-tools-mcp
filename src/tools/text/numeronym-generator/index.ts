@@ -2,13 +2,12 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerNumeronymGenerator(server: McpServer) {
-  server.tool(
-    "numeronym-generator",
-    "Generate numeronyms (abbreviations with numbers) from text",
-    {
+  server.registerTool("numeronym-generator", {
+  description: "Generate numeronyms (abbreviations with numbers) from text",
+  inputSchema: {
       text: z.string().describe("Text to convert to numeronym"),
-    },
-    async ({ text }) => {
+    }
+}, async ({ text }) => {
       try {
         const words = text.trim().split(/\s+/);
         const numeronyms = words.map(word => {
