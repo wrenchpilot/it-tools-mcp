@@ -16,7 +16,9 @@ export function registerFormatXml(server: McpServer) {
     }
 }, async ({ xml, indent = 2 }) => {
       try {
-        const formatXML = (await import("xml-formatter")).default;
+        const xmlFormatterModule = await import("xml-formatter");
+        // Use double type assertion to work around NodeNext module resolution issues
+        const formatXML = xmlFormatterModule.default as unknown as (xml: string, options?: any) => string;
         const formatted = formatXML(xml, {
           indentation: ' '.repeat(indent),
           collapseContent: true,
