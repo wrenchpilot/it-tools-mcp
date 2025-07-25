@@ -1,14 +1,14 @@
 {
   "name": "it-tools-mcp",
   "displayName": "IT Tools MCP Server",
-  "description": "A comprehensive Model Context Protocol (MCP) server that provides access to over 116 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.",
-  "version": "3.7.2",
+  "description": "VS Code MCP-compliant server providing 116+ IT tools and utilities for developers - encoding, crypto, network tools, and more",
+  "version": "4.1.5",
   "author": "wrenchpilot",
   "license": "MIT",
   "homepage": "https://github.com/wrenchpilot/it-tools-mcp#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wrenchpilot/it-tools-mcp.git"
+    "url": "git+https://github.com/wrenchpilot/it-tools-mcp.git"
   },
   "categories": [
     "Developer Tools",
@@ -18,16 +18,26 @@
     "Text Processing"
   ],
   "tags": [
+    "base64",
+    "cli-tools",
+    "crypto",
+    "developer-tools",
+    "development-utilities",
+    "docker-tools",
+    "encoding",
+    "hashing",
+    "it-tools",
+    "json-tools",
+    "jwt",
     "mcp",
     "model-context-protocol",
-    "vscode",
-    "it-tools",
-    "developer-tools",
-    "encoding",
-    "crypto",
-    "hashing",
     "network-tools",
-    "text-processing"
+    "text-processing",
+    "typescript",
+    "utilities",
+    "uuid",
+    "vscode",
+    "vscode-mcp"
   ],
   "capabilities": {
     "tools": 116,
@@ -44,7 +54,7 @@
     "14 tool categories",
     "Encoding/Decoding tools",
     "Cryptographic functions",
-    "Network utilities", 
+    "Network utilities",
     "Text processing tools",
     "JSON/XML/YAML formatting",
     "Docker integration",
@@ -58,7 +68,7 @@
       "description": "Example of secure password hashing with bcrypt"
     },
     {
-      "title": "ASCII Art Generation", 
+      "title": "ASCII Art Generation",
       "path": "screenshots/ascii-art-text-example.png",
       "description": "Creative ASCII art text generation"
     }

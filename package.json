@@ -1,6 +1,6 @@
 {
   "name": "it-tools-mcp",
-  "version": "4.1.5",
+  "version": "4.1.6",
   "description": "VS Code MCP-compliant server providing 116+ IT tools and utilities for developers - encoding, crypto, network tools, and more",
   "type": "module",
   "main": "./build/index.js",
