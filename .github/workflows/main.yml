@@ -371,7 +371,11 @@ jobs:
           echo "" >> release_notes.md
           echo "## Installation & Setup" >> release_notes.md
           echo "" >> release_notes.md
-          echo "### Using with VS Code" >> release_notes.md
+          echo "### Quick Install with VS Code" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode:mcp/install?%7B%22name%22%3A%22it-tools%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22it-tools-mcp%22%5D%7D) [![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install_Server-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect?url=vscode-insiders:mcp/install?%7B%22name%22%3A%22it-tools%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22it-tools-mcp%22%5D%7D)" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### Manual Installation" >> release_notes.md
           echo "" >> release_notes.md
           echo "Add to your VS Code \`settings.json\`:" >> release_notes.md
           echo "" >> release_notes.md
