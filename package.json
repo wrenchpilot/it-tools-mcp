@@ -1,6 +1,6 @@
 {
   "name": "it-tools-mcp",
-  "version": "4.1.14",
+  "version": "4.1.15",
   "description": "Full MCP 2025-06-18 compliant server with 121+ IT tools, logging, ping, progress tracking, cancellation, and sampling utilities",
   "type": "module",
   "main": "./build/index.js",
@@ -72,8 +72,10 @@
       "tools",
       "resources",
       "prompts",
+      "completions",
       "sampling",
-      "roots"
+      "roots",
+      "logging"
     ],
     "toolCount": 116,
     "categories": [

@@ -299,14 +299,21 @@ const server = new McpServer({
   license: packageInfo.license,
 }, {
   capabilities: {
-    tools: {},
-    resources: {},
-    prompts: {},
+    tools: {
+      listChanged: true
+    },
+    resources: {
+      listChanged: true
+    },
+    prompts: {
+      listChanged: true
+    },
     sampling: {},
     roots: {
       listChanged: true
     },
-    logging: {}
+    logging: {},
+    completions: {}
   }
 });
 
@@ -1481,16 +1488,18 @@ async function main() {
     // VS Code MCP Compliance: Dev Mode Support
     const isTest = process.env.NODE_ENV === 'test' && process.env.MCP_TEST_MODE === 'true';
     
-    if (isDevelopment) {
-      mcpLog('info', "🔧 IT Tools MCP Server starting in DEVELOPMENT mode");
-      mcpLog('debug', "   - Enhanced logging enabled");
-      mcpLog('debug', "   - Hot reload capabilities active");
-      mcpLog('debug', "   - Debug information available");
-    }
+    mcpLog('info', 'Starting IT Tools MCP Server', { 
+      version: packageInfo.version, 
+      environment: isDevelopment ? 'development' : 'production',
+      nodeVersion: process.version
+    });
     
     // Add error handling for unhandled rejections
     process.on('unhandledRejection', (reason, promise) => {
-      mcpLog('error', 'Unhandled Rejection', { promise: promise.toString(), reason });
+      // Only log to stderr in development or for critical errors
+      if (isDevelopment) {
+        mcpLog('error', 'Unhandled Rejection', { promise: promise.toString(), reason });
+      }
     });
     
     process.on('uncaughtException', (error) => {
@@ -1498,67 +1507,61 @@ async function main() {
       process.exit(1);
     });
     
+    // Register tools and connect
+    mcpLog('debug', 'Registering tools...');
+    const startTime = Date.now();
     await registerAllTools(server);
-
+    const toolLoadTime = Date.now() - startTime;
+    
+    const { totalToolCount, toolCategories } = await discoverTools();
+    mcpLog('info', 'Tools registered successfully', { 
+      totalTools: totalToolCount, 
+      categories: Object.keys(toolCategories).length,
+      loadTimeMs: toolLoadTime
+    });
+    
+    mcpLog('debug', 'Connecting to MCP transport...');
     const transport = new StdioServerTransport();
     await server.connect(transport);
     
     // Mark MCP transport as ready for logging
     mcpTransportReady = true;
+    mcpLog('info', 'MCP Server started successfully', { 
+      transport: 'stdio',
+      ready: true 
+    });
 
-    // Log startup information based on environment
+    // Exit handler for test automation
     if (isTest) {
-      mcpLog('info', "IT Tools MCP Server running on stdio");
-      // Exit after stdin closes (for test automation)
+      mcpLog('debug', 'Test mode: Setting up exit handler');
       process.stdin.on('end', () => {
+        mcpLog('debug', 'Test mode: stdin ended, exiting...');
         setTimeout(() => process.exit(0), 100);
       });
-    } else if (isDevelopment) {
-      mcpLog('info', "🚀 IT Tools MCP Server connected successfully");
-      mcpLog('info', `📊 Loaded ${await getToolCount()} tools across ${await getCategoryCount()} categories`);
-      mcpLog('info', `🔗 Protocol: Model Context Protocol (MCP) via stdio`);
-      mcpLog('info', `📦 Version: ${packageInfo.version}`);
-    } else {
-      // Production mode - simple ready message
-      mcpLog('info', `IT Tools MCP Server v${packageInfo.version} ready - ${await getToolCount()} tools loaded`);
     }
     
-    // Enhanced monitoring in development mode
-    if (isDevelopment && !isTest) {
-      // More frequent monitoring in dev mode (every minute)
+    // Production monitoring (every 5 minutes) - no logging unless critical
+    if (!isTest) {
+      mcpLog('debug', 'Setting up production monitoring');
       setInterval(() => {
         const usage = getResourceUsage();
         if (usage.memory.heapUsedBytes > 200 * 1024 * 1024) {
-          mcpLog('warning', "⚠️  High memory usage detected", usage.memory);
-        }
-        
-        // Log periodic status in dev mode
-        mcpLog('debug', `📈 Status: Memory ${usage.memory.heapUsed}, CPU ${usage.cpu.user}ms user, ${usage.cpu.system}ms system`);
-      }, 60 * 1000); // Every minute in dev mode
-    } else if (!isTest) {
-      // Production monitoring (every 5 minutes)
-      setInterval(() => {
-        const usage = getResourceUsage();
-        if (usage.memory.heapUsedBytes > 200 * 1024 * 1024) {
-          mcpLog('warning', "High memory usage detected", usage.memory);
+          // Critical memory issues
+          mcpLog('critical', 'High memory usage detected', usage.memory);
         }
       }, 5 * 60 * 1000);
     }
 
     // Handle graceful shutdown
     const shutdown = () => {
-      if (isDevelopment) {
-        mcpLog('info', "🛑 Shutting down IT Tools MCP Server (Development Mode)...");
-      } else {
-        mcpLog('info', "Shutting down IT Tools MCP Server...");
-      }
+      mcpLog('info', 'Graceful shutdown initiated');
       process.exit(0);
     };
 
     process.on('SIGINT', shutdown);
     process.on('SIGTERM', shutdown);
   } catch (error) {
-    mcpLog('critical', "Failed to start MCP server", error instanceof Error ? error.message : 'Unknown error');
+    mcpLog('emergency', 'Fatal error starting MCP server', error instanceof Error ? error.message : 'Unknown error');
     process.exit(1);
   }
 }
@@ -1612,10 +1615,8 @@ function extractReadmeSection(content: string, heading: string): string {
   return sectionLines.join('\n');
 }
 
-// Start the server if this file is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch((error) => {
-    mcpLog('emergency', "Fatal error starting MCP server", error instanceof Error ? error.message : 'Unknown error');
-    process.exit(1);
-  });
-}
+// Start the server
+main().catch((error) => {
+  console.error("Fatal error in main():", error);
+  process.exit(1);
+});
