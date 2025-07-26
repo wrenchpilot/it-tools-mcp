@@ -554,281 +554,6 @@ export function mcpToolHandler<T extends Record<string, any>>(
   };
 }
 
-// Demo tools for MCP utilities
-server.registerTool("mcp_utilities_demo", {
-  description: "Demonstrate MCP utilities: ping, progress tracking, and cancellation support",
-  inputSchema: {
-    operation: z.enum(['ping', 'long_task', 'cancellable_task']).describe("The MCP utility operation to demonstrate"),
-    duration: z.number().optional().describe("Duration in seconds for long-running tasks (default: 10)"),
-    steps: z.number().optional().describe("Number of progress steps for demonstrating progress tracking (default: 5)")
-  }
-}, async (args) => {
-  const { operation, duration = 10, steps = 5 } = args;
-
-  if (operation === 'ping') {
-    return {
-      content: [{
-        type: "text",
-        text: JSON.stringify({
-          operation: 'ping',
-          status: 'success',
-          message: 'MCP ping utility is working correctly',
-          timestamp: new Date().toISOString(),
-          usage: 'Send a "ping" request to test connection health'
-        }, null, 2)
-      }]
-    };
-  }
-
-  if (operation === 'long_task') {
-    // Simulate a long-running task with progress updates
-    const totalMs = duration * 1000;
-    const stepMs = totalMs / steps;
-    
-    return {
-      content: [{
-        type: "text", 
-        text: JSON.stringify({
-          operation: 'long_task',
-          status: 'completed',
-          message: `Simulated ${duration}s task with ${steps} progress updates`,
-          note: 'Use _meta.progressToken in your request to receive progress notifications',
-          example: {
-            request: {
-              jsonrpc: "2.0",
-              id: 1,
-              method: "tools/call", 
-              params: {
-                name: "mcp_utilities_demo",
-                arguments: { operation: "long_task", duration: 5, steps: 3 },
-                _meta: { progressToken: "demo123" }
-              }
-            }
-          }
-        }, null, 2)
-      }]
-    };
-  }
-
-  if (operation === 'cancellable_task') {
-    return {
-      content: [{
-        type: "text",
-        text: JSON.stringify({
-          operation: 'cancellable_task',
-          status: 'completed',
-          message: 'Simulated cancellable task',
-          note: 'Send a notifications/cancelled message to cancel in-progress requests',
-          example: {
-            cancel_notification: {
-              jsonrpc: "2.0",
-              method: "notifications/cancelled",
-              params: {
-                requestId: "your_request_id",
-                reason: "User requested cancellation"
-              }
-            }
-          }
-        }, null, 2)
-      }]
-    };
-  }
-
-  return {
-    content: [{
-      type: "text",
-      text: JSON.stringify({ error: 'Unknown operation' }, null, 2)
-    }]
-  };
-});
-
-// Sampling demo tool
-server.registerTool("mcp_sampling_demo", {
-  description: "Demonstrate MCP sampling capabilities and test sampling/createMessage requests",
-  inputSchema: {
-    message: z.string().describe("The message to send in the sampling request"),
-    modelPreference: z.enum(['claude', 'gpt', 'gemini', 'generic']).optional().describe("Preferred model family for demonstration"),
-    systemPrompt: z.string().optional().describe("System prompt to include in the sampling request"),
-    maxTokens: z.number().positive().optional().describe("Maximum tokens for the response (default: 100)"),
-    intelligence: z.number().min(0).max(1).optional().describe("Intelligence priority (0-1, higher = more capable models)"),
-    speed: z.number().min(0).max(1).optional().describe("Speed priority (0-1, higher = faster models)"),
-    cost: z.number().min(0).max(1).optional().describe("Cost priority (0-1, higher = cheaper models)")
-  }
-}, async (args) => {
-  const { 
-    message, 
-    modelPreference, 
-    systemPrompt, 
-    maxTokens = 100,
-    intelligence = 0.7,
-    speed = 0.5,
-    cost = 0.3
-  } = args;
-
-  // Build model preferences based on user input
-  const modelPreferences: any = {
-    intelligencePriority: intelligence,
-    speedPriority: speed,
-    costPriority: cost
-  };
-
-  // Add model hints based on preference
-  if (modelPreference) {
-    const hintMap = {
-      'claude': [{ name: 'claude-4-sonnet' }, { name: 'claude' }],
-      'gpt': [{ name: 'gpt-4' }, { name: 'gpt' }],
-      'gemini': [{ name: 'gemini-1.5-pro' }, { name: 'gemini' }],
-      'generic': [{ name: 'general-purpose' }]
-    };
-    modelPreferences.hints = hintMap[modelPreference];
-  }
-
-  // Create the sampling request
-  const samplingRequest = {
-    method: "sampling/createMessage",
-    params: {
-      messages: [
-        {
-          role: "user" as const,
-          content: {
-            type: "text" as const,
-            text: message
-          }
-        }
-      ],
-      modelPreferences,
-      ...(systemPrompt && { systemPrompt }),
-      maxTokens
-    }
-  };
-
-  return {
-    content: [{
-      type: "text",
-      text: JSON.stringify({
-        demo: 'MCP Sampling Protocol Demonstration',
-        status: 'request_prepared',
-        message: 'Here is the sampling request that would be sent to the MCP client',
-        request: samplingRequest,
-        explanation: {
-          protocol: 'MCP 2025-06-18 sampling/createMessage',
-          purpose: 'This demonstrates how servers can request LLM completions from clients',
-          modelSelection: modelPreferences.hints ? 
-            `Prefers ${modelPreference} models with intelligence=${intelligence}, speed=${speed}, cost=${cost}` :
-            `No specific model preference, using priorities: intelligence=${intelligence}, speed=${speed}, cost=${cost}`,
-          flow: [
-            '1. Server sends sampling/createMessage request to client',
-            '2. Client selects appropriate model based on preferences',
-            '3. Client processes the message through the selected LLM',
-            '4. Client returns the LLM response to the server',
-            '5. Server can use the response for its tool operations'
-          ],
-          security: 'Clients SHOULD implement user approval controls for sampling requests'
-        },
-        nextSteps: 'In production, this request would be sent to the MCP client for actual LLM processing'
-      }, null, 2)
-    }]
-  };
-});
-
-// MCP Sampling Implementation - Server-side LLM request handling
-server.server.setRequestHandler(
-  z.object({ 
-    method: z.literal("sampling/createMessage"),
-    params: z.object({
-      messages: z.array(z.object({
-        role: z.enum(["user", "assistant", "system"]),
-        content: z.union([
-          z.object({
-            type: z.literal("text"),
-            text: z.string()
-          }),
-          z.object({
-            type: z.literal("image"),
-            data: z.string(),
-            mimeType: z.string()
-          }),
-          z.object({
-            type: z.literal("audio"),
-            data: z.string(),
-            mimeType: z.string()
-          })
-        ])
-      })),
-      modelPreferences: z.object({
-        hints: z.array(z.object({
-          name: z.string()
-        })).optional(),
-        costPriority: z.number().min(0).max(1).optional(),
-        speedPriority: z.number().min(0).max(1).optional(),
-        intelligencePriority: z.number().min(0).max(1).optional()
-      }).optional(),
-      systemPrompt: z.string().optional(),
-      maxTokens: z.number().positive().optional(),
-      temperature: z.number().min(0).max(2).optional(),
-      stopSequences: z.array(z.string()).optional(),
-      metadata: z.record(z.any()).optional()
-    })
-  }),
-  async (request) => {
-    const { messages, modelPreferences, systemPrompt, maxTokens, temperature, stopSequences, metadata } = request.params;
-    
-    mcpLog('info', 'Sampling request received', {
-      messageCount: messages.length,
-      modelPreferences: modelPreferences ? Object.keys(modelPreferences) : undefined,
-      hasSystemPrompt: !!systemPrompt,
-      maxTokens
-    });
-
-    // In a real implementation, this would:
-    // 1. Forward the request to the client's LLM service
-    // 2. Apply model preferences and selection logic
-    // 3. Handle different content types (text, image, audio)
-    // 4. Return the LLM response
-    
-    // For this MCP server implementation, we return a helpful response
-    // explaining that this is a demonstration of the sampling protocol
-    // and that the actual LLM processing would be handled by the client
-    
-    const demoResponse = {
-      role: "assistant" as const,
-      content: {
-        type: "text" as const,
-        text: `This is a demonstration of MCP sampling protocol support. 
-
-In a production environment, this request would be forwarded to an LLM service based on your model preferences:
-${modelPreferences?.hints?.length ? `- Preferred models: ${modelPreferences.hints.map(h => h.name).join(', ')}` : '- No specific model preferences'}
-${modelPreferences?.intelligencePriority ? `- Intelligence priority: ${modelPreferences.intelligencePriority}` : ''}
-${modelPreferences?.speedPriority ? `- Speed priority: ${modelPreferences.speedPriority}` : ''}
-${modelPreferences?.costPriority ? `- Cost priority: ${modelPreferences.costPriority}` : ''}
-
-Your message: "${messages[messages.length - 1]?.content?.type === 'text' ? (messages[messages.length - 1] as any).content.text : 'Non-text content'}"
-
-${systemPrompt ? `System prompt: "${systemPrompt}"` : 'No system prompt provided'}
-${maxTokens ? `Max tokens: ${maxTokens}` : 'No token limit specified'}
-
-This server supports the full MCP 2025-06-18 sampling specification and is ready for production use with proper LLM integration.`
-      },
-      model: "mcp-demo-server",
-      stopReason: "endTurn" as const,
-      usage: {
-        inputTokens: messages.reduce((sum, msg) => 
-          sum + (msg.content.type === 'text' ? msg.content.text.length / 4 : 100), 0
-        ),
-        outputTokens: 150
-      }
-    };
-
-    mcpLog('debug', 'Sampling response generated', {
-      model: demoResponse.model,
-      stopReason: demoResponse.stopReason,
-      outputTokens: demoResponse.usage.outputTokens
-    });
-
-    return demoResponse;
-  }
-);
-
 // VS Code MCP Compliance: Implement Resources
 server.registerResource(
   "server-manifest",
@@ -890,7 +615,7 @@ server.registerResource(
 
 server.registerResource(
   "tool-documentation",
-  new ResourceTemplate("docs://{category}/{tool?}", {
+  new ResourceTemplate("docs://{category}", {
     list: async () => {
       const { toolCategories } = await discoverTools();
       const resources = Object.keys(toolCategories).map(category => ({
@@ -913,8 +638,8 @@ server.registerResource(
   },
   async (uri: URL, params: any) => {
     const category = params.category as string;
-    const tool = params.tool as string | undefined;
-    const docs = await getToolDocumentation(category, tool);
+    // For this simpler template, we only handle category-level documentation
+    const docs = await getToolDocumentation(category);
     return {
       contents: [{
         uri: uri.href,
@@ -1075,19 +800,145 @@ async function getManifestContent(type: string): Promise<any> {
   return manifests[type as keyof typeof manifests] || { error: "Manifest type not found" };
 }
 
+// Helper function to extract tool documentation from the main README table
+function extractToolFromReadme(readmeContent: string, toolName: string): string | null {
+  // Look for the tool in the Available Tools table
+  const lines = readmeContent.split('\n');
+  const toolRegex = new RegExp(`\\|\s*\`${toolName}\`\\s*\\|`, 'i');
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (toolRegex.test(line)) {
+      // Found the tool, extract the row
+      const parts = line.split('|').map(part => part.trim()).filter(part => part.length > 0);
+      if (parts.length >= 2) {
+        const cleanToolName = parts[0].replace(/`/g, ''); // Remove backticks from tool name
+        const descCell = parts[1]; // Description cell
+        const paramsCell = parts.length > 2 ? parts[2] : ''; // Parameters cell
+        
+        return `# ${cleanToolName} Documentation\n\n**Description:** ${descCell}\n\n${paramsCell ? `**Parameters:** ${paramsCell}\n\n` : ''}**Usage:** ${descCell}`;
+      }
+    }
+  }
+  
+  return null;
+}
+
+// Helper function to extract category section from the main README 
+function extractCategoryFromReadme(readmeContent: string, category: string): string | null {
+  // Map category names to README section names
+  const categoryMappings: Record<string, string> = {
+    'ansible': 'Ansible Tools',
+    'color': 'Color Tools', 
+    'data_format': 'Data Format',
+    'development': 'Development Tools',
+    'docker': 'Docker Tools',
+    'encoding': 'Encoding & Decoding',
+    'forensic': 'Forensic Tools', 
+    'id_generators': 'ID & Code Generators',
+    'math': 'Math & Calculations',
+    'network': 'Network & System',
+    'physics': 'Physics',
+    'crypto': 'Security & Crypto',
+    'text': 'Text Processing',
+    'utility': 'Utility Tools'
+  };
+  
+  const sectionName = categoryMappings[category];
+  if (!sectionName) {
+    return null;
+  }
+  
+  // Find the section in the README table
+  const lines = readmeContent.split('\n');
+  let inTargetSection = false;
+  let tableRows: string[] = [];
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    
+    // Check if we're entering the target section
+    if (line.includes(`**${sectionName}**`)) {
+      inTargetSection = true;
+      continue;
+    }
+    
+    // Check if we're entering a new section (exit current)
+    if (inTargetSection && line.includes('**') && line.includes('**') && !line.includes(sectionName)) {
+      break;
+    }
+    
+    // Collect table rows while in target section
+    if (inTargetSection && line.includes('|') && !line.includes('---')) {
+      tableRows.push(line);
+    }
+  }
+  
+  if (tableRows.length === 0) {
+    return null;
+  }
+  
+  // Parse and clean up the table
+  const cleanedContent: string[] = [`# ${sectionName} Documentation\n`];
+  
+  for (const row of tableRows) {
+    const cells = row.split('|').map(cell => cell.trim()).filter(cell => cell.length > 0);
+    
+    if (cells.length >= 2) {
+      const toolName = cells[0].replace(/`/g, ''); // Remove backticks
+      const description = cells[1];
+      const parameters = cells.length > 2 ? cells[2] : '';
+      
+      cleanedContent.push(`## ${toolName}`);
+      cleanedContent.push(`**Description:** ${description}`);
+      if (parameters) {
+        cleanedContent.push(`**Parameters:** ${parameters}`);
+      }
+      cleanedContent.push(''); // Add empty line for spacing
+    }
+  }
+  
+  return cleanedContent.join('\n');
+}
+
 async function getToolDocumentation(category: string, tool?: string): Promise<string> {
+  // When compiled, __dirname will be the build/ directory, so we need to go up one level
+  const readmePath = path.join(__dirname, '../README.md');
+  
   if (tool) {
+    // For specific tools, try to find them in the README table
+    try {
+      const readmeContent = fs.readFileSync(readmePath, 'utf-8');
+      const toolSection = extractToolFromReadme(readmeContent, tool);
+      if (toolSection) {
+        return toolSection;
+      }
+    } catch (error) {
+      mcpLog('warning', `Failed to read README for tool documentation: ${readmePath}`, error instanceof Error ? error.message : 'Unknown error');
+    }
     return `# ${tool} Documentation\n\nCategory: ${category}\n\nThis tool provides ${category} functionality.\n\nUsage: See tool description for specific parameters and examples.`;
   }
   
+  // Try to read category documentation from README
+  try {
+    const readmeContent = fs.readFileSync(readmePath, 'utf-8');
+    const categorySection = extractCategoryFromReadme(readmeContent, category);
+    if (categorySection) {
+      return categorySection;
+    }
+  } catch (error) {
+    mcpLog('warning', `Failed to read README for category documentation: ${readmePath}`, error instanceof Error ? error.message : 'Unknown error');
+  }
+  
+  // Fallback to dynamic generation
   const { toolCategories } = await discoverTools();
   const categoryInfo = toolCategories[category];
   
   if (!categoryInfo) {
-    return `# Category Not Found\n\nThe category '${category}' was not found.`;
+    return `# Category Not Found\n\nThe category '${category}' was not found.\n\nAvailable categories: ${Object.keys(toolCategories).join(', ')}`;
   }
   
-  return `# ${category} Category Documentation\n\n${categoryInfo.description}\n\n## Available Tools\n\n${categoryInfo.tools.map(t => `- ${t}`).join('\n')}`;
+  return `# ${category} Category Documentation\n\n${categoryInfo.description}\n\n## Available Tools\n\n${categoryInfo.tools.map(t => `- ${t}`).join('\n')}\n\n*This documentation was generated automatically. For detailed documentation, see the main README.md file.*`;
 }
 
 function generateWorkflowPrompt(taskType: string, context: string): string {
