@@ -55,3 +55,8 @@ internal/
 # SpecStory
 .specstory/
 it-tools-mcp.code-workspace
+
+.github/memory/
+.github/instructions/
+.github/prompts/
+.github/copilot-instructions.md
