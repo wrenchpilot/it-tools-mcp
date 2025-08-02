@@ -60,3 +60,4 @@ it-tools-mcp.code-workspace
 .github/instructions/
 .github/prompts/
 .github/copilot-instructions.md
+.vscode/mcp.json
