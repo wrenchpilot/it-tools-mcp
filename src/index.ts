@@ -804,7 +804,7 @@ async function getManifestContent(type: string): Promise<any> {
 function extractToolFromReadme(readmeContent: string, toolName: string): string | null {
   // Look for the tool in the Available Tools table
   const lines = readmeContent.split('\n');
-  const toolRegex = new RegExp(`\\|\s*\`${toolName}\`\\s*\\|`, 'i');
+  const toolRegex = new RegExp(`\\|\\s*\`${toolName}\`\\s*\\|`, 'i');
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];

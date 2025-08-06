@@ -14,12 +14,13 @@ export function registerDecodeHtml(server: McpServer) {
       readOnlyHint: false
     }
 }, async ({ text }) => {
+      // Proper HTML decoding order: decode &amp; LAST to prevent double-unescaping
       const decoded = text
-        .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
-        .replace(/&#39;/g, "'");
+        .replace(/&#39;/g, "'")
+        .replace(/&amp;/g, '&');  // Decode ampersand LAST
       return {
         content: [
           {

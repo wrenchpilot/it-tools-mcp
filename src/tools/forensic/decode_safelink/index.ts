@@ -18,12 +18,20 @@ export function registerDecodeSafelink(server: McpServer) {
       try {
         const url = new URL(safelink);
         
-        // Check if it's a SafeLink URL
-        if (!url.hostname.includes('safelinks.protection.outlook.com')) {
+        // Check if it's a SafeLink URL - use secure hostname validation
+        const allowedSafeLinkHosts = [
+          'safelinks.protection.outlook.com',
+          'nam11.safelinks.protection.outlook.com',
+          'eur01.safelinks.protection.outlook.com',
+          'apc01.safelinks.protection.outlook.com',
+          'gcc02.safelinks.protection.outlook.com'
+        ];
+        
+        if (!allowedSafeLinkHosts.includes(url.hostname.toLowerCase())) {
           return {
             content: [{
               type: "text",
-              text: "This doesn't appear to be a SafeLink URL."
+              text: "This doesn't appear to be a legitimate SafeLink URL from Microsoft Outlook."
             }]
           };
         }
