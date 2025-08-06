@@ -43,8 +43,8 @@ export function registerEncodeHtmlEntities(server: McpServer) {
             ],
           };
         } else {
+          // Proper HTML decoding order: decode &amp; LAST to prevent double-unescaping
           const decoded = text
-            .replace(/&amp;/g, '&')
             .replace(/&lt;/g, '<')
             .replace(/&gt;/g, '>')
             .replace(/&quot;/g, '"')
@@ -58,7 +58,8 @@ export function registerEncodeHtmlEntities(server: McpServer) {
             .replace(/&sect;/g, '§')
             .replace(/&para;/g, '¶')
             .replace(/&dagger;/g, '†')
-            .replace(/&Dagger;/g, '‡');
+            .replace(/&Dagger;/g, '‡')
+            .replace(/&amp;/g, '&');  // Decode ampersand LAST
           
           return {
             content: [

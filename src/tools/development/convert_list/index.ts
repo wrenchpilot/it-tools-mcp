@@ -42,7 +42,11 @@ export function registerConvertList(server: McpServer) {
             result = JSON.stringify(items, null, 2);
             break;
           case 'quoted':
-            result = items.map(item => `"${item.replace(/"/g, '\\"')}"`).join(', ');
+            // Proper escaping: backslashes first, then quotes
+            result = items.map(item => {
+              const escaped = item.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+              return `"${escaped}"`;
+            }).join(', ');
             break;
           default:
             const outputSeparator = separators[outputFormat];
