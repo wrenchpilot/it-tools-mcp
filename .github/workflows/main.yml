@@ -60,7 +60,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Dependency review
+      - name: Dependency review (PR only)
+        if: github.event_name == 'pull_request'
         uses: actions/dependency-review-action@v4
 
       - name: Run CodeQL analysis
@@ -75,6 +76,25 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: |
+            test-results.xml
+            tests/results/**/*
+            junit.xml
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: |
+            coverage/**/*
+            .nyc_output/**/*
 
   # Determine what to do based on changes
   analyze-changes:
@@ -95,6 +115,7 @@ jobs:
       - name: Check what changed
         id: changes
         run: |
+          # Skip change analysis for pull requests - we don't publish/release from PRs
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "has-code-changes=false" >> $GITHUB_OUTPUT
             echo "has-readme-changes=false" >> $GITHUB_OUTPUT
@@ -102,7 +123,7 @@ jobs:
             exit 0
           fi
           
-          # Check if this is a tag push
+          # For tag pushes, assume everything changed to trigger full publish/release
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
             echo "has-code-changes=true" >> $GITHUB_OUTPUT
             echo "has-readme-changes=true" >> $GITHUB_OUTPUT
@@ -110,7 +131,7 @@ jobs:
             exit 0
           fi
           
-          # Check commit message type - skip build/release for docs commits
+          # Check commit message for docs-only commits using conventional commit format
           COMMIT_MSG=$(git log -1 --pretty=%s)
           echo "Commit message: $COMMIT_MSG"
           if [[ "$COMMIT_MSG" =~ ^docs(\(.+\))?: ]]; then
@@ -121,7 +142,7 @@ jobs:
             exit 0
           fi
           
-          # For push events, check what files changed
+          # Analyze changed files to determine what types of changes occurred
           CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || echo "")
           echo "Changed files: $CHANGED_FILES"
           
@@ -129,6 +150,7 @@ jobs:
           HAS_README_CHANGES=false
           PACKAGE_JSON_CHANGED=false
           
+          # Categorize each changed file
           for file in $CHANGED_FILES; do
             if [[ "$file" =~ README\.dockerhub\.md$ || "$file" =~ README\.md$ ]]; then
               HAS_README_CHANGES=true
@@ -138,6 +160,7 @@ jobs:
               PACKAGE_JSON_CHANGED=true
             fi
             
+            # Consider it a code change if it's not documentation, images, or config files
             if [[ ! "$file" =~ \.(md|txt|png|jpg|jpeg|gif)$ ]] && \
                [[ "$file" != "LICENSE" ]] && \
                [[ ! "$file" =~ ^docs/ ]] && \
@@ -303,6 +326,20 @@ jobs:
           sbom: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Scan Docker image for vulnerabilities
+        if: steps.docker-check.outputs.exists == 'false'
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: wrenchpilot/it-tools-mcp:v${{ needs.ci.outputs.version }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results
+        if: steps.docker-check.outputs.exists == 'false'
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
 
       - name: Configure npm authentication
         run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
