@@ -1,29 +1,48 @@
 name: CI/CD Pipeline
 
+
 on:
   push:
     branches: [main, master]
     tags: ['v*']
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
 
+# Prevent concurrent runs on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Principle of least privilege
 permissions:
-  contents: write
+  contents: read
   packages: write
   id-token: write
   attestations: write
 
 jobs:
-  # Always run CI and get version
+
   ci:
+    name: CI & Version
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-
+            ${{ runner.os }}-node-
 
       - name: Get package version
         id: version
@@ -41,6 +60,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+
+      - name: Run CodeQL analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+
       - name: Build TypeScript
         run: npm run build
 
@@ -50,6 +79,7 @@ jobs:
   # Determine what to do based on changes
   analyze-changes:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       has-code-changes: ${{ steps.changes.outputs.has-code-changes }}
       has-readme-changes: ${{ steps.changes.outputs.has-readme-changes }}
@@ -159,6 +189,7 @@ jobs:
     needs: [ci, analyze-changes]
     if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.should-publish == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
     steps:
@@ -192,6 +223,7 @@ jobs:
     needs: [ci, analyze-changes, create-tag]
     if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.should-publish == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       packages: write
@@ -213,11 +245,16 @@ jobs:
       - name: Build TypeScript
         run: npm run build
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: build/
+
       - name: Check if Docker image exists
         id: docker-check
         run: |
           VERSION="${{ needs.ci.outputs.version }}"
-          
           # Check if this version tag already exists on Docker Hub
           if docker manifest inspect wrenchpilot/it-tools-mcp:v$VERSION >/dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
@@ -276,7 +313,6 @@ jobs:
         id: npm-check
         run: |
           VERSION="${{ needs.ci.outputs.version }}"
-          
           # Check if this version already exists on NPM
           if npm view it-tools-mcp@$VERSION version >/dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
@@ -295,6 +331,7 @@ jobs:
     needs: [ci, analyze-changes, create-tag]
     if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.should-release == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
     steps:
@@ -440,6 +477,7 @@ jobs:
     needs: [analyze-changes]
     if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.has-readme-changes == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
