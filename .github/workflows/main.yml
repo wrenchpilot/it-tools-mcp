@@ -20,6 +20,7 @@ permissions:
   packages: write
   id-token: write
   attestations: write
+  security-events: write
 
 jobs:
 
@@ -27,6 +28,10 @@ jobs:
     name: CI & Version
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
