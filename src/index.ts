@@ -49,24 +49,24 @@ export const secureSchemas = {
   yaml: secureTextSchema(INPUT_LIMITS.YAML_MAX),
   csv: secureTextSchema(INPUT_LIMITS.CSV_MAX),
   regex: secureTextSchema(INPUT_LIMITS.REGEX_MAX),
-  
+
   // Numeric with bounds
   positiveInt: z.number().int().min(1).max(Number.MAX_SAFE_INTEGER),
-  boundedInt: (min: number, max: number) => 
+  boundedInt: (min: number, max: number) =>
     z.number().int().min(min).max(max),
-    
+
   // Safe URL validation
   url: z.string().url().max(2048),
-  
+
   // Safe email validation
   email: z.string().email().max(254),
-  
+
   // Base64 validation
   base64: z.string().regex(/^[A-Za-z0-9+/]*={0,2}$/, "Invalid Base64 format"),
-  
+
   // Hex validation
   hexColor: z.string().regex(/^#?[0-9A-Fa-f]{6}$/, "Invalid hex color format"),
-  
+
   // Safe filename
   filename: z.string()
     .max(255)
@@ -89,22 +89,22 @@ class SimpleRateLimiter {
   isAllowed(identifier: string): boolean {
     const now = Date.now();
     const windowStart = now - this.windowMs;
-    
+
     if (!this.requests.has(identifier)) {
       this.requests.set(identifier, []);
     }
-    
+
     const requests = this.requests.get(identifier)!;
-    
+
     // Remove old requests outside the window
     while (requests.length > 0 && requests[0] < windowStart) {
       requests.shift();
     }
-    
+
     if (requests.length >= this.maxRequests) {
       return false;
     }
-    
+
     requests.push(now);
     return true;
   }
@@ -139,7 +139,7 @@ export function secureToolHandler<T extends Record<string, any>>(
     } catch (error) {
       // Log error without exposing sensitive information
       mcpLog('error', `Tool error for ${identifier}`, error instanceof Error ? error.message : 'Unknown error');
-      
+
       // Return safe error message
       throw new Error('Tool execution failed. Please check your input and try again.');
     }
@@ -179,20 +179,20 @@ export const sanitize = {
     if (pattern.length > INPUT_LIMITS.REGEX_MAX) {
       throw new Error('Regex pattern too long');
     }
-    
+
     // Check for potentially dangerous patterns
     const dangerousPatterns = [
       /(\*\+|\+\*|\?\+|\+\?|\*\?|\?\*)/, // Nested quantifiers
       /(\([^)]*){10,}/, // Excessive grouping
       /(\|.*){20,}/, // Excessive alternation
     ];
-    
+
     for (const dangerous of dangerousPatterns) {
       if (dangerous.test(pattern)) {
         throw new Error('Potentially dangerous regex pattern detected');
       }
     }
-    
+
     return pattern;
   }
 };
@@ -290,7 +290,7 @@ const activeProgressTokens = new Map<string | number, boolean>();
 const activeRequests = new Map<string | number, { abortController: AbortController; startTime: number }>();
 
 const server = new McpServer({
-  name: "it-tools-mcp", 
+  name: "it-tools-mcp",
   version: packageInfo.version,
   description: "A comprehensive Model Context Protocol (MCP) server that provides access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.",
   author: packageInfo.author,
@@ -320,18 +320,43 @@ const server = new McpServer({
 // MCP Logging Functions
 function mcpLog(level: LogLevel, message: string, data?: any): void {
   const levelValue = LOG_LEVELS[level];
-  
+
   // Only send if level meets minimum threshold
   if (levelValue >= currentLogLevel && mcpTransportReady) {
     try {
-      // Send MCP logging notification (using the transport directly)
-      // Note: The MCP SDK may handle this differently - this is a placeholder for the proper implementation
+      // Prepare safe data for notification
+      let safeData: any = undefined;
+      try {
+        if (data instanceof Error) {
+          safeData = { error: data.message, stack: data.stack };
+        } else if (typeof data === 'object' && data !== null) {
+          safeData = data;
+        } else if (data !== undefined) {
+          safeData = { info: data };
+        }
+      } catch (e) {
+        safeData = { info: String(data) };
+      }
+
+      // Send MCP logging notification (notifications/message)
+      server.server.notification({
+        method: "notifications/message",
+        params: {
+          level,
+          logger: packageInfo.name || 'it-tools-mcp',
+          data: {
+            message,
+            ...(safeData !== undefined ? { details: safeData } : {}),
+            timestamp: new Date().toISOString()
+          }
+        }
+      });
     } catch (error) {
       // Fallback to console if MCP notification fails
       console.error(`[${level.toUpperCase()}] ${message}`, data || '');
     }
   }
-  
+
   // Also log to console for development/debugging
   if (isDevelopment || level === 'error' || level === 'critical' || level === 'emergency') {
     console.error(`[${level.toUpperCase()}] ${message}`, data || '');
@@ -348,9 +373,9 @@ server.registerTool("logging_setLevel", {
   const { level } = args;
   const oldLevelName = Object.keys(LOG_LEVELS).find(k => LOG_LEVELS[k as LogLevel] === currentLogLevel) as LogLevel;
   currentLogLevel = LOG_LEVELS[level as LogLevel];
-  
+
   mcpLog('info', `Log level changed from ${oldLevelName} to ${level}`);
-  
+
   return {
     content: [{
       type: "text",
@@ -366,13 +391,38 @@ server.registerTool("logging_setLevel", {
   };
 });
 
+// Also register the JSON-RPC method name expected by the MCP spec so
+// clients that call "logging/setLevel" receive a proper response instead
+// of a Method Not Found (-32601). This bridges the tool-style registration
+// with the spec-compliant JSON-RPC method name.
+server.server.setRequestHandler(
+  z.object({
+    method: z.literal("logging/setLevel"),
+    params: z.object({ level: z.enum(['debug', 'info', 'notice', 'warning', 'error', 'critical', 'alert', 'emergency']) })
+  }),
+  async (request) => {
+    const { level } = request.params as { level: LogLevel };
+    const oldLevelName = Object.keys(LOG_LEVELS).find(k => LOG_LEVELS[k as LogLevel] === currentLogLevel) as LogLevel;
+    currentLogLevel = LOG_LEVELS[level as LogLevel];
+    mcpLog('info', `Log level changed from ${oldLevelName} to ${level}`);
+
+    // Per-spec the server may return an empty result; returning a small
+    // confirmation object is helpful for clients and tooling.
+    return {
+      previousLevel: oldLevelName,
+      newLevel: level,
+      message: `Logging level set to ${level}`
+    };
+  }
+);
+
 // Add logging status tool
 server.registerTool("logging_status", {
   description: "Get current MCP logging configuration and status",
   inputSchema: {}
 }, async (args) => {
   const currentLevelName = Object.keys(LOG_LEVELS).find(k => LOG_LEVELS[k as LogLevel] === currentLogLevel) as LogLevel;
-  
+
   return {
     content: [{
       type: "text",
@@ -388,7 +438,7 @@ server.registerTool("logging_status", {
         })),
         logLevelDescriptions: {
           debug: "Detailed debug information (level 0)",
-          info: "General information messages (level 1)", 
+          info: "General information messages (level 1)",
           notice: "Normal but significant events (level 2)",
           warning: "Warning conditions (level 3)",
           error: "Error conditions (level 4)",
@@ -417,7 +467,7 @@ function sendProgressNotification(progressToken: string | number, progress: numb
   if (!mcpTransportReady || !activeProgressTokens.has(progressToken)) {
     return;
   }
-  
+
   try {
     server.server.notification({
       method: "notifications/progress",
@@ -436,7 +486,7 @@ function sendProgressNotification(progressToken: string | number, progress: numb
 
 // Cancellation notification handler
 server.server.setNotificationHandler(
-  z.object({ 
+  z.object({
     method: z.literal("notifications/cancelled"),
     params: z.object({
       requestId: z.union([z.string(), z.number()]),
@@ -445,9 +495,9 @@ server.server.setNotificationHandler(
   }),
   async (notification) => {
     const { requestId, reason } = notification.params;
-    
+
     mcpLog('info', `Cancellation requested for request ${requestId}`, reason ? { reason } : undefined);
-    
+
     const activeRequest = activeRequests.get(requestId);
     if (activeRequest) {
       // Cancel the request using AbortController
@@ -506,11 +556,11 @@ export function mcpToolHandler<T extends Record<string, any>>(
     // Create combined abort signal
     const signals = [extra?.signal, abortController?.signal].filter(Boolean) as AbortSignal[];
     let combinedSignal: AbortSignal | undefined;
-    
+
     if (signals.length > 0) {
       const combinedController = new AbortController();
       combinedSignal = combinedController.signal;
-      
+
       signals.forEach(signal => {
         if (signal.aborted) {
           combinedController.abort(signal.reason);
@@ -523,23 +573,23 @@ export function mcpToolHandler<T extends Record<string, any>>(
     }
 
     // Progress callback
-    const progressCallback = progressToken 
+    const progressCallback = progressToken
       ? (progress: number, total?: number, message?: string) => {
-          sendProgressNotification(progressToken, progress, total, message);
-        }
+        sendProgressNotification(progressToken, progress, total, message);
+      }
       : undefined;
 
     try {
-      const result = await handler(params, { 
-        signal: combinedSignal, 
-        progressCallback 
+      const result = await handler(params, {
+        signal: combinedSignal,
+        progressCallback
       });
-      
+
       return result;
     } catch (error) {
       // Log error without exposing sensitive information
       mcpLog('error', `Tool error for ${identifier}`, error instanceof Error ? error.message : 'Unknown error');
-      
+
       // Return safe error message
       throw new Error('Tool execution failed. Please check your input and try again.');
     } finally {
@@ -586,7 +636,7 @@ server.registerResource(
 
 server.registerResource(
   "system-logs",
-  new ResourceTemplate("logs://{type}", { 
+  new ResourceTemplate("logs://{type}", {
     list: async () => ({
       resources: [
         { name: "logs://system", description: "System log entries", uri: "logs://system" },
@@ -666,7 +716,7 @@ server.registerResource(
       workingDirectory: process.cwd(),
       timestamp: new Date().toISOString()
     };
-    
+
     return {
       contents: [{
         uri: uri.href,
@@ -739,7 +789,7 @@ async function getLogContent(type: string): Promise<string> {
     error: `Error log entries\nNo recent errors recorded\nServer startup: successful\nTool loading: complete`,
     debug: `Debug information\nEnvironment: ${isDevelopment ? 'development' : 'production'}\nNode version: ${process.version}\nPlatform: ${process.platform}`
   };
-  
+
   return logs[type as keyof typeof logs] || "Log type not found";
 }
 
@@ -769,7 +819,7 @@ async function getManifestContent(type: string): Promise<any> {
         `${toolCount}+ IT tools and utilities`,
         `${Object.keys(toolCategories).length} tool categories`,
         "Encoding/Decoding tools",
-        "Cryptographic functions", 
+        "Cryptographic functions",
         "Network utilities",
         "Text processing tools",
         "JSON/XML/YAML formatting",
@@ -796,7 +846,7 @@ async function getManifestContent(type: string): Promise<any> {
       tools: toolCategories[category].tools
     }))
   };
-  
+
   return manifests[type as keyof typeof manifests] || { error: "Manifest type not found" };
 }
 
@@ -805,7 +855,7 @@ function extractToolFromReadme(readmeContent: string, toolName: string): string 
   // Look for the tool in the Available Tools table
   const lines = readmeContent.split('\n');
   const toolRegex = new RegExp(`\\|\\s*\`${toolName}\`\\s*\\|`, 'i');
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (toolRegex.test(line)) {
@@ -815,12 +865,12 @@ function extractToolFromReadme(readmeContent: string, toolName: string): string 
         const cleanToolName = parts[0].replace(/`/g, ''); // Remove backticks from tool name
         const descCell = parts[1]; // Description cell
         const paramsCell = parts.length > 2 ? parts[2] : ''; // Parameters cell
-        
+
         return `# ${cleanToolName} Documentation\n\n**Description:** ${descCell}\n\n${paramsCell ? `**Parameters:** ${paramsCell}\n\n` : ''}**Usage:** ${descCell}`;
       }
     }
   }
-  
+
   return null;
 }
 
@@ -829,12 +879,12 @@ function extractCategoryFromReadme(readmeContent: string, category: string): str
   // Map category names to README section names
   const categoryMappings: Record<string, string> = {
     'ansible': 'Ansible Tools',
-    'color': 'Color Tools', 
+    'color': 'Color Tools',
     'data_format': 'Data Format',
     'development': 'Development Tools',
     'docker': 'Docker Tools',
     'encoding': 'Encoding & Decoding',
-    'forensic': 'Forensic Tools', 
+    'forensic': 'Forensic Tools',
     'id_generators': 'ID & Code Generators',
     'math': 'Math & Calculations',
     'network': 'Network & System',
@@ -843,52 +893,52 @@ function extractCategoryFromReadme(readmeContent: string, category: string): str
     'text': 'Text Processing',
     'utility': 'Utility Tools'
   };
-  
+
   const sectionName = categoryMappings[category];
   if (!sectionName) {
     return null;
   }
-  
+
   // Find the section in the README table
   const lines = readmeContent.split('\n');
   let inTargetSection = false;
   let tableRows: string[] = [];
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    
+
     // Check if we're entering the target section
     if (line.includes(`**${sectionName}**`)) {
       inTargetSection = true;
       continue;
     }
-    
+
     // Check if we're entering a new section (exit current)
     if (inTargetSection && line.includes('**') && line.includes('**') && !line.includes(sectionName)) {
       break;
     }
-    
+
     // Collect table rows while in target section
     if (inTargetSection && line.includes('|') && !line.includes('---')) {
       tableRows.push(line);
     }
   }
-  
+
   if (tableRows.length === 0) {
     return null;
   }
-  
+
   // Parse and clean up the table
   const cleanedContent: string[] = [`# ${sectionName} Documentation\n`];
-  
+
   for (const row of tableRows) {
     const cells = row.split('|').map(cell => cell.trim()).filter(cell => cell.length > 0);
-    
+
     if (cells.length >= 2) {
       const toolName = cells[0].replace(/`/g, ''); // Remove backticks
       const description = cells[1];
       const parameters = cells.length > 2 ? cells[2] : '';
-      
+
       cleanedContent.push(`## ${toolName}`);
       cleanedContent.push(`**Description:** ${description}`);
       if (parameters) {
@@ -897,14 +947,14 @@ function extractCategoryFromReadme(readmeContent: string, category: string): str
       cleanedContent.push(''); // Add empty line for spacing
     }
   }
-  
+
   return cleanedContent.join('\n');
 }
 
 async function getToolDocumentation(category: string, tool?: string): Promise<string> {
   // When compiled, __dirname will be the build/ directory, so we need to go up one level
   const readmePath = path.join(__dirname, '../README.md');
-  
+
   if (tool) {
     // For specific tools, try to find them in the README table
     try {
@@ -918,7 +968,7 @@ async function getToolDocumentation(category: string, tool?: string): Promise<st
     }
     return `# ${tool} Documentation\n\nCategory: ${category}\n\nThis tool provides ${category} functionality.\n\nUsage: See tool description for specific parameters and examples.`;
   }
-  
+
   // Try to read category documentation from README
   try {
     const readmeContent = fs.readFileSync(readmePath, 'utf-8');
@@ -929,15 +979,15 @@ async function getToolDocumentation(category: string, tool?: string): Promise<st
   } catch (error) {
     mcpLog('warning', `Failed to read README for category documentation: ${readmePath}`, error instanceof Error ? error.message : 'Unknown error');
   }
-  
+
   // Fallback to dynamic generation
   const { toolCategories } = await discoverTools();
   const categoryInfo = toolCategories[category];
-  
+
   if (!categoryInfo) {
     return `# Category Not Found\n\nThe category '${category}' was not found.\n\nAvailable categories: ${Object.keys(toolCategories).join(', ')}`;
   }
-  
+
   return `# ${category} Category Documentation\n\n${categoryInfo.description}\n\n## Available Tools\n\n${categoryInfo.tools.map(t => `- ${t}`).join('\n')}\n\n*This documentation was generated automatically. For detailed documentation, see the main README.md file.*`;
 }
 
@@ -947,7 +997,7 @@ function generateWorkflowPrompt(taskType: string, context: string): string {
     hash: `I need to hash data. Context: ${context}\n\nRecommended workflow:\n1. Choose appropriate hash algorithm (MD5, SHA256, etc.)\n2. Use the corresponding hash tool\n3. Store or compare the hash securely`,
     format: `I need to format data. Context: ${context}\n\nRecommended workflow:\n1. Identify the data format (JSON, XML, HTML, SQL)\n2. Use the appropriate formatter tool\n3. Validate the formatted output`
   };
-  
+
   return workflows[taskType as keyof typeof workflows] || `Generic IT workflow for: ${taskType}\nContext: ${context}\n\nPlease describe your specific requirements for customized guidance.`;
 }
 
@@ -958,14 +1008,14 @@ function getAnalysisPrompt(analysisType: string, content: string): string {
     optimization: `Please analyze the following content and suggest optimizations or improvements:\n\n${content}`,
     documentation: `Please analyze the following content and generate appropriate documentation:\n\n${content}`
   };
-  
+
   return prompts[analysisType as keyof typeof prompts] || `Please analyze the following content:\n\n${content}`;
 }
 
 // Helper function to dynamically load modular tools from a category directory
 async function loadModularTools(server: McpServer, category: string) {
   const toolsDir = path.join(__dirname, 'tools', category);
-  
+
   if (!fs.existsSync(toolsDir)) {
     if (isDevelopment) {
       mcpLog('warning', `Category directory does not exist: ${toolsDir}`);
@@ -979,11 +1029,11 @@ async function loadModularTools(server: McpServer, category: string) {
 
   for (const toolDir of toolDirs) {
     const toolPath = path.join(toolsDir, toolDir, 'index.js');
-    
+
     if (fs.existsSync(toolPath)) {
       try {
         const toolModule = await import(`./${path.relative(__dirname, toolPath).replace(/\\/g, '/')}`);
-        
+
         // Find the register function in the module
         const registerFunction = Object.values(toolModule).find(
           (fn: any) => typeof fn === 'function' && fn.name.startsWith('register')
@@ -998,7 +1048,7 @@ async function loadModularTools(server: McpServer, category: string) {
             }
           } catch (regError) {
             // Always log errors
-            mcpLog('error', `Failed to register tool ${category}/${toolDir}`, 
+            mcpLog('error', `Failed to register tool ${category}/${toolDir}`,
               regError instanceof Error ? regError.message : 'Unknown registration error');
           }
         } else {
@@ -1009,7 +1059,7 @@ async function loadModularTools(server: McpServer, category: string) {
         }
       } catch (error) {
         // Always log errors
-        mcpLog('error', `Failed to load tool ${category}/${toolDir}`, 
+        mcpLog('error', `Failed to load tool ${category}/${toolDir}`,
           error instanceof Error ? error.message : 'Unknown error');
       }
     } else {
@@ -1024,7 +1074,7 @@ async function loadModularTools(server: McpServer, category: string) {
 // Dynamic tool discovery and metadata generation
 async function discoverTools() {
   const toolsBaseDir = path.join(__dirname, 'tools');
-  
+
   if (!fs.existsSync(toolsBaseDir)) {
     return { toolCategories: {}, totalToolCount: 0 };
   }
@@ -1040,7 +1090,7 @@ async function discoverTools() {
 
   for (const category of categories) {
     const toolsDir = path.join(toolsBaseDir, category);
-    
+
     const toolDirs = fs.readdirSync(toolsDir, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name)
@@ -1062,23 +1112,23 @@ async function discoverTools() {
 async function getCategoryDescription(category: string, toolNames: string[]): Promise<string> {
   const toolsDir = path.join(__dirname, 'tools', category);
   const toolDescriptions: string[] = [];
-  
+
   // Try to extract descriptions from a few sample tools in the category
   const samplesToCheck = Math.min(3, toolNames.length); // Check up to 3 tools for description
-  
+
   for (let i = 0; i < samplesToCheck; i++) {
     const toolDir = toolNames[i];
     const toolPath = path.join(toolsDir, toolDir, 'index.js');
-    
+
     if (fs.existsSync(toolPath)) {
       try {
         const toolModule = await import(`./${path.relative(__dirname, toolPath).replace(/\\/g, '/')}`);
-        
+
         // Look for description in the tool registration
         const registerFunction = Object.values(toolModule).find(
           (fn: any) => typeof fn === 'function' && fn.name.startsWith('register')
         ) as any;
-        
+
         if (registerFunction) {
           // Create a mock server to capture the tool registration
           const mockServer = {
@@ -1088,7 +1138,7 @@ async function getCategoryDescription(category: string, toolNames: string[]): Pr
               }
             }
           };
-          
+
           try {
             registerFunction(mockServer as any);
           } catch (error) {
@@ -1100,12 +1150,12 @@ async function getCategoryDescription(category: string, toolNames: string[]): Pr
       }
     }
   }
-  
+
   // Generate category description based on collected tool descriptions
   if (toolDescriptions.length > 0) {
     // Create a summary from the actual tool descriptions
     const uniqueDescriptions = [...new Set(toolDescriptions)];
-    
+
     if (uniqueDescriptions.length === 1) {
       // If all tools have the same description, use it directly
       return uniqueDescriptions[0];
@@ -1117,7 +1167,7 @@ async function getCategoryDescription(category: string, toolNames: string[]): Pr
       return `${category.charAt(0).toUpperCase() + category.slice(1)} category with ${toolNames.length} tools including: ${uniqueDescriptions.slice(0, 2).join(', ')} and more`;
     }
   }
-  
+
   // Fallback: generate description from category name and tool count
   const categoryTitle = category.charAt(0).toUpperCase() + category.slice(1);
   return `${categoryTitle} tools and utilities (${toolNames.length} tools available)`;
@@ -1128,7 +1178,7 @@ async function getCategoryDescription(category: string, toolNames: string[]): Pr
 // Register all tools dynamically by discovering categories from filesystem
 async function registerAllTools(server: McpServer) {
   const toolsBaseDir = path.join(__dirname, 'tools');
-  
+
   if (!fs.existsSync(toolsBaseDir)) {
     if (isDevelopment) {
       mcpLog('warning', 'Tools directory does not exist', toolsBaseDir);
@@ -1162,10 +1212,10 @@ server.registerTool("system_info", {
   }
 }, async (args) => {
   const { include_tools = false, category } = args;
-  
+
   // Discover tools dynamically
   const { toolCategories, totalToolCount } = await discoverTools();
-  
+
   // Get comprehensive system info
   const usage = getResourceUsage();
   const systemInfo = {
@@ -1249,7 +1299,7 @@ server.registerPrompt("it-tools-workflow", {
   }
 }, async (args) => {
   const { task_type, context = "" } = args;
-  
+
   const workflows = {
     security: `Security Workflow for IT Tools MCP:
 1. Generate secure password: use generate_password tool
@@ -1281,7 +1331,7 @@ ${context ? `Context: ${context}` : ''}`,
 ${context ? `Context: ${context}` : ''}`
   };
 
-  const workflow = workflows[task_type as keyof typeof workflows] || 
+  const workflow = workflows[task_type as keyof typeof workflows] ||
     `General IT Tools Workflow:
 1. Use system_info to explore available tools
 2. Select appropriate tools from 14+ categories
@@ -1338,13 +1388,13 @@ async function main() {
   try {
     // VS Code MCP Compliance: Dev Mode Support
     const isTest = process.env.NODE_ENV === 'test' && process.env.MCP_TEST_MODE === 'true';
-    
-    mcpLog('info', 'Starting IT Tools MCP Server', { 
-      version: packageInfo.version, 
+
+    mcpLog('info', 'Starting IT Tools MCP Server', {
+      version: packageInfo.version,
       environment: isDevelopment ? 'development' : 'production',
       nodeVersion: process.version
     });
-    
+
     // Add error handling for unhandled rejections
     process.on('unhandledRejection', (reason, promise) => {
       // Only log to stderr in development or for critical errors
@@ -1352,34 +1402,34 @@ async function main() {
         mcpLog('error', 'Unhandled Rejection', { promise: promise.toString(), reason });
       }
     });
-    
+
     process.on('uncaughtException', (error) => {
       mcpLog('critical', 'Uncaught Exception', error.message);
       process.exit(1);
     });
-    
+
     // Register tools and connect
     mcpLog('debug', 'Registering tools...');
     const startTime = Date.now();
     await registerAllTools(server);
     const toolLoadTime = Date.now() - startTime;
-    
+
     const { totalToolCount, toolCategories } = await discoverTools();
-    mcpLog('info', 'Tools registered successfully', { 
-      totalTools: totalToolCount, 
+    mcpLog('info', 'Tools registered successfully', {
+      totalTools: totalToolCount,
       categories: Object.keys(toolCategories).length,
       loadTimeMs: toolLoadTime
     });
-    
+
     mcpLog('debug', 'Connecting to MCP transport...');
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    
+
     // Mark MCP transport as ready for logging
     mcpTransportReady = true;
-    mcpLog('info', 'MCP Server started successfully', { 
+    mcpLog('info', 'MCP Server started successfully', {
       transport: 'stdio',
-      ready: true 
+      ready: true
     });
 
     // Exit handler for test automation
@@ -1390,7 +1440,7 @@ async function main() {
         setTimeout(() => process.exit(0), 100);
       });
     }
-    
+
     // Production monitoring (every 5 minutes) - no logging unless critical
     if (!isTest) {
       mcpLog('debug', 'Setting up production monitoring');
@@ -1430,17 +1480,17 @@ async function getCategoryCount(): Promise<number> {
 
 async function getReadmeContent(section: string): Promise<string> {
   const readmePath = path.resolve(__dirname, '../README.md');
-  
+
   try {
     const fullReadme = fs.readFileSync(readmePath, 'utf-8');
-    
+
     const sections = {
       full: fullReadme,
       installation: extractReadmeSection(fullReadme, '## 📦 Installation & Setup'),
       tools: extractReadmeSection(fullReadme, '## Available Tools'),
       examples: extractReadmeSection(fullReadme, '## 📸 Screenshot Examples')
     };
-    
+
     return sections[section as keyof typeof sections] || `# ${section}\n\nSection not found in README.`;
   } catch (error) {
     return `# Error\n\nCould not read README.md: ${error}`;
@@ -1450,19 +1500,19 @@ async function getReadmeContent(section: string): Promise<string> {
 function extractReadmeSection(content: string, heading: string): string {
   const lines = content.split('\n');
   const startIndex = lines.findIndex(line => line.startsWith(heading));
-  
+
   if (startIndex === -1) {
     return `# Section Not Found\n\nThe section "${heading}" was not found in the README.`;
   }
-  
-  const endIndex = lines.findIndex((line, index) => 
+
+  const endIndex = lines.findIndex((line, index) =>
     index > startIndex && line.startsWith('## ') && !line.startsWith(heading)
   );
-  
-  const sectionLines = endIndex === -1 
-    ? lines.slice(startIndex) 
+
+  const sectionLines = endIndex === -1
+    ? lines.slice(startIndex)
     : lines.slice(startIndex, endIndex);
-  
+
   return sectionLines.join('\n');
 }
 
