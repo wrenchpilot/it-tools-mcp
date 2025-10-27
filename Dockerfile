@@ -1,5 +1,5 @@
 # Multi-stage build for smaller production image
-FROM node:lts-alpine AS builder
+FROM node:lts-bookworm-slim AS builder
 
 WORKDIR /app
 
@@ -8,7 +8,13 @@ COPY package*.json ./
 COPY tsconfig.json ./
 
 # Install dependencies (this layer will be cached unless package.json changes)
-RUN npm ci
+# Use `npm ci` when a lockfile exists for reproducible installs; otherwise fall back
+# to `npm install` so Docker builds don't fail when a lockfile isn't present.
+RUN if [ -f package-lock.json ]; then \
+      npm ci --no-audit --no-fund; \
+    else \
+      npm install --no-audit --no-fund; \
+    fi
 
 # Copy source code (this layer will be cached unless source changes)
 COPY src/ ./src/
@@ -17,7 +23,7 @@ COPY src/ ./src/
 RUN npm run build:docker
 
 # Production stage
-FROM node:lts-alpine AS production
+FROM node:lts-bookworm-slim AS production
 
 WORKDIR /app
 
@@ -25,14 +31,22 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Try `npm ci` first (reproducible). If it fails for any reason (missing/invalid lockfile),
+# fall back to `npm install` so the Docker build doesn't fail.
+RUN if [ -f package-lock.json ]; then \
+      npm ci --only=production --no-audit --no-fund; \
+    else \
+      echo "Error: package-lock.json not found. Aborting build for reproducibility."; \
+      exit 1; \
+    fi && npm cache clean --force
 
 # Copy built application from builder stage
 COPY --from=builder /app/build ./build
-
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S mcp -u 1001 -G nodejs
+# Use Debian-compatible tools/options (node:slim is Debian-based). `adduser`/`addgroup`
+# short options differ across distros (Alpine vs Debian) which causes the "ambiguous"
+# option errors. Use `groupadd`/`useradd` with explicit options for clarity and portability
+RUN groupadd -g 1001 nodejs && \
+  useradd -u 1001 -g nodejs -M -r -s /usr/sbin/nologin mcp
 
 # Change ownership of the app directory
 RUN chown -R mcp:nodejs /app

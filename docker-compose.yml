@@ -1,16 +1,19 @@
 services:
   it-tools-mcp:
+    # Use the following image for remote registry pulls:
     image: wrenchpilot/it-tools-mcp:latest
+    # If you want to use a locally built image, comment the above line and uncomment below:
+    # image: it-tools-mcp:latest
     container_name: it-tools-mcp
-    
+
     # Security hardening (default secure configuration)
     read_only: true
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
-    user: "1001:1001"  # Non-root user
-    
+    user: '1001:1001' # Non-root user
+
     # Resource limits
     deploy:
       resources:
@@ -20,35 +23,35 @@ services:
         reservations:
           memory: 128M
           cpus: '0.25'
-    
+
     # Network isolation
     networks:
       - it-tools-isolated
-    
+
     # Logging configuration
     logging:
-      driver: "json-file"
+      driver: 'json-file'
       options:
-        max-size: "10m"
-        max-file: "3"
-    
+        max-size: '10m'
+        max-file: '3'
+
     # Health check
     healthcheck:
-      test: ["CMD", "node", "-e", "process.exit(0)"]
+      test: ['CMD', 'node', '-e', 'process.exit(0)']
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
-    
+
     # Environment variables
     environment:
       - NODE_ENV=production
       - NODE_OPTIONS=--max-old-space-size=128
-    
+
     # Restart policy
     restart: unless-stopped
 
 networks:
   it-tools-isolated:
     driver: bridge
-    internal: true  # No external access
+    internal: true # No external access
