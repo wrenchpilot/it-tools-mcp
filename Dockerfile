@@ -1,5 +1,5 @@
 # Multi-stage build for smaller production image
-FROM node:lts-alpine AS builder
+FROM node:slim AS builder
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ COPY src/ ./src/
 RUN npm run build:docker
 
 # Production stage
-FROM node:lts-alpine AS production
+FROM node:slim AS production
 
 WORKDIR /app
 
@@ -31,8 +31,11 @@ RUN npm ci --only=production && npm cache clean --force
 COPY --from=builder /app/build ./build
 
 # Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S mcp -u 1001 -G nodejs
+# Use Debian-compatible tools/options (node:slim is Debian-based). `adduser`/`addgroup`
+# short options differ across distros (Alpine vs Debian) which causes the "ambiguous"
+# option errors. Use `groupadd`/`useradd` with explicit options for clarity and portability
+RUN groupadd -g 1001 nodejs && \
+  useradd -u 1001 -g nodejs -M -r -s /usr/sbin/nologin mcp
 
 # Change ownership of the app directory
 RUN chown -R mcp:nodejs /app

@@ -144,7 +144,7 @@
     "telnet-client": "^2.2.5",
     "turndown": "^7.2.0",
     "ulid": "^3.0.1",
-    "validator": "^13.15.15",
+    "validator": "^13.15.20",
     "xml-formatter": "^3.6.6",
     "zod": "^3.25.67"
   }
