@@ -33,12 +33,15 @@ COPY package*.json ./
 # Install only production dependencies
 # Try `npm ci` first (reproducible). If it fails for any reason (missing/invalid lockfile),
 # fall back to `npm install` so the Docker build doesn't fail.
-RUN (npm ci --only=production --no-audit --no-fund || npm install --only=production --no-audit --no-fund) && npm cache clean --force
+RUN if [ -f package-lock.json ]; then \
+      npm ci --only=production --no-audit --no-fund; \
+    else \
+      echo "Error: package-lock.json not found. Aborting build for reproducibility."; \
+      exit 1; \
+    fi && npm cache clean --force
 
 # Copy built application from builder stage
 COPY --from=builder /app/build ./build
-
-# Create non-root user for security
 # Use Debian-compatible tools/options (node:slim is Debian-based). `adduser`/`addgroup`
 # short options differ across distros (Alpine vs Debian) which causes the "ambiguous"
 # option errors. Use `groupadd`/`useradd` with explicit options for clarity and portability
