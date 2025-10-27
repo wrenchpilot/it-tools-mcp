@@ -33,7 +33,7 @@ COPY package*.json ./
 # Install only production dependencies
 # Try `npm ci` first (reproducible). If it fails for any reason (missing/invalid lockfile),
 # fall back to `npm install` so the Docker build doesn't fail.
-RUN npm ci --only=production --no-audit --no-fund || npm install --only=production --no-audit --no-fund && npm cache clean --force
+RUN (npm ci --only=production --no-audit --no-fund || npm install --only=production --no-audit --no-fund) && npm cache clean --force
 
 # Copy built application from builder stage
 COPY --from=builder /app/build ./build

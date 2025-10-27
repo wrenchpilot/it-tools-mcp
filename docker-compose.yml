@@ -1,6 +1,9 @@
 services:
   it-tools-mcp:
-    image: it-tools-mcp:latest
+    # Use the following image for remote registry pulls:
+    image: wrenchpilot/it-tools-mcp:latest
+    # If you want to use a locally built image, comment the above line and uncomment below:
+    # image: it-tools-mcp:latest
     container_name: it-tools-mcp
     
     # Security hardening (default secure configuration)
