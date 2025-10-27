@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-
+import * as crypto from "crypto";
 export function registerMacAddressGenerate(server: McpServer) {
   server.registerTool("generate_mac_address", {
   description: "Generate random MAC address",
@@ -34,9 +34,13 @@ export function registerMacAddressGenerate(server: McpServer) {
         }
 
         // Generate remaining parts
-        while (macParts.length < 6) {
-          const randomByte = Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase();
-          macParts.push(randomByte);
+        if (macParts.length < 6) {
+          const neededBytes = 6 - macParts.length;
+          const randomBytes = crypto.randomBytes(neededBytes);
+          for (let i = 0; i < neededBytes; i++) {
+            const randomByte = randomBytes[i].toString(16).padStart(2, '0').toUpperCase();
+            macParts.push(randomByte);
+          }
         }
 
         // Ensure first octet indicates locally administered unicast
