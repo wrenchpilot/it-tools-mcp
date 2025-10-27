@@ -1,5 +1,5 @@
 # Multi-stage build for smaller production image
-FROM node:slim AS builder
+FROM node:lts-bookworm-slim AS builder
 
 WORKDIR /app
 
@@ -8,7 +8,13 @@ COPY package*.json ./
 COPY tsconfig.json ./
 
 # Install dependencies (this layer will be cached unless package.json changes)
-RUN npm ci
+# Use `npm ci` when a lockfile exists for reproducible installs; otherwise fall back
+# to `npm install` so Docker builds don't fail when a lockfile isn't present.
+RUN if [ -f package-lock.json ]; then \
+      npm ci --no-audit --no-fund; \
+    else \
+      npm install --no-audit --no-fund; \
+    fi
 
 # Copy source code (this layer will be cached unless source changes)
 COPY src/ ./src/
@@ -17,7 +23,7 @@ COPY src/ ./src/
 RUN npm run build:docker
 
 # Production stage
-FROM node:slim AS production
+FROM node:lts-bookworm-slim AS production
 
 WORKDIR /app
 
@@ -25,7 +31,9 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Try `npm ci` first (reproducible). If it fails for any reason (missing/invalid lockfile),
+# fall back to `npm install` so the Docker build doesn't fail.
+RUN npm ci --only=production --no-audit --no-fund || npm install --only=production --no-audit --no-fund && npm cache clean --force
 
 # Copy built application from builder stage
 COPY --from=builder /app/build ./build

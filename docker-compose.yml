@@ -1,6 +1,6 @@
 services:
   it-tools-mcp:
-    image: wrenchpilot/it-tools-mcp:latest
+    image: it-tools-mcp:latest
     container_name: it-tools-mcp
     
     # Security hardening (default secure configuration)
