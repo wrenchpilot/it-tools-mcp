@@ -2,7 +2,7 @@
   "name": "it-tools-mcp",
   "displayName": "IT Tools MCP Server",
   "description": "Full MCP 2025-06-18 compliant server with 121+ IT tools, logging, ping, progress tracking, cancellation, and sampling utilities",
-  "version": "5.0.3",
+  "version": "5.2.4",
   "author": "wrenchpilot",
   "license": "MIT",
   "homepage": "https://github.com/wrenchpilot/it-tools-mcp#readme",
