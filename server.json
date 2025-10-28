@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.wrenchpilot/it-tools-mcp",
+  "description": "MCP server exposing 100+ IT tools and utilities for developers and system administrators.",
+  "repository": {
+    "url": "https://github.com/wrenchpilot/it-tools-mcp",
+    "source": "github"
+  },
+  "version": "5.2.8",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "it-tools-mcp",
+      "version": "5.2.8",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": []
+    }
+  ]
+}

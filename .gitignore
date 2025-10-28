@@ -61,3 +61,6 @@ it-tools-mcp.code-workspace
 .github/prompts/
 .github/copilot-instructions.md
 .vscode/mcp.json
+
+.mcpregistry_github_token
+.mcpregistry_registry_token
