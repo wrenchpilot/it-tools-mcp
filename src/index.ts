@@ -406,13 +406,12 @@ server.server.setRequestHandler(
     currentLogLevel = LOG_LEVELS[level as LogLevel];
     mcpLog('info', `Log level changed from ${oldLevelName} to ${level}`);
 
-    // Per-spec the server may return an empty result; returning a small
-    // confirmation object is helpful for clients and tooling.
-    return {
-      previousLevel: oldLevelName,
-      newLevel: level,
-      message: `Logging level set to ${level}`
-    };
+    // Per-spec the server may return an empty result. Returning an empty
+    // object here avoids surprising clients/tools that strictly validate
+    // response shapes (the Inspector/CLI validates responses and will
+    // reject unknown keys). If clients need details, they can call the
+    // `logging_status` tool or rely on logging notifications.
+    return {};
   }
 );
 
