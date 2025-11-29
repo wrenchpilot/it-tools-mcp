@@ -242,7 +242,7 @@ export function getResourceUsage() {
  */
 // Get package metadata for enhanced server info
 function getPackageMetadata() {
-  const __dirname = path.dirname(new URL(import.meta.url).pathname);
+  // Use module-level __dirname (correctly handles Windows paths via fileURLToPath)
   const pkgPath = path.resolve(__dirname, '../package.json');
   const pkgRaw = fs.readFileSync(pkgPath, 'utf-8');
   const pkg = JSON.parse(pkgRaw);
