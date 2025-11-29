@@ -64,36 +64,26 @@ export function registerFormatJson(server: McpServer) {
               ],
             };
           } catch (secondError) {
-            // If normalization fails, try using Function constructor for JavaScript object literals
-            try {
-              const evaluated = new Function('return ' + json)();
-              const formatted = JSON.stringify(evaluated, null, indent);
-              return {
-                content: [
-                  {
-                    type: "text",
-                    text: `Formatted JSON (converted from JavaScript object):\n${formatted}`,
-                  },
-                ],
-              };
-            } catch (evalError) {
-              return {
-                content: [
-                  {
-                    type: "text",
-                    text: `Error parsing JSON: ${firstError instanceof Error ? firstError.message : 'Unknown error'}
+            // Security: Do NOT use Function() constructor or eval() as they enable code injection
+            // Only JSON.parse() should be used - it's safe and sufficient for JSON formatting
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: `Error parsing JSON: ${firstError instanceof Error ? firstError.message : 'Unknown error'}
 
-Tried to normalize JavaScript object notation but failed.
-Please ensure your input is valid JSON or JavaScript object notation.
+Attempted normalization failed: ${secondError instanceof Error ? secondError.message : 'Unknown error'}
 
-Examples of supported formats:
+Please ensure your input is valid JSON.
+
+Supported format:
 - Valid JSON: {"name":"John","age":30}
-- JavaScript object: {'name':'John','age':30}
-- Unquoted keys: {name:'John',age:30}`,
-                  },
-                ],
-              };
-            }
+
+Note: For security reasons, JavaScript object literals and code evaluation are not supported.
+Please convert your input to valid JSON format before formatting.`,
+                },
+              ],
+            };
           }
         }
       } catch (error) {
