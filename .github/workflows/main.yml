@@ -283,6 +283,72 @@ jobs:
           name: build-artifact
           path: build/
 
+      - name: Set up Node.js for publish (enable registry & OIDC)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Ensure npm supports OIDC
+        run: npm install -g npm@^11.5.1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check if NPM version exists
+        id: npm-check
+        run: |
+          VERSION="${{ needs.ci.outputs.version }}"
+          # Check if this version already exists on NPM
+          if npm view it-tools-mcp@$VERSION version >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Version $VERSION already exists on NPM"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Version $VERSION does not exist on NPM"
+          fi
+
+      # Ensure OIDC-ready npm and force use of OIDC by clearing any tokens
+      - name: Set up Node.js for publish (enable registry & OIDC)
+        if: steps.npm-check.outputs.exists == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Ensure npm supports OIDC
+        if: steps.npm-check.outputs.exists == 'false'
+        run: npm install -g npm@^11.5.1
+
+      - name: Clear npm auth to force OIDC
+        if: steps.npm-check.outputs.exists == 'false'
+        run: |
+          unset NODE_AUTH_TOKEN || true
+          rm -f ~/.npmrc || true
+          npm config delete //registry.npmjs.org/:_authToken || true
+          npm config delete //registry.npmjs.org/:_auth || true
+
+      - name: Clear npm auth to force OIDC
+        if: steps.npm-check.outputs.exists == 'false'
+        run: |
+          unset NODE_AUTH_TOKEN || true
+          rm -f ~/.npmrc || true
+          npm config delete //registry.npmjs.org/:_authToken || true
+          npm config delete //registry.npmjs.org/:_auth || true
+
+      - name: Clear npm auth to force OIDC
+        if: steps.npm-check.outputs.exists == 'false'
+        run: |
+          echo "Removing any existing npm auth tokens to allow OIDC"
+          unset NODE_AUTH_TOKEN || true
+          rm -f ~/.npmrc || true
+          npm config delete //registry.npmjs.org/:_authToken || true
+          npm config delete //registry.npmjs.org/:_auth || true
+
+      - name: Publish to NPM
+        if: steps.npm-check.outputs.exists == 'false'
+        run: npm publish --access public
       - name: Check if Docker image exists
         id: docker-check
         run: |
@@ -349,77 +415,6 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
-
-      - name: Set up Node.js for publish (enable registry & OIDC)
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
-
-      - name: Ensure npm supports OIDC
-        run: npm install -g npm@^11.5.1
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Check if NPM version exists
-        id: npm-check
-        run: |
-          VERSION="${{ needs.ci.outputs.version }}"
-          # Check if this version already exists on NPM
-          if npm view it-tools-mcp@$VERSION version >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "Version $VERSION already exists on NPM"
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "Version $VERSION does not exist on NPM"
-          fi
-
-      # Ensure OIDC-ready npm and force use of OIDC by clearing any tokens
-      - name: Set up Node.js for publish (enable registry & OIDC)
-        if: steps.npm-check.outputs.exists == 'false'
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Ensure npm supports OIDC
-        if: steps.npm-check.outputs.exists == 'false'
-        run: npm install -g npm@^11.5.1
-
-      - name: Clear npm auth to force OIDC
-        if: steps.npm-check.outputs.exists == 'false'
-        run: |
-          unset NODE_AUTH_TOKEN || true
-          rm -f ~/.npmrc || true
-          npm config delete //registry.npmjs.org/:_authToken || true
-          npm config delete //registry.npmjs.org/:_auth || true
-
-      - name: Clear npm auth to force OIDC
-        if: steps.npm-check.outputs.exists == 'false'
-        run: |
-          unset NODE_AUTH_TOKEN || true
-          rm -f ~/.npmrc || true
-          npm config delete //registry.npmjs.org/:_authToken || true
-          npm config delete //registry.npmjs.org/:_auth || true
-
-      - name: Verify Trusted Publisher (OIDC exchange)
-        if: steps.npm-check.outputs.exists == 'false'
-        run: node scripts/verify-oidc-publish.cjs
-
-      - name: Clear npm auth to force OIDC
-        if: steps.npm-check.outputs.exists == 'false'
-        run: |
-          echo "Removing any existing npm auth tokens to allow OIDC"
-          unset NODE_AUTH_TOKEN || true
-          rm -f ~/.npmrc || true
-          npm config delete //registry.npmjs.org/:_authToken || true
-          npm config delete //registry.npmjs.org/:_auth || true
-
-      - name: Publish to NPM
-        if: steps.npm-check.outputs.exists == 'false'
-        run: npm publish --access public
 
   # Create release when needed
   release:
