@@ -66,11 +66,46 @@ function syncManifest() {
       fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
       console.log('✅ mcp-manifest.json synced with package.json');
       changes.forEach(change => console.log(`  📝 ${change}`));
-      return true;
     } else {
       console.log('✨ mcp-manifest.json is already in sync');
-      return false;
     }
+
+    // Also sync server.json version fields where present
+    const serverPath = path.join(process.cwd(), 'server.json');
+    if (fs.existsSync(serverPath)) {
+      const server = JSON.parse(fs.readFileSync(serverPath, 'utf8'));
+      let serverChanged = false;
+
+      if (server.version !== pkg.version) {
+        server.version = pkg.version;
+        serverChanged = true;
+        console.log(`  📝 Updated server.json version to ${pkg.version}`);
+      }
+
+      if (Array.isArray(server.packages)) {
+        server.packages.forEach((p, idx) => {
+          // If package item looks like this repo's package, update its version
+          if (p && p.identifier && p.version && p.identifier === pkg.name) {
+            if (p.version !== pkg.version) {
+              server.packages[idx].version = pkg.version;
+              serverChanged = true;
+              console.log(`  📝 Updated server.json.packages[${idx}].version to ${pkg.version}`);
+            }
+          }
+        });
+      }
+
+      if (serverChanged) {
+        fs.writeFileSync(serverPath, JSON.stringify(server, null, 2) + '\n');
+        console.log('✅ server.json synced with package.json');
+        return true;
+      } else {
+        console.log('✨ server.json is already in sync');
+        return false;
+      }
+    }
+
+    return false;
   } catch (error) {
     console.error('❌ Error syncing files:', error.message);
     process.exit(1);

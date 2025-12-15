@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-echo "Running pre-commit: syncing mcp-manifest.json from package.json"
+echo "Running pre-commit: syncing mcp-manifest.json and server.json from package.json"
 node scripts/sync-manifest.mjs || { echo "sync failed"; exit 1; }
-git add mcp-manifest.json || true
+git add mcp-manifest.json server.json || true
 exit 0
