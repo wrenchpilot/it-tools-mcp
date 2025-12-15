@@ -19,7 +19,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Ensure npm supports OIDC
-        run: npm install -g npm@^11.5.1
+        run: sudo npm install -g npm@^11.5.1
 
       - name: Request and exchange OIDC id_token
         run: |
