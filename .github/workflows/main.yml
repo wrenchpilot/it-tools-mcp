@@ -321,30 +321,30 @@ jobs:
         if: steps.npm-check.outputs.exists == 'false'
         run: npm install -g npm@^11.5.1
 
-      - name: Clear npm auth to force OIDC
+      - name: Ensure no token auth present and force OIDC
         if: steps.npm-check.outputs.exists == 'false'
         run: |
+          set -euo pipefail
+          echo "Checking npm version: $(npm --version)"
+          # Unset common env vars
           unset NODE_AUTH_TOKEN || true
+          unset NPM_TOKEN || true
+          unset NPM_CONFIG_USERCONFIG || true
+          # Remove global and temp npmrc files if present
           rm -f ~/.npmrc || true
+          rm -f "$RUNNER_TEMP/.npmrc" || true
+          # Clean npm config entries
           npm config delete //registry.npmjs.org/:_authToken || true
           npm config delete //registry.npmjs.org/:_auth || true
-
-      - name: Clear npm auth to force OIDC
-        if: steps.npm-check.outputs.exists == 'false'
-        run: |
-          unset NODE_AUTH_TOKEN || true
-          rm -f ~/.npmrc || true
-          npm config delete //registry.npmjs.org/:_authToken || true
-          npm config delete //registry.npmjs.org/:_auth || true
-
-      - name: Clear npm auth to force OIDC
-        if: steps.npm-check.outputs.exists == 'false'
-        run: |
-          echo "Removing any existing npm auth tokens to allow OIDC"
-          unset NODE_AUTH_TOKEN || true
-          rm -f ~/.npmrc || true
-          npm config delete //registry.npmjs.org/:_authToken || true
-          npm config delete //registry.npmjs.org/:_auth || true
+          npm config delete //registry.npmjs.org/:_password || true
+          # Check auth state
+          if npm whoami >/dev/null 2>&1; then
+            echo "ERROR: runner is still authenticated to npm via token. Remove publish tokens from repo/org secrets and retry or configure Trusted Publisher on npmjs.com." >&2
+            npm whoami || true
+            exit 1
+          else
+            echo "No npm auth detected; proceeding to OIDC publish flow"
+          fi
 
       - name: Publish to NPM
         if: steps.npm-check.outputs.exists == 'false'
