@@ -1,46 +1,6 @@
-#!/bin/bash
-
-# Get the commit message from the temporary commit message file
-COMMIT_MSG_FILE="$1"
-if [ -f "$COMMIT_MSG_FILE" ]; then
-    COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
-else
-    # For interactive commits, get the message from git log
-    COMMIT_MSG=$(git log --format=%B -n 1 HEAD 2>/dev/null || echo "")
-fi
-
-# Extract version bump type from commit message
-if [[ "$COMMIT_MSG" =~ ^(feat!|BREAKING CHANGE:|major:) ]]; then
-    VERSION_TYPE="major"
-elif [[ "$COMMIT_MSG" =~ ^feat: ]]; then
-    VERSION_TYPE="minor"
-elif [[ "$COMMIT_MSG" =~ ^(fix:|docs:|style:|refactor:|perf:|test:|build:|ci:|chore:) ]]; then
-    VERSION_TYPE="patch"
-else
-    # No conventional commit format, skip version bump
-    exit 0
-fi
-
-# Get current version
-CURRENT_VERSION=$(node -p "require('./package.json').version")
-echo "Current version: $CURRENT_VERSION"
-
-# Calculate new version
-case $VERSION_TYPE in
-    "major")
-        NEW_VERSION=$(npm version major --no-git-tag-version)
-        ;;
-    "minor")
-        NEW_VERSION=$(npm version minor --no-git-tag-version)
-        ;;
-    "patch")
-        NEW_VERSION=$(npm version patch --no-git-tag-version)
-        ;;
-esac
-
-if [ ! -z "$NEW_VERSION" ]; then
-    echo "Auto-bumped version to: $NEW_VERSION"
-    
-    # Add the updated package.json to the commit
-    git add package.json package-lock.json
-fi
+#!/usr/bin/env bash
+set -euo pipefail
+echo "Running pre-commit: syncing mcp-manifest.json from package.json"
+node scripts/sync-manifest.mjs || { echo "sync failed"; exit 1; }
+git add mcp-manifest.json || true
+exit 0

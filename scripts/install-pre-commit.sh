@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-HOOK_DEST=".git/hooks/pre-commit"
+HOOK_DIR="$(git config --get core.hooksPath || echo '.git/hooks')"
+HOOK_DEST="$HOOK_DIR/pre-commit"
 echo "Installing pre-commit hook to ensure mcp-manifest.json is in sync with package.json"
+mkdir -p "$HOOK_DIR"
 cat > "$HOOK_DEST" <<'HOOK'
 #!/usr/bin/env bash
 set -euo pipefail
