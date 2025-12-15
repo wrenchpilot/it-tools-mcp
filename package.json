@@ -1,6 +1,6 @@
 {
   "name": "it-tools-mcp",
-  "version": "5.2.9",
+  "version": "5.2.10",
   "description": "MCP-compliant server access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals.",
   "mcpName": "io.github.wrenchpilot/it-tools-mcp",
   "type": "module",
