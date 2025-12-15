@@ -292,11 +292,8 @@ const activeRequests = new Map<string | number, { abortController: AbortControll
 const server = new McpServer({
   name: "it-tools-mcp",
   version: packageInfo.version,
-  description: "A comprehensive Model Context Protocol (MCP) server that provides access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.",
-  author: packageInfo.author,
-  homepage: packageInfo.homepage,
-  repository: packageInfo.repository,
-  license: packageInfo.license,
+  title: "IT Tools MCP Server - a comprehensive collection of IT utilities",
+  websiteUrl: packageInfo.homepage
 }, {
   capabilities: {
     tools: {
@@ -1206,7 +1203,6 @@ server.registerTool("system_info", {
   // VS Code compliance annotations
   annotations: {
     title: "System Information",
-    description: "Comprehensive system and server information including tool categories and resource usage",
     readOnlyHint: true
   }
 }, async (args) => {

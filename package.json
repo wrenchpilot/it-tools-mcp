@@ -66,8 +66,8 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "mcp": {
-    "mcpVersion": "2025-06-18",
+    "mcp": {
+    "mcpVersion": "2025-11-25",
     "transport": "stdio",
     "capabilities": [
       "tools",
@@ -115,7 +115,7 @@
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@modelcontextprotocol/sdk": "^1.17.0",
+    "@modelcontextprotocol/sdk": "^1.24.3",
     "@types/js-yaml": "^4.0.9",
     "@types/papaparse": "^5.3.16",
     "@types/qrcode": "^1.5.5",

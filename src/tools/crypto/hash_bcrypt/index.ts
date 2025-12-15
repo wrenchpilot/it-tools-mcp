@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export function registerHashBcrypt(server: McpServer) {
   server.registerTool("hash_bcrypt", {
-  description: "Generate bcrypt hash or verify password against hash",
+
   inputSchema: {
       password: z.string().describe("Password to hash or verify"),
       rounds: z.number().describe("Number of salt rounds (4-12, default 10)").optional(),
@@ -13,7 +13,7 @@ export function registerHashBcrypt(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Hash Bcrypt",
-      description: "Generate bcrypt hash or verify password against hash",
+
       readOnlyHint: false
     }
 }, async ({ password, rounds = 10, hash }) => {

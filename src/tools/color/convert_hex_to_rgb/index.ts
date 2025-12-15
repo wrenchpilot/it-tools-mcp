@@ -4,14 +4,14 @@ import { z } from "zod";
 
 export function registerConvertHexRgb(server: McpServer) {
   server.registerTool("convert_hex_to_rgb", {
-  description: "Convert HEX color to RGB",
+
   inputSchema: {
       hex: z.string().describe("HEX color code (e.g., #FF5733 or FF5733)"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Convert Hex To Rgb",
-      description: "Convert HEX color to RGB",
+
       readOnlyHint: false
     }
 }, async ({ hex }) => {

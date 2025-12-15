@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerGeneratePassword(server: McpServer) {
   server.registerTool("generate_password", {
-  description: "Generate a secure password",
+
   inputSchema: {
       length: z.number().describe("Password length").optional(),
       includeUppercase: z.boolean().describe("Include uppercase letters").optional(),
@@ -14,7 +14,7 @@ export function registerGeneratePassword(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Generate Password",
-      description: "Generate a secure password",
+
       readOnlyHint: false
     }
 }, async ({ length = 16, includeUppercase = true, includeLowercase = true, includeNumbers = true, includeSymbols = true }) => {

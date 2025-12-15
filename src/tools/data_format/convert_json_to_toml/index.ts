@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerConvertJsonToml(server: McpServer) {
   server.registerTool("convert_json_to_toml", {
-  description: "Convert JSON to TOML format",
+
   inputSchema: {
       json: z.string().describe("JSON string to convert"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Convert Json To Toml",
-      description: "Convert JSON to TOML format",
+
       readOnlyHint: false
     }
 }, async ({ json }) => {

@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerConvertHtmlMarkdown(server: McpServer) {
   server.registerTool("convert_html_to_markdown", {
-  description: "Convert HTML to Markdown",
+
   inputSchema: {
       html: z.string().describe("HTML content to convert to Markdown"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Convert Html To Markdown",
-      description: "Convert HTML to Markdown",
+
       readOnlyHint: false
     }
 }, async ({ html }) => {

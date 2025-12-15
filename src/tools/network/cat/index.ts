@@ -4,14 +4,14 @@ import fs from "fs";
 
 export function registerCat(server: McpServer) {
   server.registerTool("cat", {
-  description: "Display content of a file",
+
   inputSchema: {
       file: z.string().describe("File path")
     },
     // VS Code compliance annotations
     annotations: {
       title: "Cat",
-      description: "Display content of a file",
+
       readOnlyHint: false
     }
 }, async ({ file }) => {

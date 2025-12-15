@@ -3,7 +3,7 @@ import { z } from "zod";
 import * as crypto from "crypto";
 export function registerMacAddressGenerate(server: McpServer) {
   server.registerTool("generate_mac_address", {
-  description: "Generate random MAC address",
+
   inputSchema: {
       prefix: z.string().optional().describe("MAC address prefix (e.g., '00:1B:44')"),
       separator: z.enum([":", "-"]).describe("Separator character").optional(),
@@ -11,7 +11,7 @@ export function registerMacAddressGenerate(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Mac-address-generate",
-      description: "Generate random MAC address",
+
       readOnlyHint: false
     }
 }, async ({ prefix, separator = ":" }) => {

@@ -43,7 +43,7 @@ function resolvePrivateKey(privateKeyArg?: string): string | undefined {
 
 export function registerScp(server: McpServer) {
   server.registerTool("scp", {
-  description: "Copy files to or from a remote host using SFTP (SCP-like)",
+
   inputSchema: {
       target: z.string().describe("Target host"),
       user: z.string().describe("Username"),
@@ -55,7 +55,7 @@ export function registerScp(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Scp",
-      description: "Copy files to or from a remote host using SFTP (SCP-like)",
+
       readOnlyHint: false
     }
 }, async ({ target, user, direction, localPath, remotePath, privateKey }) => {

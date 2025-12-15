@@ -4,7 +4,7 @@ import ping from "ping";
 
 export function registerPing(server: McpServer) {
   server.registerTool("ping", {
-  description: "Test network connectivity to a host. Example: ping google.com to check if it's reachable",
+
   inputSchema: {
       target: z.string().describe("Host to ping"),
       count: z.number().default(4).describe("Number of ping attempts")
@@ -12,7 +12,7 @@ export function registerPing(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Ping",
-      description: "Test network connectivity to a host",
+
       readOnlyHint: false
     }
 }, async ({ target, count }) => {

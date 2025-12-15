@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerEncodeHtmlEntities(server: McpServer) {
   server.registerTool("encode_html_entities", {
-  description: "Extended HTML entity encoding/decoding",
+
   inputSchema: {
       text: z.string().describe("Text to encode or decode"),
       operation: z.enum(["encode", "decode"]).describe("Operation to perform"),
@@ -11,7 +11,7 @@ export function registerEncodeHtmlEntities(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Encode Html Entities",
-      description: "Extended HTML entity encoding/decoding",
+
       readOnlyHint: false
     }
 }, async ({ text, operation }) => {

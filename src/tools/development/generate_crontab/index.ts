@@ -4,7 +4,7 @@ import { CronExpressionParser } from 'cron-parser';
 
 export function registerGenerateCrontab(server: McpServer) {
   server.registerTool("generate_crontab", {
-  description: "Generate crontab expressions",
+
   inputSchema: {
       minute: z.string().describe("Minute (0-59, *, */n, n-m)").optional(),
       hour: z.string().describe("Hour (0-23, *, */n, n-m)").optional(),
@@ -15,7 +15,7 @@ export function registerGenerateCrontab(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Generate Crontab",
-      description: "Generate crontab expressions",
+
       readOnlyHint: false
     }
 }, async ({ minute = "*", hour = "*", dayOfMonth = "*", month = "*", dayOfWeek = "*" }) => {

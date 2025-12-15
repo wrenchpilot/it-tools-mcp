@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerUnixTimestampConverter(server: McpServer) {
   server.registerTool("convert_unix_timestamp", {
-  description: "Convert between Unix timestamps and human-readable dates",
+
   inputSchema: {
       input: z.string().describe("Unix timestamp (seconds) or ISO date string")
     },
     // VS Code compliance annotations
     annotations: {
       title: "Unix-timestamp-converter",
-      description: "Convert between Unix timestamps and human-readable dates",
+
       readOnlyHint: false
     }
 }, async ({ input }) => {

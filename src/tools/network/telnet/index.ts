@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerTelnet(server: McpServer) {
   server.registerTool("telnet", {
-  description: "Test TCP connectivity to a host and port",
+
   inputSchema: {
       target: z.string().describe("Host to connect to"),
       port: z.number().describe("Port number")
@@ -11,7 +11,7 @@ export function registerTelnet(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Telnet",
-      description: "Test TCP connectivity to a host and port",
+
       readOnlyHint: false
     }
 }, async ({ target, port }) => {

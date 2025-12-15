@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerTextPascalcase(server: McpServer) {
   server.registerTool("convert_text_to_pascalcase", {
-  description: "Convert text to PascalCase",
+
   inputSchema: {
       text: z.string().describe("Text to convert to PascalCase"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Convert Text To Pascalcase",
-      description: "Convert text to PascalCase",
+
       readOnlyHint: false
     }
 }, async ({ text }) => {

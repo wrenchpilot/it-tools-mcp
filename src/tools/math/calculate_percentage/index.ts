@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerCalculatePercentage(server: McpServer) {
   server.registerTool("calculate_percentage", {
-  description: "Calculate percentages, percentage of a number, or percentage change",
+
   inputSchema: {
       operation: z.enum(["percentage-of", "what-percentage", "percentage-change"]).describe("Type of percentage calculation"),
       value1: z.number().describe("First value"),
@@ -12,7 +12,7 @@ export function registerCalculatePercentage(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Calculate Percentage",
-      description: "Calculate percentages, percentage of a number, or percentage change",
+
       readOnlyHint: false
     }
 }, async ({ operation, value1, value2 }) => {

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerGenerateAuth(server: McpServer) {
   server.registerTool("generate_basic_auth", {
-  description: "Generate HTTP Basic Authentication header",
+
   inputSchema: {
       username: z.string().describe("Username"),
       password: z.string().describe("Password"),
@@ -11,7 +11,7 @@ export function registerGenerateAuth(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Generate Basic Auth",
-      description: "Generate HTTP Basic Authentication header",
+
       readOnlyHint: false
     }
 }, async ({ username, password }) => {

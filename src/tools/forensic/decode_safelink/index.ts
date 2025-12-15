@@ -4,14 +4,14 @@ import { Buffer } from 'buffer';
 
 export function registerDecodeSafelink(server: McpServer) {
   server.registerTool("decode_safelink", {
-  description: "Decode Microsoft Outlook SafeLink URLs",
+
   inputSchema: {
       safelink: z.string().describe("SafeLink URL to decode")
     },
     // VS Code compliance annotations
     annotations: {
       title: "Decode Safelink",
-      description: "Decode Microsoft Outlook SafeLink URLs",
+
       readOnlyHint: false
     }
 }, async ({ safelink }) => {

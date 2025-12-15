@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerCssPrettifier(server: McpServer) {
   server.registerTool("format_css", {
-  description: "Format and prettify CSS code",
+
   inputSchema: {
       css: z.string().describe("CSS code to format"),
       indentSize: z.number().optional().describe("Number of spaces for indentation (default: 2)")
@@ -11,7 +11,7 @@ export function registerCssPrettifier(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Format Css",
-      description: "Format and prettify CSS code",
+
       readOnlyHint: false
     }
 }, async ({ css, indentSize = 2 }) => {

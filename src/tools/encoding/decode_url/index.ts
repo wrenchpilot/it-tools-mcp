@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerDecodeUrl(server: McpServer) {
   server.registerTool("decode_url", {
-  description: "URL decode text",
+
   inputSchema: {
       text: z.string().describe("URL encoded text to decode"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Decode Url",
-      description: "URL decode text",
+
       readOnlyHint: false
     }
 }, async ({ text }) => {

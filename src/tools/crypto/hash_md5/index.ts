@@ -4,14 +4,14 @@ import { z } from "zod";
 
 export function registerHashMd5(server: McpServer) {
   server.registerTool("hash_md5", {
-  description: "Generate MD5 hash",
+
   inputSchema: {
       text: z.string().describe("Text to hash with MD5"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Hash Md5",
-      description: "Generate MD5 hash",
+
       readOnlyHint: false
     }
 }, async ({ text }) => {

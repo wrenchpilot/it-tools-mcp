@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerAnsibleInventoryParser(server: McpServer) {
   server.registerTool("parse_ansible_inventory", {
-  description: "Parse and validate Ansible inventory files",
+
   inputSchema: {
       inventory: z.string().describe("Ansible inventory content (INI or YAML format)"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Generate Ansible Inventory",
-      description: "Parse and validate Ansible inventory files",
+
       readOnlyHint: false
     }
 }, async ({ inventory }) => {

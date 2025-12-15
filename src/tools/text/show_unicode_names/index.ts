@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerTextToUnicodeNames(server: McpServer) {
   server.registerTool("show_unicode_names", {
-  description: "Convert text to Unicode character names",
+
   inputSchema: {
       text: z.string().describe("Text to convert to Unicode names")
     },
     // VS Code compliance annotations
     annotations: {
       title: "Show Unicode Names",
-      description: "Convert text to Unicode character names",
+
       readOnlyHint: true
     }
 }, async ({ text }) => {

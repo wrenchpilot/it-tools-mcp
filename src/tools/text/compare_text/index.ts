@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerTextDiff(server: McpServer) {
   server.registerTool("compare_text", {
-  description: "Compare two texts and show differences",
+
   inputSchema: {
       text1: z.string().describe("First text to compare"),
       text2: z.string().describe("Second text to compare"),
@@ -11,7 +11,7 @@ export function registerTextDiff(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Compare Text",
-      description: "Compare two texts and show differences",
+
       readOnlyHint: false
     }
 }, async ({ text1, text2 }) => {

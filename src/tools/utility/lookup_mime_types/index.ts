@@ -33,7 +33,7 @@ function getMimeDescription(mimeType: string): string {
 
 export function registerMimeTypes(server: McpServer) {
   server.registerTool("lookup_mime_types", {
-  description: "Look up MIME types for file extensions",
+
   inputSchema: {
       input: z.string().describe("File extension (e.g., 'txt') or MIME type (e.g., 'text/plain')"),
       lookupType: z.enum(["extension-to-mime", "mime-to-extension"]).describe("Lookup direction").optional(),
@@ -41,7 +41,7 @@ export function registerMimeTypes(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Lookup Mime Types",
-      description: "Look up MIME types for file extensions",
+
       readOnlyHint: true
     }
 }, async ({ input, lookupType = "extension-to-mime" }) => {

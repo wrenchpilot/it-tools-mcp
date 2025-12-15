@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerFormatJson(server: McpServer) {
   server.registerTool("format_json", {
-    description: 'Format and prettify JSON with proper indentation. Example: {"a":1,"b":2} → formatted JSON with customizable spacing',
+
     inputSchema: {
       json: z.string().describe("JSON string to format"),
       indent: z.number().describe("Number of spaces for indentation").optional(),
@@ -11,7 +11,7 @@ export function registerFormatJson(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Format JSON",
-      description: "Format and prettify JSON with proper indentation and customizable spacing",
+
       readOnlyHint: false
     }
   }, async ({ json, indent = 2 }) => {

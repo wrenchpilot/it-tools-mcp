@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerPowerConverter(server: McpServer) {
   server.registerTool("convert_power", {
-  description: "Convert between different power units",
+
   inputSchema: {
       value: z.number().describe("Power value to convert"),
       fromUnit: z.enum([
@@ -18,7 +18,7 @@ export function registerPowerConverter(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Convert Power",
-      description: "Convert between different power units",
+
       readOnlyHint: false
     }
 }, async ({ value, fromUnit, toUnit }) => {

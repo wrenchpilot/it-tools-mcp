@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerPrettifyHtml(server: McpServer) {
   server.registerTool("format_html", {
-  description: "Format and beautify HTML code",
+
   inputSchema: {
       html: z.string().describe("HTML code to prettify"),
       indentSize: z.number().optional().default(2).describe("Number of spaces for indentation")
@@ -11,7 +11,7 @@ export function registerPrettifyHtml(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Format Html",
-      description: "Format and beautify HTML code",
+
       readOnlyHint: false
     }
 }, async ({ html, indentSize }) => {

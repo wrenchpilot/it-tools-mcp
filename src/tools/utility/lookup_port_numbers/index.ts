@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerPortNumbers(server: McpServer) {
   server.registerTool("lookup_port_numbers", {
-  description: "Look up common TCP/UDP port numbers and their services",
+
   inputSchema: {
       query: z.string().describe("Port number or service name to look up")
     },
     // VS Code compliance annotations
     annotations: {
       title: "Lookup Port Numbers",
-      description: "Look up common TCP/UDP port numbers and their services",
+
       readOnlyHint: true
     }
 }, async ({ query }) => {

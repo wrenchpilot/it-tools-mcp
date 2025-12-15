@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerEmojiSearch(server: McpServer) {
   server.registerTool("search_emoji", {
-  description: "Search for emojis by name or category",
+
   inputSchema: {
       query: z.string().describe("Search term for emoji (name, category, or keyword)"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Search Emoji",
-      description: "Search for emojis by name or category",
+
       readOnlyHint: false
     }
 }, async ({ query }) => {

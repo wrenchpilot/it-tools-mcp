@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerCidrToIpRange(server: McpServer) {
   server.registerTool("convert_cidr_to_ip_range", {
-  description: "Convert CIDR notation to IP address range",
+
   inputSchema: {
       cidr: z.string().describe("CIDR notation (e.g., 192.168.1.0/24)")
     },
     // VS Code compliance annotations
     annotations: {
       title: "Cidr-to-ip-range",
-      description: "Convert CIDR notation to IP address range",
+
       readOnlyHint: false
     }
 }, async ({ cidr }) => {

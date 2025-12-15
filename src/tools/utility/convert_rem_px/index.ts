@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerRemPxConverter(server: McpServer) {
   server.registerTool("convert_rem_px", {
-    description: "Convert between REM and PX units for CSS. Example: Convert 1.5rem to pixels, or 24px to rem units.",
+
     inputSchema: {
       value: z.number().min(0).describe("Value to convert (e.g., 1.5 for 1.5rem or 24 for 24px)"),
       fromUnit: z.enum(["rem", "px"]).describe("Source unit - either 'rem' or 'px'"),
@@ -12,7 +12,7 @@ export function registerRemPxConverter(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Convert Rem Px",
-      description: "Convert between REM and PX units for CSS",
+
       readOnlyHint: false
     }
   }, async ({ value, fromUnit, rootFontSize = 16 }) => {

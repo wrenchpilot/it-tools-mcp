@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerConvertJsonCsv(server: McpServer) {
   server.registerTool("convert_json_to_csv", {
-  description: "Convert JSON to CSV format",
+
   inputSchema: {
       json: z.string().describe("JSON string to convert to CSV"),
       delimiter: z.string().describe("CSV delimiter").optional(),
@@ -11,7 +11,7 @@ export function registerConvertJsonCsv(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Convert Json To Csv",
-      description: "Convert JSON to CSV format",
+
       readOnlyHint: false
     }
 }, async ({ json, delimiter = "," }) => {

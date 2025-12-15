@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerStringObfuscator(server: McpServer) {
   server.registerTool("obfuscate_string", {
-  description: "Obfuscate text by replacing characters with their HTML entities or other representations",
+
   inputSchema: {
       text: z.string().describe("Text to obfuscate"),
       method: z.enum(["html-entities", "unicode", "base64"]).describe("Obfuscation method").optional(),
@@ -11,7 +11,7 @@ export function registerStringObfuscator(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Obfuscate String",
-      description: "Obfuscate text by replacing characters with their HTML entities or other representations",
+
       readOnlyHint: false
     }
 }, async ({ text, method = "html-entities" }) => {

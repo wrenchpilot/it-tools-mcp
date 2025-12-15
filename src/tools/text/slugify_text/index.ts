@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerSlugifyString(server: McpServer) {
   server.registerTool("slugify_text", {
-  description: "Convert text to URL-friendly slug format",
+
   inputSchema: {
       text: z.string().describe("Text to convert to slug"),
       separator: z.string().describe("Character to use as separator").optional(),
@@ -12,7 +12,7 @@ export function registerSlugifyString(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Slugify Text",
-      description: "Convert text to URL-friendly slug format",
+
       readOnlyHint: false
     }
 }, async ({ text, separator = "-", lowercase = true }) => {

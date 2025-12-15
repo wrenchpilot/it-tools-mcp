@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerFormatSql(server: McpServer) {
   server.registerTool("format_sql", {
-  description: "Format and prettify SQL queries",
+
   inputSchema: {
       sql: z.string().describe("SQL query to format"),
       dialect: z.string().optional().describe(
@@ -13,7 +13,7 @@ export function registerFormatSql(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Format Sql",
-      description: "Format and prettify SQL queries",
+
       readOnlyHint: false
     }
 }, async ({ sql, dialect = "sql" }) => {

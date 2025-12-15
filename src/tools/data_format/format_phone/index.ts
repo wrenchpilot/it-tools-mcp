@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerFormatPhone(server: McpServer) {
   server.registerTool("format_phone", {
-  description: "Parse and format phone numbers",
+
   inputSchema: {
       phoneNumber: z.string().describe("Phone number to parse and format"),
       countryCode: z.string().optional().describe("Country code (e.g., 'US', 'GB', 'FR')"),
@@ -11,7 +11,7 @@ export function registerFormatPhone(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Format Phone",
-      description: "Parse and format phone numbers",
+
       readOnlyHint: false
     }
 }, async ({ phoneNumber, countryCode }) => {

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerConvertTextBinary(server: McpServer) {
   server.registerTool("convert_text_to_binary", {
-  description: "Convert text to binary and vice versa",
+
   inputSchema: {
       input: z.string().describe("Text to convert to binary, or binary to convert to text"),
       operation: z.enum(["encode", "decode"]).describe("Operation: encode text to binary or decode binary to text"),
@@ -11,7 +11,7 @@ export function registerConvertTextBinary(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Convert Text To Binary",
-      description: "Convert text to binary and vice versa",
+
       readOnlyHint: false
     }
 }, async ({ input, operation }) => {

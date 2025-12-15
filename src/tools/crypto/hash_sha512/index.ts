@@ -4,14 +4,14 @@ import { z } from "zod";
 
 export function registerHashSha512(server: McpServer) {
   server.registerTool("hash_sha512", {
-  description: "Generate SHA512 hash",
+
   inputSchema: {
       text: z.string().describe("Text to hash with SHA512"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Hash Sha512",
-      description: "Generate SHA512 hash",
+
       readOnlyHint: false
     }
 }, async ({ text }) => {

@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerTextKebabcase(server: McpServer) {
   server.registerTool("convert_text_to_kebabcase", {
-  description: "Convert text to kebab-case",
+
   inputSchema: {
       text: z.string().describe("Text to convert to kebab-case"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Convert Text To Kebabcase",
-      description: "Convert text to kebab-case",
+
       readOnlyHint: false
     }
 }, async ({ text }) => {

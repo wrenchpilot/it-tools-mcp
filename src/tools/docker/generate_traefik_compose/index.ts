@@ -4,7 +4,7 @@ import yaml from "js-yaml";
 
 export function registerGenerateTraefik(server: McpServer) {
   server.registerTool("generate_traefik_compose", {
-  description: "Generate Traefik Docker Compose configuration",
+
   inputSchema: {
       domain: z.string().optional().describe("Domain for Traefik services (default: example.com)"),
       email: z.string().optional().describe("Email for Let's Encrypt (default: admin@example.com)"),
@@ -15,7 +15,7 @@ export function registerGenerateTraefik(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Generate Traefik Compose",
-      description: "Generate Traefik Docker Compose configuration",
+
       readOnlyHint: false
     }
 }, async ({ domain = 'example.com', email = 'admin@example.com', network = 'traefik', serviceName = 'webapp', serviceImage = 'nginx:latest' }) => {

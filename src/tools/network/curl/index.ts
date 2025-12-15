@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerCurl(server: McpServer) {
   server.registerTool("curl", {
-  description: "Make HTTP requests to web endpoints. Example: GET request to an API or POST data to a server",
+
   inputSchema: {
       url: z.string().describe("URL to request"),
       method: z.enum(["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"]).default("GET").describe("HTTP method"),
@@ -13,7 +13,7 @@ export function registerCurl(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Curl",
-      description: "Make HTTP requests to web endpoints",
+
       readOnlyHint: false
     }
 }, async ({ url, method, headers, body }) => {

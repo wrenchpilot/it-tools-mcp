@@ -4,7 +4,7 @@ import { Buffer } from 'buffer';
 
 export function registerFangUrl(server: McpServer) {
   server.registerTool("fang_url", {
-  description: "Defang or refang URLs for safe sharing (security analysis)",
+
   inputSchema: {
       text: z.string().describe("Text containing URLs to fang/defang"),
       operation: z.enum(["defang", "refang"]).describe("Whether to defang (make safe) or refang (restore) URLs")
@@ -12,7 +12,7 @@ export function registerFangUrl(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Fang Url",
-      description: "Defang or refang URLs for safe sharing (security analysis)",
+
       readOnlyHint: false
     }
 }, async ({ text, operation }) => {

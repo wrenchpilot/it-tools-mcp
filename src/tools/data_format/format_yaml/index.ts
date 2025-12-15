@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerFormatYaml(server: McpServer) {
   server.registerTool("format_yaml", {
-  description: "Format and prettify YAML",
+
   inputSchema: {
       yaml: z.string().describe("YAML string to format"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Format Yaml",
-      description: "Format and prettify YAML",
+
       readOnlyHint: false
     }
 }, async ({ yaml }) => {

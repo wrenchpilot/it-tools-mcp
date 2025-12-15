@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerDecodeJwt(server: McpServer) {
   server.registerTool("decode_jwt", {
-  description: "Decode JWT token (header and payload only)",
+
   inputSchema: {
       token: z.string().describe("JWT token to decode"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Decode Jwt",
-      description: "Decode JWT token (header and payload only)",
+
       readOnlyHint: false
     }
 }, async ({ token }) => {

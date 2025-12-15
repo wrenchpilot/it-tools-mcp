@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerFormatXml(server: McpServer) {
   server.registerTool("format_xml", {
-  description: "Format and prettify XML",
+
   inputSchema: {
       xml: z.string().describe("XML string to format"),
       indent: z.number().describe("Number of spaces for indentation").optional(),
@@ -11,7 +11,7 @@ export function registerFormatXml(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Format Xml",
-      description: "Format and prettify XML",
+
       readOnlyHint: false
     }
 }, async ({ xml, indent = 2 }) => {

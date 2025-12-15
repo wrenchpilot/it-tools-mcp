@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerDistinctWords(server: McpServer) {
   server.registerTool("analyze_distinct_words", {
-  description: "Count distinct words in text and show their frequency",
+
   inputSchema: {
       text: z.string().describe("Text to analyze for distinct words")
     },
     // VS Code compliance annotations
     annotations: {
       title: "Analyze Distinct Words",
-      description: "Count distinct words in text and show their frequency",
+
       readOnlyHint: true
     }
 }, async ({ text }) => {

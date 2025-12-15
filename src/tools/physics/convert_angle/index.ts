@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerAngleConverter(server: McpServer) {
   server.registerTool("convert_angle", {
-  description: "Convert between different angle units",
+
   inputSchema: {
       value: z.number().describe("Angle value to convert"),
       fromUnit: z.enum([
@@ -16,7 +16,7 @@ export function registerAngleConverter(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Convert Angle",
-      description: "Convert between different angle units",
+
       readOnlyHint: false
     }
 }, async ({ value, fromUnit, toUnit }) => {

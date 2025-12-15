@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerEvaluateMath(server: McpServer) {
   server.registerTool("evaluate_math", {
-  description: "Safely evaluate mathematical expressions",
+
   inputSchema: {
       expression: z.string().describe("Mathematical expression to evaluate (e.g., '2 + 3 * 4')")
     },
     // VS Code compliance annotations
     annotations: {
       title: "Evaluate Math",
-      description: "Safely evaluate mathematical expressions",
+
       readOnlyHint: false
     }
 }, async ({ expression }) => {

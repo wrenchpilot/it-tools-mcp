@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerIpv6SubnetCalculator(server: McpServer) {
   server.registerTool("calculate_ipv6_subnet", {
-  description: "Calculate IPv6 subnet information",
+
   inputSchema: {
       ipv6: z.string().describe("IPv6 address and prefix (e.g., 2001:db8::/32)"),
       newPrefix: z.number().optional().describe("New prefix length for subnetting")
@@ -11,7 +11,7 @@ export function registerIpv6SubnetCalculator(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Ipv6-subnet-calculator",
-      description: "Calculate IPv6 subnet information",
+
       readOnlyHint: false
     }
 }, async ({ ipv6, newPrefix }) => {

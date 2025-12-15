@@ -4,14 +4,14 @@ import yaml from "js-yaml";
 
 export function registerDockerComposeToRun(server: McpServer) {
   server.registerTool("convert_docker_compose_to_run", {
-  description: "Convert Docker Compose files to docker run commands",
+
   inputSchema: {
       content: z.string().describe("Docker Compose file content to convert"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Convert Docker Compose To Run",
-      description: "Convert Docker Compose files to docker run commands",
+
       readOnlyHint: false
     }
 }, async ({ content }) => {

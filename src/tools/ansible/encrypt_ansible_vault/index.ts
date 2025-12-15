@@ -4,7 +4,7 @@ import { pbkdf2Sync, randomBytes } from "crypto";
 
 export function registerEncryptAnsibleVault(server: McpServer) {
   server.registerTool("encrypt_ansible_vault", {
-  description: "Encrypt text using Ansible Vault format",
+
   inputSchema: {
       text: z.string().describe("Text to encrypt"),
       password: z.string().describe("Password for encryption"),
@@ -13,7 +13,7 @@ export function registerEncryptAnsibleVault(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Encrypt Ansible Vault",
-      description: "Encrypt text using Ansible Vault format",
+
       readOnlyHint: false
     }
 }, async ({ text, password, vaultId }) => {

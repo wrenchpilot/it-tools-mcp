@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export function registerConvertRgbHex(server: McpServer) {
   server.registerTool("convert_rgb_to_hex", {
-  description: "Convert RGB color to HEX",
+
   inputSchema: {
       r: z.number().describe("Red value (0-255)"),
       g: z.number().describe("Green value (0-255)"),
@@ -13,7 +13,7 @@ export function registerConvertRgbHex(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Convert Rgb To Hex",
-      description: "Convert RGB color to HEX",
+
       readOnlyHint: false
     }
 }, async ({ r, g, b }) => {

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerTestRegex(server: McpServer) {
   server.registerTool("test_regex", {
-  description: "Test regular expressions against text",
+
   inputSchema: {
       pattern: z.string().describe("Regular expression pattern"),
       text: z.string().describe("Text to test against the regex"),
@@ -12,7 +12,7 @@ export function registerTestRegex(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Test Regex",
-      description: "Test regular expressions against text",
+
       readOnlyHint: false
     }
 }, async ({ pattern, text, flags }) => {

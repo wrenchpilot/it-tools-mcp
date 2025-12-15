@@ -4,7 +4,7 @@ import fs from "fs";
 
 export function registerHead(server: McpServer) {
   server.registerTool("head", {
-  description: "Display the beginning of a file",
+
   inputSchema: {
       file: z.string().describe("File path"),
       lines: z.number().default(10).describe("Number of lines")
@@ -12,7 +12,7 @@ export function registerHead(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Head",
-      description: "Display the beginning of a file",
+
       readOnlyHint: false
     }
 }, async ({ file, lines }) => {

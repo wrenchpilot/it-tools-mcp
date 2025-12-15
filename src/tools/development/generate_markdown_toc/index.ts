@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerGenerateMarkdownToc(server: McpServer) {
   server.registerTool("generate_markdown_toc", {
-  description: "Generate a table of contents from Markdown headers",
+
   inputSchema: {
       markdown: z.string().describe("Markdown content to generate TOC from"),
       maxLevel: z.number().optional().default(6).describe("Maximum header level to include (1-6)"),
@@ -12,7 +12,7 @@ export function registerGenerateMarkdownToc(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Generate Markdown Toc",
-      description: "Generate a table of contents from Markdown headers",
+
       readOnlyHint: false
     }
 }, async ({ markdown, maxLevel, generateAnchors }) => {

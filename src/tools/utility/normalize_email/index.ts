@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerEmailNormalizer(server: McpServer) {
   server.registerTool("normalize_email", {
-  description: "Normalize email addresses (remove dots, plus aliases, etc.)",
+
   inputSchema: {
       email: z.string().describe("Email address to normalize"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Normalize Email",
-      description: "Normalize email addresses (remove dots, plus aliases, etc",
+
       readOnlyHint: false
     }
 }, async ({ email }) => {

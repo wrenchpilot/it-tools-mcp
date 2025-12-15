@@ -4,7 +4,7 @@ import fs from "fs";
 
 export function registerGrep(server: McpServer) {
   server.registerTool("grep", {
-  description: "Search for patterns in files",
+
   inputSchema: {
       pattern: z.string().describe("Pattern to search for"),
       file: z.string().describe("File path")
@@ -12,7 +12,7 @@ export function registerGrep(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Grep",
-      description: "Search for patterns in files",
+
       readOnlyHint: false
     }
 }, async ({ pattern, file }) => {

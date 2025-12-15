@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerConvertList(server: McpServer) {
   server.registerTool("convert_list", {
-  description: "Convert between different list formats (comma-separated, line-separated, etc.)",
+
   inputSchema: {
       list: z.string().describe("Input list to convert"),
       inputFormat: z.enum(["comma", "semicolon", "newline", "space", "pipe"]).describe("Input format"),
@@ -13,7 +13,7 @@ export function registerConvertList(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Convert List",
-      description: "Convert between different list formats (comma-separated, line-separated, etc",
+
       readOnlyHint: false
     }
 }, async ({ list, inputFormat, outputFormat, trim = true }) => {

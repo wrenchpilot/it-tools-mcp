@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerUrlParse(server: McpServer) {
   server.registerTool("parse_url", {
-  description: "Parse URL into components",
+
   inputSchema: {
       url: z.string().describe("URL to parse"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Url-parse",
-      description: "Parse URL into components",
+
       readOnlyHint: false
     }
 }, async ({ url }) => {

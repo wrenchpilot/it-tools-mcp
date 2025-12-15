@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerConvertRomanNumeral(server: McpServer) {
   server.registerTool("convert_roman_numerals", {
-  description: "Convert between Arabic numbers and Roman numerals",
+
   inputSchema: {
       input: z.string().describe("Number to convert (Arabic number 1-3999 or Roman numeral)")
     },
     // VS Code compliance annotations
     annotations: {
       title: "Convert Roman Numerals",
-      description: "Convert between Arabic numbers and Roman numerals",
+
       readOnlyHint: false
     }
 }, async ({ input }) => {

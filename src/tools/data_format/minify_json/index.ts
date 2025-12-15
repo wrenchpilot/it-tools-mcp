@@ -3,14 +3,14 @@ import { z } from "zod";
 
 export function registerMinifyJson(server: McpServer) {
   server.registerTool("minify_json", {
-    description: "Minify JSON by removing whitespace and unnecessary characters. Example: formatted JSON → compact single-line JSON",
+
     inputSchema: {
       json: z.string().describe("JSON string to minify"),
     },
     // VS Code compliance annotations
     annotations: {
       title: "Minify JSON",
-      description: "Remove whitespace and minify JSON to compact format",
+
       readOnlyHint: false
     }
   }, async ({ json }) => {

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 export function registerLoremIpsumGenerator(server: McpServer) {
   server.registerTool("generate_lorem_ipsum", {
-  description: "Generate Lorem Ipsum placeholder text",
+
   inputSchema: {
       count: z.number().describe("Number of items to generate").optional(),
       type: z.enum(["words", "sentences", "paragraphs"]).describe("Type of content to generate").optional(),
@@ -11,7 +11,7 @@ export function registerLoremIpsumGenerator(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Generate Lorem Ipsum",
-      description: "Generate Lorem Ipsum placeholder text",
+
       readOnlyHint: false
     }
 }, async ({ count = 5, type = "sentences" }) => {

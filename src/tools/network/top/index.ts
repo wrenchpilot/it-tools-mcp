@@ -4,12 +4,12 @@ import psList from "ps-list";
 
 export function registerTop(server: McpServer) {
   server.registerTool("top", {
-  description: "Display system processes (snapshot)",
+
   inputSchema: {},
     // VS Code compliance annotations
     annotations: {
       title: "Top",
-      description: "Display system processes (snapshot)",
+
       readOnlyHint: false
     }
 }, async () => {

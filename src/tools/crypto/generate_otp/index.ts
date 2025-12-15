@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export function registerGenerateOtp(server: McpServer) {
   server.registerTool("generate_otp", {
-  description: "Generate Time-based One-Time Password (TOTP) codes",
+
   inputSchema: {
       secret: z.string().describe("Base32 encoded secret key"),
       digits: z.number().describe("Number of digits in the code").optional(),
@@ -13,7 +13,7 @@ export function registerGenerateOtp(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Generate Otp",
-      description: "Generate Time-based One-Time Password (TOTP) codes",
+
       readOnlyHint: false
     }
 }, async ({ secret, digits = 6, period = 30 }) => {

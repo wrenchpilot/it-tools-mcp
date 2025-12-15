@@ -4,7 +4,7 @@ import { Buffer } from 'buffer';
 
 export function registerIdentifyFileType(server: McpServer) {
   server.registerTool("identify_file_type", {
-  description: "Identify file type based on magic numbers/file signatures",
+
   inputSchema: {
       data: z.string().describe("Hex data or base64 data of file header"),
       format: z.enum(["hex", "base64"]).describe("Format of the input data")
@@ -12,7 +12,7 @@ export function registerIdentifyFileType(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Identify File Type",
-      description: "Identify file type based on magic numbers/file signatures",
+
       readOnlyHint: false
     }
 }, async ({ data, format }) => {

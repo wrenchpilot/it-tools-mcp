@@ -43,7 +43,7 @@ function resolvePrivateKey(privateKeyArg?: string): string | undefined {
 
 export function registerSsh(server: McpServer) {
   server.registerTool("ssh", {
-  description: "Connect to a target via SSH",
+
   inputSchema: {
       target: z.string().describe("Target host"),
       user: z.string().describe("Username"),
@@ -53,7 +53,7 @@ export function registerSsh(server: McpServer) {
     // VS Code compliance annotations
     annotations: {
       title: "Ssh",
-      description: "Connect to a target via SSH",
+
       readOnlyHint: false
     }
 }, async ({ target, user, command, privateKey }) => {
