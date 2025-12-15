@@ -1,0 +1,46 @@
+name: Diagnose OIDC for NPM Trusted Publisher
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  diagnose:
+    name: Diagnose OIDC Exchange (manual)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ensure jq is available
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Ensure npm supports OIDC
+        run: npm install -g npm@^11.5.1
+
+      - name: Request and exchange OIDC id_token
+        run: |
+          set -euo pipefail
+          echo "Requesting OIDC id_token for audience npm:registry.npmjs.org"
+          OIDC_URL="$ACTIONS_ID_TOKEN_REQUEST_URL?audience=npm:registry.npmjs.org"
+          OIDC_TOKEN=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$OIDC_URL" | jq -r .value || true)
+          if [ -z "$OIDC_TOKEN" ] || [ "$OIDC_TOKEN" = "null" ]; then
+            echo "ERROR: Could not retrieve OIDC id_token from the runner. Ensure 'id-token: write' permission is set and the runner is GitHub-hosted." >&2
+            exit 1
+          fi
+
+          echo "Exchanging OIDC token with npm registry API (diagnostic only)"
+          PKG=$(node -e "console.log(encodeURIComponent(require('./package.json').name))")
+          RESP=$(curl -s -w "\n%{http_code}" -X POST "https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/$PKG" -H "Authorization: Bearer $OIDC_TOKEN" -H "Content-Type: application/json")
+          HTTP_CODE=$(echo "$RESP" | tail -n1)
+          BODY=$(echo "$RESP" | sed '$d')
+          echo "HTTP=$HTTP_CODE"
+          echo "$BODY"
+          if [ "$HTTP_CODE" != "201" ]; then
+            echo "ERROR: OIDC exchange failed. Verify your Trusted Publisher config on npmjs.com matches this repository and that the workflow filename is correct (the workflow filename must match the one configured on npmjs.com)." >&2
+            exit 1
+          fi
+          echo "OIDC exchange OK — Trusted Publisher appears configured for this workflow"

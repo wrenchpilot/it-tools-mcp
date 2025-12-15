@@ -2,7 +2,7 @@
   "name": "it-tools-mcp",
   "displayName": "IT Tools MCP Server",
   "description": "MCP-compliant server access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals.",
-  "version": "5.7.3",
+  "version": "5.8.0",
   "author": "wrenchpilot",
   "license": "MIT",
   "homepage": "https://github.com/wrenchpilot/it-tools-mcp#readme",
