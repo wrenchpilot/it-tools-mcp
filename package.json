@@ -1,6 +1,6 @@
 {
   "name": "it-tools-mcp",
-  "version": "5.2.9",
+  "version": "5.3.0",
   "description": "MCP-compliant server access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals.",
   "mcpName": "io.github.wrenchpilot/it-tools-mcp",
   "type": "module",
@@ -18,6 +18,7 @@
     "test": "clear;node tests/test-server.mjs",
     "test:all": "clear;node tests/all-tools-test.mjs",
     "sync:manifest": "node scripts/sync-manifest.cjs",
+    "sync:version": "node scripts/sync-manifest-version.cjs",
     "setup:hooks": "chmod +x .git/hooks/pre-commit",
     "docker:build": "docker buildx build --platform linux/amd64,linux/arm64 --provenance=true --sbom=true -t it-tools-mcp .",
     "docker:build:local": "docker build -t it-tools-mcp .",
