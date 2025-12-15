@@ -373,6 +373,15 @@ jobs:
             echo "Version $VERSION does not exist on NPM"
           fi
 
+      - name: Clear npm auth to force OIDC
+        if: steps.npm-check.outputs.exists == 'false'
+        run: |
+          echo "Removing any existing npm auth tokens to allow OIDC"
+          unset NODE_AUTH_TOKEN || true
+          rm -f ~/.npmrc || true
+          npm config delete //registry.npmjs.org/:_authToken || true
+          npm config delete //registry.npmjs.org/:_auth || true
+
       - name: Publish to NPM
         if: steps.npm-check.outputs.exists == 'false'
         run: npm publish --access public
