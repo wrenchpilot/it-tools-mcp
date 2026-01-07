@@ -21,6 +21,7 @@ function getUsageHint(code: number): string {
 
 export function registerHttpStatusCodes(server: McpServer) {
   server.registerTool("lookup_http_status", {
+  description: "Get information about HTTP status codes",
 
   inputSchema: {
       code: z.number().optional().describe("HTTP status code to look up (optional)"),
@@ -29,6 +30,7 @@ export function registerHttpStatusCodes(server: McpServer) {
     annotations: {
       title: "Lookup Http Status",
 
+      
       readOnlyHint: true
     }
 }, async ({ code }) => {

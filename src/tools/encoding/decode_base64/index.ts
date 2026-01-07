@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerDecodeBase64(server: McpServer) {
   server.registerTool("decode_base64", {
+  description: 'Decode Base64 text back to original text. Example: "SGVsbG8gV29ybGQ=" → "Hello World"',
 
   inputSchema: {
       text: z.string().min(1).regex(/^[A-Za-z0-9+/]*={0,2}$/, "Invalid Base64 format").describe("Base64 text to decode"),

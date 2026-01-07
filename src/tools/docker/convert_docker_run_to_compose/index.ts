@@ -4,6 +4,7 @@ import yaml from "js-yaml";
 
 export function registerDockerRunToCompose(server: McpServer) {
   server.registerTool("convert_docker_run_to_compose", {
+    description: "Convert docker run commands to Docker Compose format",
 
   inputSchema: {
       commands: z.string().describe("Docker run commands to convert (one per line)"),
@@ -12,6 +13,7 @@ export function registerDockerRunToCompose(server: McpServer) {
     annotations: {
       title: "Convert Docker Run To Compose",
 
+      
       readOnlyHint: false
     }
 }, async ({ commands }) => {

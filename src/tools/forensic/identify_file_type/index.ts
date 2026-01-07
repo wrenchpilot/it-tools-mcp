@@ -4,6 +4,7 @@ import { Buffer } from 'buffer';
 
 export function registerIdentifyFileType(server: McpServer) {
   server.registerTool("identify_file_type", {
+    description: "Identify file type based on magic numbers/file signatures",
 
   inputSchema: {
       data: z.string().describe("Hex data or base64 data of file header"),
@@ -13,6 +14,7 @@ export function registerIdentifyFileType(server: McpServer) {
     annotations: {
       title: "Identify File Type",
 
+      
       readOnlyHint: false
     }
 }, async ({ data, format }) => {

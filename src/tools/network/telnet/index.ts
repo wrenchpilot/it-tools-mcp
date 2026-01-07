@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTelnet(server: McpServer) {
   server.registerTool("telnet", {
+    description: "Test TCP connectivity to a host and port",
 
   inputSchema: {
       target: z.string().describe("Host to connect to"),
@@ -12,6 +13,7 @@ export function registerTelnet(server: McpServer) {
     annotations: {
       title: "Telnet",
 
+      
       readOnlyHint: false
     }
 }, async ({ target, port }) => {

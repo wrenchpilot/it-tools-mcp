@@ -2,12 +2,14 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 export function registerGenerateUlid(server: McpServer) {
   server.registerTool("generate_ulid", {
+    description: "Generate Universally Unique Lexicographically Sortable Identifier (ULID). Example: creates time-sortable unique IDs like '01ARZ3NDEKTSV4RRFFQ69G5FAV'",
 
     inputSchema: {},
     // VS Code compliance annotations
     annotations: {
       title: "Generate ULID",
 
+      
       readOnlyHint: false
     }
   }, async () => {

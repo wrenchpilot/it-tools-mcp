@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerConvertRomanNumeral(server: McpServer) {
   server.registerTool("convert_roman_numerals", {
+    description: "Convert between Arabic numbers and Roman numerals",
 
   inputSchema: {
       input: z.string().describe("Number to convert (Arabic number 1-3999 or Roman numeral)")
@@ -11,6 +12,7 @@ export function registerConvertRomanNumeral(server: McpServer) {
     annotations: {
       title: "Convert Roman Numerals",
 
+      
       readOnlyHint: false
     }
 }, async ({ input }) => {

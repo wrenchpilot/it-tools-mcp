@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerCurl(server: McpServer) {
   server.registerTool("curl", {
+    description: "Make HTTP requests to web endpoints. Example: GET request to an API or POST data to a server",
 
   inputSchema: {
       url: z.string().describe("URL to request"),
@@ -14,6 +15,7 @@ export function registerCurl(server: McpServer) {
     annotations: {
       title: "Curl",
 
+      
       readOnlyHint: false
     }
 }, async ({ url, method, headers, body }) => {

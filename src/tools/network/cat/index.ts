@@ -4,6 +4,7 @@ import fs from "fs";
 
 export function registerCat(server: McpServer) {
   server.registerTool("cat", {
+    description: "Display content of a file",
 
   inputSchema: {
       file: z.string().describe("File path")
@@ -12,6 +13,7 @@ export function registerCat(server: McpServer) {
     annotations: {
       title: "Cat",
 
+      
       readOnlyHint: false
     }
 }, async ({ file }) => {

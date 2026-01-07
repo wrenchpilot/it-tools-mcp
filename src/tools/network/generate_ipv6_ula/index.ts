@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerIpv6UlaGenerator(server: McpServer) {
   server.registerTool("generate_ipv6_ula", {
+    description: "Generate IPv6 Unique Local Address (ULA) prefix",
 
   inputSchema: {
       globalId: z.string().optional().describe("Global ID (40 bits in hex, auto-generated if not provided)"),
@@ -11,6 +12,7 @@ export function registerIpv6UlaGenerator(server: McpServer) {
     annotations: {
       title: "Ipv6-ula-generator",
 
+      
       readOnlyHint: false
     }
 }, async ({ globalId }) => {

@@ -4,6 +4,7 @@ import fs from "fs";
 
 export function registerGrep(server: McpServer) {
   server.registerTool("grep", {
+    description: "Search for patterns in files",
 
   inputSchema: {
       pattern: z.string().describe("Pattern to search for"),
@@ -13,6 +14,7 @@ export function registerGrep(server: McpServer) {
     annotations: {
       title: "Grep",
 
+      
       readOnlyHint: false
     }
 }, async ({ pattern, file }) => {

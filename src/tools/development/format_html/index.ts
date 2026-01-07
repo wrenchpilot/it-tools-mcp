@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerPrettifyHtml(server: McpServer) {
   server.registerTool("format_html", {
+    description: "Format and beautify HTML code",
 
   inputSchema: {
       html: z.string().describe("HTML code to prettify"),
@@ -12,6 +13,7 @@ export function registerPrettifyHtml(server: McpServer) {
     annotations: {
       title: "Format Html",
 
+      
       readOnlyHint: false
     }
 }, async ({ html, indentSize }) => {

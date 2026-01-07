@@ -33,6 +33,7 @@ function getMimeDescription(mimeType: string): string {
 
 export function registerMimeTypes(server: McpServer) {
   server.registerTool("lookup_mime_types", {
+    description: "Look up MIME types for file extensions",
 
   inputSchema: {
       input: z.string().describe("File extension (e.g., 'txt') or MIME type (e.g., 'text/plain')"),
@@ -42,6 +43,7 @@ export function registerMimeTypes(server: McpServer) {
     annotations: {
       title: "Lookup Mime Types",
 
+      
       readOnlyHint: true
     }
 }, async ({ input, lookupType = "extension-to-mime" }) => {

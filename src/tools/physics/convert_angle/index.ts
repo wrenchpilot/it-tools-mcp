@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerAngleConverter(server: McpServer) {
   server.registerTool("convert_angle", {
+    description: "Convert between different angle units",
 
   inputSchema: {
       value: z.number().describe("Angle value to convert"),
@@ -17,6 +18,7 @@ export function registerAngleConverter(server: McpServer) {
     annotations: {
       title: "Convert Angle",
 
+      
       readOnlyHint: false
     }
 }, async ({ value, fromUnit, toUnit }) => {

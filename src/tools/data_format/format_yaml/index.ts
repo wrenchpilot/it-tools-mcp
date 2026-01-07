@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerFormatYaml(server: McpServer) {
   server.registerTool("format_yaml", {
+    description: "Format and prettify YAML",
 
   inputSchema: {
       yaml: z.string().describe("YAML string to format"),
@@ -11,6 +12,7 @@ export function registerFormatYaml(server: McpServer) {
     annotations: {
       title: "Format Yaml",
 
+      
       readOnlyHint: false
     }
 }, async ({ yaml }) => {

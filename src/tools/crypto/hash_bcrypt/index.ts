@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export function registerHashBcrypt(server: McpServer) {
   server.registerTool("hash_bcrypt", {
+    description: "Generate bcrypt hash or verify password against hash",
 
   inputSchema: {
       password: z.string().describe("Password to hash or verify"),
@@ -14,6 +15,7 @@ export function registerHashBcrypt(server: McpServer) {
     annotations: {
       title: "Hash Bcrypt",
 
+      
       readOnlyHint: false
     }
 }, async ({ password, rounds = 10, hash }) => {

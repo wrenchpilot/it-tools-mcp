@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerIpRangeToCidr(server: McpServer) {
   server.registerTool("convert_ip_range_to_cidr", {
+    description: "Convert IP address range to CIDR notation(s)",
 
   inputSchema: {
       startIP: z.string().describe("Starting IP address"),
@@ -12,6 +13,7 @@ export function registerIpRangeToCidr(server: McpServer) {
     annotations: {
       title: "Ip-range-to-cidr",
 
+      
       readOnlyHint: false
     }
 }, async ({ startIP, endIP }) => {

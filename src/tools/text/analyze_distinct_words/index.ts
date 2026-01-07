@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerDistinctWords(server: McpServer) {
   server.registerTool("analyze_distinct_words", {
+    description: "Count distinct words in text and show their frequency",
 
   inputSchema: {
       text: z.string().describe("Text to analyze for distinct words")
@@ -11,6 +12,7 @@ export function registerDistinctWords(server: McpServer) {
     annotations: {
       title: "Analyze Distinct Words",
 
+      
       readOnlyHint: true
     }
 }, async ({ text }) => {

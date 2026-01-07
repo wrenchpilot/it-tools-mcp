@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export function registerHashSha512(server: McpServer) {
   server.registerTool("hash_sha512", {
+    description: "Generate SHA512 hash",
 
   inputSchema: {
       text: z.string().describe("Text to hash with SHA512"),
@@ -12,6 +13,7 @@ export function registerHashSha512(server: McpServer) {
     annotations: {
       title: "Hash Sha512",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

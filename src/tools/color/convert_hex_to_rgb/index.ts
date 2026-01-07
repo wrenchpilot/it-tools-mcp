@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export function registerConvertHexRgb(server: McpServer) {
   server.registerTool("convert_hex_to_rgb", {
+  description: "Convert HEX color to RGB",
 
   inputSchema: {
       hex: z.string().describe("HEX color code (e.g., #FF5733 or FF5733)"),
@@ -12,6 +13,7 @@ export function registerConvertHexRgb(server: McpServer) {
     annotations: {
       title: "Convert Hex To Rgb",
 
+      
       readOnlyHint: false
     }
 }, async ({ hex }) => {

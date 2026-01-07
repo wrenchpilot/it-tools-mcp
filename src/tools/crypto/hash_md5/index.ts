@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export function registerHashMd5(server: McpServer) {
   server.registerTool("hash_md5", {
+    description: "Generate MD5 hash",
 
   inputSchema: {
       text: z.string().describe("Text to hash with MD5"),
@@ -12,6 +13,7 @@ export function registerHashMd5(server: McpServer) {
     annotations: {
       title: "Hash Md5",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

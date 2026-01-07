@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerDiffJson(server: McpServer) {
   server.registerTool("compare_json", {
+    description: "Compare two JSON objects and show differences",
 
   inputSchema: {
       json1: z.string().describe("First JSON object"),
@@ -12,6 +13,7 @@ export function registerDiffJson(server: McpServer) {
     annotations: {
       title: "Compare Json",
 
+      
       readOnlyHint: false
     }
 }, async ({ json1, json2 }) => {

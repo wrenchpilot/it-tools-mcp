@@ -4,6 +4,7 @@ import ping from "ping";
 
 export function registerPing(server: McpServer) {
   server.registerTool("ping", {
+    description: "Test network connectivity to a host. Example: ping google.com to check if it's reachable",
 
   inputSchema: {
       target: z.string().describe("Host to ping"),
@@ -13,6 +14,7 @@ export function registerPing(server: McpServer) {
     annotations: {
       title: "Ping",
 
+      
       readOnlyHint: false
     }
 }, async ({ target, count }) => {

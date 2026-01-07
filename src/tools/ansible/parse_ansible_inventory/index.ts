@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerAnsibleInventoryParser(server: McpServer) {
   server.registerTool("parse_ansible_inventory", {
+    description: "Parse and validate Ansible inventory files",
 
   inputSchema: {
       inventory: z.string().describe("Ansible inventory content (INI or YAML format)"),
@@ -11,6 +12,7 @@ export function registerAnsibleInventoryParser(server: McpServer) {
     annotations: {
       title: "Generate Ansible Inventory",
 
+      
       readOnlyHint: false
     }
 }, async ({ inventory }) => {

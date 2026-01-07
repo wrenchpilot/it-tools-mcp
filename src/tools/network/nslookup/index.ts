@@ -4,6 +4,7 @@ import dns from "dns";
 
 export function registerNslookup(server: McpServer) {
   server.registerTool("nslookup", {
+    description: "Perform DNS lookup on a hostname or IP address",
 
   inputSchema: {
       target: z.string().describe("Hostname or IP address")
@@ -12,6 +13,7 @@ export function registerNslookup(server: McpServer) {
     annotations: {
       title: "Nslookup",
 
+      
       readOnlyHint: false
     }
 }, async ({ target }) => {

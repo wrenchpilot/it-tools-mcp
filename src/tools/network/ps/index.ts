@@ -4,12 +4,14 @@ import psList from "ps-list";
 
 export function registerPs(server: McpServer) {
   server.registerTool("ps", {
+    description: "List running processes",
 
   inputSchema: {},
     // VS Code compliance annotations
     annotations: {
       title: "Ps",
 
+      
       readOnlyHint: false
     }
 }, async () => {

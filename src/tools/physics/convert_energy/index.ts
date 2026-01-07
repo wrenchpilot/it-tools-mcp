@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerEnergyConverter(server: McpServer) {
   server.registerTool("convert_energy", {
+    description: "Convert between different energy units",
 
   inputSchema: {
       value: z.number().describe("Energy value to convert"),
@@ -19,6 +20,7 @@ export function registerEnergyConverter(server: McpServer) {
     annotations: {
       title: "Convert Energy",
 
+      
       readOnlyHint: false
     }
 }, async ({ value, fromUnit, toUnit }) => {

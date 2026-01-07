@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerEncodeHtml(server: McpServer) {
   server.registerTool("encode_html", {
+    description: "Encode HTML entities",
 
   inputSchema: {
       text: z.string().describe("Text to HTML encode"),
@@ -11,6 +12,7 @@ export function registerEncodeHtml(server: McpServer) {
     annotations: {
       title: "Encode Html",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

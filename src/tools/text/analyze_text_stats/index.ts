@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTextStats(server: McpServer) {
   server.registerTool("analyze_text_stats", {
+    description: "Get statistics about text (character count, word count, etc.)",
 
   inputSchema: {
       text: z.string().describe("Text to analyze"),
@@ -11,6 +12,7 @@ export function registerTextStats(server: McpServer) {
     annotations: {
       title: "Analyze Text Stats",
 
+      
       readOnlyHint: true
     }
 }, async ({ text }) => {

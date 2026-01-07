@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerIpv4SubnetCalc(server: McpServer) {
   server.registerTool("calculate_ipv4_subnet", {
+    description: "Calculate IPv4 subnet information",
 
   inputSchema: {
       cidr: z.string().describe("IPv4 CIDR notation (e.g., 192.168.1.0/24)"),
@@ -11,6 +12,7 @@ export function registerIpv4SubnetCalc(server: McpServer) {
     annotations: {
       title: "Ipv4-subnet-calc",
 
+      
       readOnlyHint: false
     }
 }, async ({ cidr }) => {

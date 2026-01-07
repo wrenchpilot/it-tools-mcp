@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerEvaluateMath(server: McpServer) {
   server.registerTool("evaluate_math", {
+    description: "Safely evaluate mathematical expressions",
 
   inputSchema: {
       expression: z.string().describe("Mathematical expression to evaluate (e.g., '2 + 3 * 4')")
@@ -11,6 +12,7 @@ export function registerEvaluateMath(server: McpServer) {
     annotations: {
       title: "Evaluate Math",
 
+      
       readOnlyHint: false
     }
 }, async ({ expression }) => {

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerAsciiArtText(server: McpServer) {
   server.registerTool("generate_ascii_art", {
+    description: "Generate ASCII art text using figlet fonts. Example: 'Hello' → stylized ASCII text art, supports 295+ fonts",
 
     inputSchema: {
       text: z.string().describe("Text to convert to ASCII art, or use 'LIST_FONTS' to get all available font names"),
@@ -12,6 +13,7 @@ export function registerAsciiArtText(server: McpServer) {
     annotations: {
       title: "Generate ASCII Art",
 
+      
       readOnlyHint: false
     }
   }, async ({ text, font = "standard" }) => {

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerLoremIpsumGenerator(server: McpServer) {
   server.registerTool("generate_lorem_ipsum", {
+    description: "Generate Lorem Ipsum placeholder text",
 
   inputSchema: {
       count: z.number().describe("Number of items to generate").optional(),
@@ -12,6 +13,7 @@ export function registerLoremIpsumGenerator(server: McpServer) {
     annotations: {
       title: "Generate Lorem Ipsum",
 
+      
       readOnlyHint: false
     }
 }, async ({ count = 5, type = "sentences" }) => {

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerPowerConverter(server: McpServer) {
   server.registerTool("convert_power", {
+    description: "Convert between different power units",
 
   inputSchema: {
       value: z.number().describe("Power value to convert"),
@@ -19,6 +20,7 @@ export function registerPowerConverter(server: McpServer) {
     annotations: {
       title: "Convert Power",
 
+      
       readOnlyHint: false
     }
 }, async ({ value, fromUnit, toUnit }) => {

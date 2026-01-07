@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerConvertHtmlMarkdown(server: McpServer) {
   server.registerTool("convert_html_to_markdown", {
+    description: "Convert HTML to Markdown",
 
   inputSchema: {
       html: z.string().describe("HTML content to convert to Markdown"),
@@ -11,6 +12,7 @@ export function registerConvertHtmlMarkdown(server: McpServer) {
     annotations: {
       title: "Convert Html To Markdown",
 
+      
       readOnlyHint: false
     }
 }, async ({ html }) => {

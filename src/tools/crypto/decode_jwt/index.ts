@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerDecodeJwt(server: McpServer) {
   server.registerTool("decode_jwt", {
+  description: "Decode JWT token (header and payload only)",
 
   inputSchema: {
       token: z.string().describe("JWT token to decode"),
@@ -11,6 +12,7 @@ export function registerDecodeJwt(server: McpServer) {
     annotations: {
       title: "Decode Jwt",
 
+      
       readOnlyHint: false
     }
 }, async ({ token }) => {

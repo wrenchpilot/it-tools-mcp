@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerRandomPort(server: McpServer) {
   server.registerTool("generate_random_port", {
+    description: "Generate random port numbers",
 
   inputSchema: {
       count: z.number().describe("Number of ports to generate").optional(),
@@ -14,6 +15,7 @@ export function registerRandomPort(server: McpServer) {
     annotations: {
       title: "Random-port",
 
+      
       readOnlyHint: false
     }
 }, async ({ count = 1, min = 1024, max = 65535, exclude = [] }) => {

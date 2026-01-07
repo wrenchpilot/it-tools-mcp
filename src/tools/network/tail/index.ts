@@ -4,6 +4,7 @@ import readLastLines from "read-last-lines";
 
 export function registerTail(server: McpServer) {
   server.registerTool("tail", {
+    description: "Display the end of a file",
 
   inputSchema: {
       file: z.string().describe("File path"),
@@ -13,6 +14,7 @@ export function registerTail(server: McpServer) {
     annotations: {
       title: "Tail",
 
+      
       readOnlyHint: false
     }
 }, async ({ file, lines }) => {

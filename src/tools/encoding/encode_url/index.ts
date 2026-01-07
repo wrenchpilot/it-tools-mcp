@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerEncodeUrl(server: McpServer) {
   server.registerTool("encode_url", {
+    description: "URL encode text",
 
   inputSchema: {
       text: z.string().describe("Text to URL encode"),
@@ -11,6 +12,7 @@ export function registerEncodeUrl(server: McpServer) {
     annotations: {
       title: "Encode Url",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

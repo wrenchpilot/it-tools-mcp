@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerGenerateSvgPlaceholder(server: McpServer) {
   server.registerTool("generate_svg_placeholder", {
+    description: "Generate SVG placeholder images",
 
   inputSchema: {
       width: z.number().describe("Width in pixels").optional(),
@@ -15,6 +16,7 @@ export function registerGenerateSvgPlaceholder(server: McpServer) {
     annotations: {
       title: "Generate Svg Placeholder",
 
+      
       readOnlyHint: false
     }
 }, async ({ width = 300, height = 200, backgroundColor = "#cccccc", textColor = "#666666", text }) => {

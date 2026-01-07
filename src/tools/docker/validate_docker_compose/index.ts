@@ -4,6 +4,7 @@ import yaml from "js-yaml";
 
 export function registerValidateCompose(server: McpServer) {
   server.registerTool("validate_docker_compose", {
+    description: "Validate Docker Compose files for syntax errors, compatibility issues, and best practices. Example: check YAML syntax, service configuration, network setup",
 
     inputSchema: {
       content: z.string().describe("Docker Compose file content to validate"),
@@ -12,6 +13,7 @@ export function registerValidateCompose(server: McpServer) {
     annotations: {
       title: "Validate Docker Compose",
 
+      
       readOnlyHint: false
     }
   }, async ({ content }) => {

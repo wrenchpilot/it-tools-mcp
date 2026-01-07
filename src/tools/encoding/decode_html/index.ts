@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerDecodeHtml(server: McpServer) {
   server.registerTool("decode_html", {
+    description: "Decode HTML entities",
 
   inputSchema: {
       text: z.string().describe("HTML encoded text to decode"),
@@ -11,6 +12,7 @@ export function registerDecodeHtml(server: McpServer) {
     annotations: {
       title: "Decode Html",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

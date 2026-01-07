@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerIpSubnetCalculator(server: McpServer) {
   server.registerTool("calculate_ip_subnet", {
+    description: "Calculate subnet information for IPv4",
 
   inputSchema: {
       ip: z.string().describe("IPv4 address (e.g., 192.168.1.1)"),
@@ -12,6 +13,7 @@ export function registerIpSubnetCalculator(server: McpServer) {
     annotations: {
       title: "Ip-subnet-calculator",
 
+      
       readOnlyHint: false
     }
 }, async ({ ip, cidr }) => {
