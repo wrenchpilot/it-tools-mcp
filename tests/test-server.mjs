@@ -15,7 +15,7 @@ const testMessages = [
     method: "initialize",
     params: {
       protocolVersion: "2024-11-05",
-      capabilities: { roots: { listChanged: true }, sampling: {} },
+      capabilities: { completions: {} },
       clientInfo: { name: "test-client", version: "1.0.0" }
     }
   },

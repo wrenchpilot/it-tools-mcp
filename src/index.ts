@@ -305,10 +305,6 @@ const server = new McpServer({
     prompts: {
       listChanged: true
     },
-    sampling: {},
-    roots: {
-      listChanged: true
-    },
     logging: {},
     completions: {}
   }
@@ -775,7 +771,7 @@ server.registerPrompt(
   })
 );
 
-// VS Code MCP Compliance: Sampling and Roots are declared in capabilities
+// VS Code MCP Compliance: Completions are declared in capabilities
 // The MCP SDK handles these automatically when capabilities are declared
 
 // Helper functions for VS Code MCP compliance features
