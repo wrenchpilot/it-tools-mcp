@@ -254,7 +254,8 @@ function getPackageMetadata() {
     author: pkg.author,
     repository: pkg.repository,
     homepage: pkg.homepage,
-    license: pkg.license
+    license: pkg.license,
+    mcpName: pkg.mcpName
   };
 }
 
@@ -1507,8 +1508,220 @@ function extractReadmeSection(content: string, heading: string): string {
   return sectionLines.join('\n');
 }
 
-// Start the server
-main().catch((error) => {
-  console.error("Fatal error in main():", error);
+// CLI argument parsing
+function parseArgs(args: string[]): { command: string | null; flags: Set<string> } {
+  const flags = new Set<string>();
+  let command: string | null = null;
+
+  for (const arg of args.slice(2)) {
+    if (arg.startsWith('--')) {
+      flags.add(arg.substring(2));
+    } else if (arg.startsWith('-')) {
+      // Single char flags
+      for (const char of arg.substring(1)) {
+        flags.add(char);
+      }
+    } else if (!command) {
+      command = arg;
+    }
+  }
+
+  return { command, flags };
+}
+
+// CLI Commands
+async function printVersion(): Promise<void> {
+  console.log(`${packageInfo.name} v${packageInfo.version}`);
+  process.exit(0);
+}
+
+async function printHelp(): Promise<void> {
+  const helpText = `
+${packageInfo.name} v${packageInfo.version}
+${packageInfo.description}
+
+USAGE:
+  ${packageInfo.name}                    Start the MCP server
+  ${packageInfo.name} --version          Display version information
+  ${packageInfo.name} --help             Display this help message
+  ${packageInfo.name} --test             Run server validation tests
+
+OPTIONS:
+  --version, -v                          Show version number
+  --help, -h                             Show help information
+  --test, -t                             Run validation tests and exit
+
+ENVIRONMENT VARIABLES:
+  NODE_ENV                               Set to 'development' for verbose logging
+  MCP_DEV_MODE                          Enable development mode features
+
+EXAMPLES:
+  # Start the MCP server (normal operation)
+  $ ${packageInfo.name}
+
+  # Check version
+  $ ${packageInfo.name} --version
+
+  # Run tests (used by Homebrew)
+  $ ${packageInfo.name} --test
+
+For more information, visit: ${packageInfo.homepage || 'https://github.com/wrenchpilot/it-tools-mcp'}
+`;
+
+  console.log(helpText);
+  process.exit(0);
+}
+
+async function runTests(): Promise<void> {
+  console.log(`Running validation tests for ${packageInfo.name} v${packageInfo.version}...\n`);
+
+  let allTestsPassed = true;
+  const results: { test: string; passed: boolean; message?: string }[] = [];
+
+  // Test 1: Package info validation
+  try {
+    if (!packageInfo.name || !packageInfo.version) {
+      throw new Error('Package info incomplete');
+    }
+    results.push({ test: 'Package Info', passed: true });
+  } catch (error) {
+    results.push({
+      test: 'Package Info',
+      passed: false,
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+    allTestsPassed = false;
+  }
+
+  // Test 2: Tool discovery
+  try {
+    const { totalToolCount, toolCategories } = await discoverTools();
+    if (totalToolCount === 0) {
+      throw new Error('No tools discovered');
+    }
+    if (Object.keys(toolCategories).length === 0) {
+      throw new Error('No tool categories found');
+    }
+    results.push({
+      test: 'Tool Discovery',
+      passed: true,
+      message: `Found ${totalToolCount} tools in ${Object.keys(toolCategories).length} categories`
+    });
+  } catch (error) {
+    results.push({
+      test: 'Tool Discovery',
+      passed: false,
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+    allTestsPassed = false;
+  }
+
+  // Test 3: Server initialization (dry run)
+  try {
+    const server = new McpServer({
+      name: packageInfo.mcpName || packageInfo.name,
+      version: packageInfo.version
+    });
+    if (!server) {
+      throw new Error('Failed to create server instance');
+    }
+    results.push({ test: 'Server Initialization', passed: true });
+  } catch (error) {
+    results.push({
+      test: 'Server Initialization',
+      passed: false,
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+    allTestsPassed = false;
+  }
+
+  // Test 4: Resource usage check
+  try {
+    const usage = getResourceUsage();
+    if (usage.memory.heapUsedBytes <= 0) {
+      throw new Error('Invalid memory usage reported');
+    }
+    results.push({
+      test: 'Resource Monitoring',
+      passed: true,
+      message: `Memory: ${(usage.memory.heapUsedBytes / 1024 / 1024).toFixed(2)}MB`
+    });
+  } catch (error) {
+    results.push({
+      test: 'Resource Monitoring',
+      passed: false,
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+    allTestsPassed = false;
+  }
+
+  // Test 5: README resource availability
+  try {
+    const readmePath = path.resolve(__dirname, '../README.md');
+    if (!fs.existsSync(readmePath)) {
+      throw new Error('README.md not found');
+    }
+    const readmeContent = await getReadmeContent('full');
+    if (!readmeContent || readmeContent.length === 0) {
+      throw new Error('README content is empty');
+    }
+    results.push({ test: 'Documentation', passed: true });
+  } catch (error) {
+    results.push({
+      test: 'Documentation',
+      passed: false,
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+    allTestsPassed = false;
+  }
+
+  // Print results
+  console.log('Test Results:');
+  console.log('='.repeat(60));
+  
+  for (const result of results) {
+    const status = result.passed ? '✓ PASS' : '✗ FAIL';
+    const color = result.passed ? '\x1b[32m' : '\x1b[31m';
+    const reset = '\x1b[0m';
+    console.log(`${color}${status}${reset} ${result.test}`);
+    if (result.message) {
+      console.log(`      ${result.message}`);
+    }
+  }
+
+  console.log('='.repeat(60));
+  console.log(
+    allTestsPassed
+      ? '\x1b[32m✓ All tests passed!\x1b[0m'
+      : '\x1b[31m✗ Some tests failed.\x1b[0m'
+  );
+
+  process.exit(allTestsPassed ? 0 : 1);
+}
+
+// Main CLI entry point
+async function cli(): Promise<void> {
+  const { flags } = parseArgs(process.argv);
+
+  // Handle CLI flags
+  if (flags.has('version') || flags.has('v')) {
+    await printVersion();
+  }
+
+  if (flags.has('help') || flags.has('h')) {
+    await printHelp();
+  }
+
+  if (flags.has('test') || flags.has('t')) {
+    await runTests();
+  }
+
+  // No flags provided - start the server normally
+  await main();
+}
+
+// Start the CLI
+cli().catch((error) => {
+  console.error("Fatal error in CLI:", error);
   process.exit(1);
 });
