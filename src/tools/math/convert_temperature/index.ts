@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerConvertTemperature(server: McpServer) {
   server.registerTool("convert_temperature", {
+    description: "Convert temperatures between Celsius, Fahrenheit, and Kelvin",
 
   inputSchema: {
       temperature: z.number().describe("Temperature value to convert"),
@@ -13,6 +14,7 @@ export function registerConvertTemperature(server: McpServer) {
     annotations: {
       title: "Convert Temperature",
 
+      
       readOnlyHint: false
     }
 }, async ({ temperature, from, to }) => {

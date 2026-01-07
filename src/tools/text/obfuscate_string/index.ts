@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerStringObfuscator(server: McpServer) {
   server.registerTool("obfuscate_string", {
+    description: "Obfuscate text by replacing characters with their HTML entities or other representations",
 
   inputSchema: {
       text: z.string().describe("Text to obfuscate"),
@@ -12,6 +13,7 @@ export function registerStringObfuscator(server: McpServer) {
     annotations: {
       title: "Obfuscate String",
 
+      
       readOnlyHint: false
     }
 }, async ({ text, method = "html-entities" }) => {

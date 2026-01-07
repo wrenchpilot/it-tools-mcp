@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerFormatXml(server: McpServer) {
   server.registerTool("format_xml", {
+    description: "Format and prettify XML",
 
   inputSchema: {
       xml: z.string().describe("XML string to format"),
@@ -12,6 +13,7 @@ export function registerFormatXml(server: McpServer) {
     annotations: {
       title: "Format Xml",
 
+      
       readOnlyHint: false
     }
 }, async ({ xml, indent = 2 }) => {

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerUnixTimestampConverter(server: McpServer) {
   server.registerTool("convert_unix_timestamp", {
+    description: "Convert between Unix timestamps and human-readable dates",
 
   inputSchema: {
       input: z.string().describe("Unix timestamp (seconds) or ISO date string")
@@ -11,6 +12,7 @@ export function registerUnixTimestampConverter(server: McpServer) {
     annotations: {
       title: "Unix-timestamp-converter",
 
+      
       readOnlyHint: false
     }
 }, async ({ input }) => {

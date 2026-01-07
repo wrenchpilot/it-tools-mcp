@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTextDiff(server: McpServer) {
   server.registerTool("compare_text", {
+    description: "Compare two texts and show differences",
 
   inputSchema: {
       text1: z.string().describe("First text to compare"),
@@ -12,6 +13,7 @@ export function registerTextDiff(server: McpServer) {
     annotations: {
       title: "Compare Text",
 
+      
       readOnlyHint: false
     }
 }, async ({ text1, text2 }) => {

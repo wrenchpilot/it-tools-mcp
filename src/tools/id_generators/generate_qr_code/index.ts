@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerGenerateQr(server: McpServer) {
   server.registerTool("generate_qr_code", {
+    description: "Generate QR code for any text including URLs, WiFi networks, contact info, etc.",
 
     inputSchema: {
       text: z.string().describe("Text to encode in QR code (URLs, WiFi: WIFI:T:WPA;S:network;P:password;;, contact info, etc.)"),
@@ -12,6 +13,7 @@ export function registerGenerateQr(server: McpServer) {
     annotations: {
       title: "Generate Qr Code",
 
+      
       readOnlyHint: false
     }
   }, async ({ text, size = 1 }) => {

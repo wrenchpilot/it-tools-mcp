@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTextToUnicode(server: McpServer) {
   server.registerTool("convert_text_to_unicode", {
+    description: "Convert text to Unicode code points and vice versa",
 
   inputSchema: {
       input: z.string().describe("Text to convert to Unicode or Unicode to convert to text"),
@@ -12,6 +13,7 @@ export function registerTextToUnicode(server: McpServer) {
     annotations: {
       title: "Convert Text To Unicode",
 
+      
       readOnlyHint: false
     }
 }, async ({ input, operation }) => {

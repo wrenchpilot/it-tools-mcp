@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerMinifyJson(server: McpServer) {
   server.registerTool("minify_json", {
+    description: "Minify JSON by removing whitespace and unnecessary characters. Example: formatted JSON → compact single-line JSON",
 
     inputSchema: {
       json: z.string().describe("JSON string to minify"),
@@ -11,6 +12,7 @@ export function registerMinifyJson(server: McpServer) {
     annotations: {
       title: "Minify JSON",
 
+      
       readOnlyHint: false
     }
   }, async ({ json }) => {

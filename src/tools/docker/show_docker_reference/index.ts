@@ -3,12 +3,14 @@ import { z } from "zod";
 
 export function registerReferenceDocker(server: McpServer) {
   server.registerTool("show_docker_reference", {
+    description: "Get Docker commands reference and cheatsheet",
 
   inputSchema: {},
     // VS Code compliance annotations
     annotations: {
       title: "Show Docker Reference",
 
+      
       readOnlyHint: true
     }
 }, async () => {

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTextToUnicodeNames(server: McpServer) {
   server.registerTool("show_unicode_names", {
+    description: "Convert text to Unicode character names",
 
   inputSchema: {
       text: z.string().describe("Text to convert to Unicode names")
@@ -11,6 +12,7 @@ export function registerTextToUnicodeNames(server: McpServer) {
     annotations: {
       title: "Show Unicode Names",
 
+      
       readOnlyHint: true
     }
 }, async ({ text }) => {

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerValidateAnsiblePlaybook(server: McpServer) {
   server.registerTool("validate_ansible_playbook", {
+    description: "Validate Ansible playbook syntax and structure",
 
   inputSchema: {
       playbook: z.string().describe("Ansible playbook YAML content"),
@@ -11,6 +12,7 @@ export function registerValidateAnsiblePlaybook(server: McpServer) {
     annotations: {
       title: "Validate Ansible Playbook",
 
+      
       readOnlyHint: false
     }
 }, async ({ playbook }) => {

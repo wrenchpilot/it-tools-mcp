@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerConvertTextBinary(server: McpServer) {
   server.registerTool("convert_text_to_binary", {
+    description: "Convert text to binary and vice versa",
 
   inputSchema: {
       input: z.string().describe("Text to convert to binary, or binary to convert to text"),
@@ -12,6 +13,7 @@ export function registerConvertTextBinary(server: McpServer) {
     annotations: {
       title: "Convert Text To Binary",
 
+      
       readOnlyHint: false
     }
 }, async ({ input, operation }) => {

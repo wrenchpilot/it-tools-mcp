@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerGenerateToken(server: McpServer) {
   server.registerTool("generate_token", {
+    description: "Generate secure random tokens",
 
   inputSchema: {
       length: z.number().describe("Token length").optional(),
@@ -13,6 +14,7 @@ export function registerGenerateToken(server: McpServer) {
     annotations: {
       title: "Generate Token",
 
+      
       readOnlyHint: false
     }
 }, async ({ length = 32, charset = "alphanumeric", customChars }) => {

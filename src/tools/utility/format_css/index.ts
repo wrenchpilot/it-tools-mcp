@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerCssPrettifier(server: McpServer) {
   server.registerTool("format_css", {
+    description: "Format and prettify CSS code",
 
   inputSchema: {
       css: z.string().describe("CSS code to format"),
@@ -12,6 +13,7 @@ export function registerCssPrettifier(server: McpServer) {
     annotations: {
       title: "Format Css",
 
+      
       readOnlyHint: false
     }
 }, async ({ css, indentSize = 2 }) => {

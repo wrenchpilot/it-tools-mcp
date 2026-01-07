@@ -4,6 +4,7 @@ import fs from "fs";
 
 export function registerHead(server: McpServer) {
   server.registerTool("head", {
+    description: "Display the beginning of a file",
 
   inputSchema: {
       file: z.string().describe("File path"),
@@ -13,6 +14,7 @@ export function registerHead(server: McpServer) {
     annotations: {
       title: "Head",
 
+      
       readOnlyHint: false
     }
 }, async ({ file, lines }) => {

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerDecodeUrl(server: McpServer) {
   server.registerTool("decode_url", {
+    description: "URL decode text",
 
   inputSchema: {
       text: z.string().describe("URL encoded text to decode"),
@@ -11,6 +12,7 @@ export function registerDecodeUrl(server: McpServer) {
     annotations: {
       title: "Decode Url",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

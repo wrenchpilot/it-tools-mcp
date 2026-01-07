@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerFormatJson(server: McpServer) {
   server.registerTool("format_json", {
+  description: 'Format and prettify JSON with proper indentation. Example: {"a":1,"b":2} → formatted JSON with customizable spacing',
 
     inputSchema: {
       json: z.string().describe("JSON string to format"),

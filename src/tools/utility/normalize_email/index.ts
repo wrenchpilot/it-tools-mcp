@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerEmailNormalizer(server: McpServer) {
   server.registerTool("normalize_email", {
+    description: "Normalize email addresses (remove dots, plus aliases, etc.)",
 
   inputSchema: {
       email: z.string().describe("Email address to normalize"),
@@ -11,6 +12,7 @@ export function registerEmailNormalizer(server: McpServer) {
     annotations: {
       title: "Normalize Email",
 
+      
       readOnlyHint: false
     }
 }, async ({ email }) => {

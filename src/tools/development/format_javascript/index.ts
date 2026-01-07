@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerPrettifyJavascript(server: McpServer) {
   server.registerTool("format_javascript", {
+    description: "Format and beautify JavaScript/CSS code",
 
   inputSchema: {
       code: z.string().describe("JavaScript or CSS code to prettify"),
@@ -13,6 +14,7 @@ export function registerPrettifyJavascript(server: McpServer) {
     annotations: {
       title: "Format Javascript",
 
+      
       readOnlyHint: false
     }
 }, async ({ code, type, indentSize }) => {

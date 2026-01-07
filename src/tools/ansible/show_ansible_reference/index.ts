@@ -3,12 +3,14 @@ import { z } from "zod";
 
 export function registerReferenceAnsible(server: McpServer) {
   server.registerTool("show_ansible_reference", {
+    description: "Get Ansible commands reference and cheatsheet",
 
   inputSchema: {},
     // VS Code compliance annotations
     annotations: {
       title: "Show Ansible Reference",
 
+      
       readOnlyHint: true
     }
 }, async () => {

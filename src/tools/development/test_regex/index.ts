@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTestRegex(server: McpServer) {
   server.registerTool("test_regex", {
+    description: "Test regular expressions against text",
 
   inputSchema: {
       pattern: z.string().describe("Regular expression pattern"),
@@ -13,6 +14,7 @@ export function registerTestRegex(server: McpServer) {
     annotations: {
       title: "Test Regex",
 
+      
       readOnlyHint: false
     }
 }, async ({ pattern, text, flags }) => {

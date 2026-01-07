@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerPortNumbers(server: McpServer) {
   server.registerTool("lookup_port_numbers", {
+    description: "Look up common TCP/UDP port numbers and their services",
 
   inputSchema: {
       query: z.string().describe("Port number or service name to look up")
@@ -11,6 +12,7 @@ export function registerPortNumbers(server: McpServer) {
     annotations: {
       title: "Lookup Port Numbers",
 
+      
       readOnlyHint: true
     }
 }, async ({ query }) => {

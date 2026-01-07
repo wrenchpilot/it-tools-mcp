@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTextKebabcase(server: McpServer) {
   server.registerTool("convert_text_to_kebabcase", {
+    description: "Convert text to kebab-case",
 
   inputSchema: {
       text: z.string().describe("Text to convert to kebab-case"),
@@ -11,6 +12,7 @@ export function registerTextKebabcase(server: McpServer) {
     annotations: {
       title: "Convert Text To Kebabcase",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

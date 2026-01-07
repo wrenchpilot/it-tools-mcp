@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerGeneratePassword(server: McpServer) {
   server.registerTool("generate_password", {
+    description: "Generate a secure password",
 
   inputSchema: {
       length: z.number().describe("Password length").optional(),
@@ -15,6 +16,7 @@ export function registerGeneratePassword(server: McpServer) {
     annotations: {
       title: "Generate Password",
 
+      
       readOnlyHint: false
     }
 }, async ({ length = 16, includeUppercase = true, includeLowercase = true, includeNumbers = true, includeSymbols = true }) => {

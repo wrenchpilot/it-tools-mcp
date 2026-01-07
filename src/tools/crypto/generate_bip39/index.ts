@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export function registerGenerateBip39(server: McpServer) {
   server.registerTool("generate_bip39", {
+    description: "Generate BIP39 mnemonic phrases",
 
   inputSchema: {
       wordCount: z.enum(["12", "15", "18", "21", "24"]).describe("Number of words in the mnemonic").optional(),
@@ -12,6 +13,7 @@ export function registerGenerateBip39(server: McpServer) {
     annotations: {
       title: "Generate Bip39",
 
+      
       readOnlyHint: false
     }
 }, async ({ wordCount = "12" }) => {

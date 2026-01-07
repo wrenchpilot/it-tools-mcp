@@ -2,12 +2,14 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 export function registerDeviceInfo(server: McpServer) {
   server.registerTool("show_device_info", {
+    description: "Get basic device/system information",
 
   inputSchema: {},
     // VS Code compliance annotations
     annotations: {
       title: "Show Device Info",
 
+      
       readOnlyHint: true
     }
 }, async () => {

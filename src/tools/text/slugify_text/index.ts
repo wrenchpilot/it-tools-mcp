@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerSlugifyString(server: McpServer) {
   server.registerTool("slugify_text", {
+    description: "Convert text to URL-friendly slug format",
 
   inputSchema: {
       text: z.string().describe("Text to convert to slug"),
@@ -13,6 +14,7 @@ export function registerSlugifyString(server: McpServer) {
     annotations: {
       title: "Slugify Text",
 
+      
       readOnlyHint: false
     }
 }, async ({ text, separator = "-", lowercase = true }) => {

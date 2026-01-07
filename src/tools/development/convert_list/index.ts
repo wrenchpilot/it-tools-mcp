@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerConvertList(server: McpServer) {
   server.registerTool("convert_list", {
+    description: "Convert between different list formats (comma-separated, line-separated, etc.)",
 
   inputSchema: {
       list: z.string().describe("Input list to convert"),
@@ -14,6 +15,7 @@ export function registerConvertList(server: McpServer) {
     annotations: {
       title: "Convert List",
 
+      
       readOnlyHint: false
     }
 }, async ({ list, inputFormat, outputFormat, trim = true }) => {

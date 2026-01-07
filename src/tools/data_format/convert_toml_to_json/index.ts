@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerConvertTomlJson(server: McpServer) {
   server.registerTool("convert_toml_to_json", {
+    description: "Convert TOML to JSON format",
 
   inputSchema: {
       toml: z.string().describe("TOML string to convert"),
@@ -11,6 +12,7 @@ export function registerConvertTomlJson(server: McpServer) {
     annotations: {
       title: "Convert Toml To Json",
 
+      
       readOnlyHint: false
     }
 }, async ({ toml: tomlString }) => {

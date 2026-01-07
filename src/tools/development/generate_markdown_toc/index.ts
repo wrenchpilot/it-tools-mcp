@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerGenerateMarkdownToc(server: McpServer) {
   server.registerTool("generate_markdown_toc", {
+    description: "Generate a table of contents from Markdown headers",
 
   inputSchema: {
       markdown: z.string().describe("Markdown content to generate TOC from"),
@@ -13,6 +14,7 @@ export function registerGenerateMarkdownToc(server: McpServer) {
     annotations: {
       title: "Generate Markdown Toc",
 
+      
       readOnlyHint: false
     }
 }, async ({ markdown, maxLevel, generateAnchors }) => {

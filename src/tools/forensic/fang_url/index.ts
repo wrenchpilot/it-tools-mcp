@@ -4,6 +4,7 @@ import { Buffer } from 'buffer';
 
 export function registerFangUrl(server: McpServer) {
   server.registerTool("fang_url", {
+    description: "Defang or refang URLs for safe sharing (security analysis)",
 
   inputSchema: {
       text: z.string().describe("Text containing URLs to fang/defang"),
@@ -13,6 +14,7 @@ export function registerFangUrl(server: McpServer) {
     annotations: {
       title: "Fang Url",
 
+      
       readOnlyHint: false
     }
 }, async ({ text, operation }) => {

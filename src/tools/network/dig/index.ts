@@ -4,6 +4,7 @@ import dns from "dns";
 
 export function registerDig(server: McpServer) {
   server.registerTool("dig", {
+    description: "Perform DNS lookup with dig command",
 
   inputSchema: {
       target: z.string().describe("Hostname or IP address"),
@@ -13,6 +14,7 @@ export function registerDig(server: McpServer) {
     annotations: {
       title: "Dig",
 
+      
       readOnlyHint: false
     }
 }, async ({ target, type }) => {

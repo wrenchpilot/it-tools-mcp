@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTextUppercase(server: McpServer) {
   server.registerTool("convert_text_to_uppercase", {
+    description: "Convert text to uppercase",
 
   inputSchema: {
       text: z.string().describe("Text to convert to uppercase"),
@@ -11,6 +12,7 @@ export function registerTextUppercase(server: McpServer) {
     annotations: {
       title: "Convert Text To Uppercase",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

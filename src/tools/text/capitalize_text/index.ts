@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTextCapitalize(server: McpServer) {
   server.registerTool("capitalize_text", {
+    description: "Capitalize first letter of each word",
 
   inputSchema: {
       text: z.string().describe("Text to capitalize"),
@@ -11,6 +12,7 @@ export function registerTextCapitalize(server: McpServer) {
     annotations: {
       title: "Capitalize Text",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

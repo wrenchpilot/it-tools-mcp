@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerUrlParse(server: McpServer) {
   server.registerTool("parse_url", {
+    description: "Parse URL into components",
 
   inputSchema: {
       url: z.string().describe("URL to parse"),
@@ -11,6 +12,7 @@ export function registerUrlParse(server: McpServer) {
     annotations: {
       title: "Url-parse",
 
+      
       readOnlyHint: false
     }
 }, async ({ url }) => {

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerConvertNumberBase(server: McpServer) {
   server.registerTool("convert_number_base", {
+    description: "Convert numbers between different bases (binary, octal, decimal, hexadecimal)",
 
   inputSchema: {
       number: z.string().describe("Number to convert"),
@@ -13,6 +14,7 @@ export function registerConvertNumberBase(server: McpServer) {
     annotations: {
       title: "Convert Number Base",
 
+      
       readOnlyHint: false
     }
 }, async ({ number, fromBase, toBase }) => {

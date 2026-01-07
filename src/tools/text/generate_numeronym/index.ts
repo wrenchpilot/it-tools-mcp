@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerNumeronymGenerator(server: McpServer) {
   server.registerTool("generate_numeronym", {
+    description: "Generate numeronyms (abbreviations with numbers) from text",
 
   inputSchema: {
       text: z.string().describe("Text to convert to numeronym"),
@@ -11,6 +12,7 @@ export function registerNumeronymGenerator(server: McpServer) {
     annotations: {
       title: "Generate Numeronym",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

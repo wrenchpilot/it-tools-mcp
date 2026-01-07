@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTextSnakecase(server: McpServer) {
   server.registerTool("text_snakecase", {
+    description: "Convert text to snake_case",
 
     inputSchema: {
       text: z.string().describe("Text to convert to snake_case"),
@@ -11,6 +12,7 @@ export function registerTextSnakecase(server: McpServer) {
     annotations: {
       title: "Convert Text To Snake Case",
 
+      
       readOnlyHint: false
     }
   }, async ({ text }) => {

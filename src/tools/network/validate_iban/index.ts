@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerIbanValidate(server: McpServer) {
   server.registerTool("validate_iban", {
+    description: "Validate and parse IBAN (International Bank Account Number)",
 
   inputSchema: {
       iban: z.string().describe("IBAN to validate and parse"),
@@ -11,6 +12,7 @@ export function registerIbanValidate(server: McpServer) {
     annotations: {
       title: "Iban-validate",
 
+      
       readOnlyHint: false
     }
 }, async ({ iban }) => {

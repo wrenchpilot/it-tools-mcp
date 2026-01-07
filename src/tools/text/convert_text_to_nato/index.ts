@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTextToNatoAlphabet(server: McpServer) {
   server.registerTool("convert_text_to_nato", {
+    description: "Convert text to NATO phonetic alphabet",
 
   inputSchema: {
       text: z.string().describe("Text to convert to NATO phonetic alphabet"),
@@ -12,6 +13,7 @@ export function registerTextToNatoAlphabet(server: McpServer) {
     annotations: {
       title: "Convert Text To Nato",
 
+      
       readOnlyHint: false
     }
 }, async ({ text, language }) => {

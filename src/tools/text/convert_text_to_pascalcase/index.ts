@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export function registerTextPascalcase(server: McpServer) {
   server.registerTool("convert_text_to_pascalcase", {
+    description: "Convert text to PascalCase",
 
   inputSchema: {
       text: z.string().describe("Text to convert to PascalCase"),
@@ -11,6 +12,7 @@ export function registerTextPascalcase(server: McpServer) {
     annotations: {
       title: "Convert Text To Pascalcase",
 
+      
       readOnlyHint: false
     }
 }, async ({ text }) => {

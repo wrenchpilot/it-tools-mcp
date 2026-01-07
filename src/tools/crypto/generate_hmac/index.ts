@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export function registerGenerateHmac(server: McpServer) {
   server.registerTool("generate_hmac", {
+    description: "Generate HMAC (Hash-based Message Authentication Code)",
 
   inputSchema: {
       message: z.string().describe("Message to authenticate"),
@@ -14,6 +15,7 @@ export function registerGenerateHmac(server: McpServer) {
     annotations: {
       title: "Generate Hmac",
 
+      
       readOnlyHint: false
     }
 }, async ({ message, key, algorithm = "sha256" }) => {
