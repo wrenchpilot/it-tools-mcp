@@ -13,6 +13,10 @@
 
 A comprehensive Model Context Protocol (MCP) server that provides access to over **100 IT tools and utilities** commonly used by developers, system administrators, and IT professionals. This server exposes a complete set of tools for encoding/decoding, text manipulation, hashing, network utilities, and many other common development and IT tasks.
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=wrenchpilot/it-tools-mcp&type=date&legend=top-left)](https://www.star-history.com/#wrenchpilot/it-tools-mcp&type=date&legend=top-left)
+
 ## Using with VS Code
 
 Add to your VS Code `settings.json`:
