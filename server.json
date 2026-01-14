@@ -6,7 +6,7 @@
     "url": "https://github.com/wrenchpilot/it-tools-mcp",
     "source": "github"
   },
-  "version": "5.8.10",
+  "version": "5.8.11",
   "packages": [
     {
       "registryType": "npm",
@@ -16,7 +16,7 @@
       "runtimeArguments": [],
       "packageArguments": [],
       "environmentVariables": [],
-      "version": "5.8.10",
+      "version": "5.8.11",
       "transport": {
         "type": "stdio"
       }

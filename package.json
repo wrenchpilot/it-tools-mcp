@@ -1,6 +1,6 @@
 {
   "name": "it-tools-mcp",
-  "version": "5.8.10",
+  "version": "5.8.11",
   "description": "MCP-compliant server access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals.",
   "mcpName": "io.github.wrenchpilot/it-tools-mcp",
   "type": "module",
@@ -24,7 +24,9 @@
     "docker:run": "docker-compose up --build",
     "docker:stop": "docker-compose down",
     "deploy:build": "npm run build && docker buildx build --platform linux/amd64,linux/arm64 --provenance=true --sbom=true -t it-tools-mcp:latest .",
-    "deploy:prod": "npm run deploy:build && docker-compose up -d"
+    "deploy:prod": "npm run deploy:build && docker-compose up -d",
+    "mcp:login": "mcp-publisher login github",
+    "mcp:publish": "mcp-publisher publish"
   },
   "files": [
     "build",
