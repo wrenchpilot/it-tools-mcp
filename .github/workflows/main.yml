@@ -372,10 +372,31 @@ jobs:
 
       - name: Install MCP Publisher
         run: |
-          set -e
-          curl -fsSL "https://github.com/mcpcentral-io/mcpcentral-registry-publish-tool/archive/refs/tags/mcp.tar.gz" | tar xz mcp-publisher
-          sudo mv mcp-publisher /usr/local/bin/
+          set -euo pipefail
+          URL="https://github.com/mcpcentral-io/mcpcentral-registry-publish-tool/archive/refs/tags/mcp.tar.gz"
+          TMPDIR=$(mktemp -d)
+          trap 'rm -rf "${TMPDIR}"' EXIT
+          echo "Downloading $URL"
+          curl -fSL "$URL" -o "$TMPDIR/mcp.tar.gz"
+
+          mkdir -p "$TMPDIR/extracted"
+          tar -xzf "$TMPDIR/mcp.tar.gz" -C "$TMPDIR/extracted"
+
+          echo "Archive top-level contents:"
+          ls -la "$TMPDIR/extracted" || true
+
+          # Locate the mcp-publisher binary inside the extracted archive
+          BINPATH=$(find "$TMPDIR/extracted" -type f -name 'mcp-publisher' -print -quit || true)
+          if [ -z "${BINPATH}" ]; then
+            echo "ERROR: mcp-publisher not found in archive. Showing first 512 bytes of the archive for debugging:" >&2
+            head -c 512 "$TMPDIR/mcp.tar.gz" | hexdump -C | sed -n '1,200p' >&2 || true
+            exit 2
+          fi
+
+          echo "Found binary at: $BINPATH"
+          sudo mv "$BINPATH" /usr/local/bin/mcp-publisher
           sudo chmod +x /usr/local/bin/mcp-publisher
+          echo "/usr/local/bin/mcp-publisher installed"
 
       - name: Login to MCP Registry using GitHub OIDC
         run: |
