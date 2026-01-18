@@ -2,7 +2,7 @@
   "name": "it-tools-mcp",
   "displayName": "IT Tools MCP Server",
   "description": "MCP-compliant server access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals.",
-  "version": "5.8.14",
+  "version": "5.8.16",
   "author": "wrenchpilot",
   "license": "MIT",
   "icon": "icons/icon.png",
