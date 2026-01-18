@@ -27,6 +27,9 @@ FROM node:lts-bookworm-slim AS production
 
 WORKDIR /app
 
+# Required MCP annotation
+LABEL io.modelcontextprotocol.server.name="io.github.wrenchpilot/it-tools-mcp"
+
 # Copy package files
 COPY package*.json ./
 

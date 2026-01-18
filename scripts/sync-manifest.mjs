@@ -112,8 +112,101 @@ function syncManifest() {
   }
 }
 
+function parseArgs() {
+  const args = {};
+  const argv = process.argv.slice(2);
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--oci-image' || a === '--image') {
+      args.ociImage = argv[i + 1];
+      i++;
+    }
+  }
+  // allow env fallback
+  if (!args.ociImage && process.env.OCI_IMAGE) args.ociImage = process.env.OCI_IMAGE;
+  return args;
+}
+
+async function runIfMain() {
+  const args = parseArgs();
+  const updated = syncManifest();
+
+  // If an OCI image was provided, update server.json package identifiers for registryType=="oci"
+  try {
+    const serverPath = path.join(process.cwd(), 'server.json');
+    if (fs.existsSync(serverPath)) {
+      const server = JSON.parse(fs.readFileSync(serverPath, 'utf8'));
+      let changed = false;
+
+      // Prefer explicit OCI image passed in via args
+      if (args.ociImage) {
+        if (Array.isArray(server.packages)) {
+          server.packages = server.packages.map(p => {
+            if (p && p.registryType === 'oci') {
+              if (p.identifier !== args.ociImage) {
+                p.identifier = args.ociImage;
+                changed = true;
+              }
+            }
+            return p;
+          });
+        }
+        if (changed) {
+          fs.writeFileSync(serverPath, JSON.stringify(server, null, 2) + '\n');
+          console.log(`✅ server.json OCI identifiers updated to ${args.ociImage}`);
+        } else {
+          console.log('✨ server.json OCI identifiers already up to date');
+        }
+      } else {
+        // No explicit image provided: try to align OCI identifiers to package.json version
+        const pkgPath = path.join(process.cwd(), 'package.json');
+        if (fs.existsSync(pkgPath)) {
+          const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+          const desiredTag = `v${pkg.version}`;
+          if (Array.isArray(server.packages)) {
+            server.packages = server.packages.map(p => {
+              if (p && p.registryType === 'oci' && typeof p.identifier === 'string') {
+                // Only update identifiers that reference this package name to avoid touching unrelated images
+                if (pkg.name && p.identifier.includes(pkg.name)) {
+                  // If already ends with desired tag, skip
+                  if (!p.identifier.endsWith(desiredTag)) {
+                    const lastColon = p.identifier.lastIndexOf(':');
+                    const lastSlash = p.identifier.lastIndexOf('/');
+                    if (lastColon > lastSlash) {
+                      // has a tag, replace it
+                      p.identifier = p.identifier.slice(0, lastColon + 1) + desiredTag;
+                    } else {
+                      // no tag present, append
+                      p.identifier = `${p.identifier}:${desiredTag}`;
+                    }
+                    changed = true;
+                    console.log(`  📝 Updated OCI identifier for package to ${p.identifier}`);
+                  }
+                }
+              }
+              return p;
+            });
+          }
+
+          if (changed) {
+            fs.writeFileSync(serverPath, JSON.stringify(server, null, 2) + '\n');
+            console.log(`✅ server.json OCI identifiers aligned to package.json version ${pkg.version}`);
+          } else {
+            console.log('✨ server.json OCI identifiers already match package.json version');
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('❌ Error updating server.json OCI identifiers:', err.message);
+    process.exit(1);
+  }
+
+  return updated;
+}
+
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1].endsWith('sync-manifest.mjs')) {
-  syncManifest();
+  runIfMain();
 }
 
 export { syncManifest };

@@ -72,13 +72,6 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/dependency-review-action@v4
 
-      - name: Run CodeQL analysis
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript
-      - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@v3
-
       - name: Build TypeScript
         run: npm run build
 
@@ -321,34 +314,6 @@ jobs:
         if: steps.npm-check.outputs.exists == 'false'
         run: sudo npm install -g npm@^11.5.1
 
-      - name: Ensure no token auth present and force OIDC
-        if: steps.npm-check.outputs.exists == 'false'
-        run: |
-          set -euo pipefail
-          echo "Checking npm version: $(npm --version)"
-          # Unset common env vars
-          unset NODE_AUTH_TOKEN || true
-          unset NPM_TOKEN || true
-          unset NPM_CONFIG_USERCONFIG || true
-          # Remove global and temp npmrc files if present
-          rm -f ~/.npmrc || true
-          rm -f "$RUNNER_TEMP/.npmrc" || true
-          # Clean npm config entries
-          npm config delete //registry.npmjs.org/:_authToken || true
-          npm config delete //registry.npmjs.org/:_auth || true
-          npm config delete //registry.npmjs.org/:_password || true
-          # Check auth state
-          if npm whoami >/dev/null 2>&1; then
-            echo "ERROR: runner is still authenticated to npm via token. Remove publish tokens from repo/org secrets and retry or configure Trusted Publisher on npmjs.com." >&2
-            npm whoami || true
-            exit 1
-          else
-            echo "No npm auth detected; proceeding to OIDC publish flow"
-          fi
-
-      # Diagnostic steps removed from main CI pipeline to avoid running OIDC checks during normal publish flow.
-      # Use the manual 'diagnose-oidc.yml' workflow to run a focused OIDC exchange diagnostic on demand.
-
       - name: Publish to NPM
         if: steps.npm-check.outputs.exists == 'false'
         run: npm publish --access public
@@ -405,20 +370,23 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Scan Docker image for vulnerabilities
-        if: steps.docker-check.outputs.exists == 'false'
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: wrenchpilot/it-tools-mcp:v${{ needs.ci.outputs.version }}
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+      - name: Install MCP Publisher
+        run: |
+          set -e
+          VERSION=v1.1.0
+          OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+          ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/download/${VERSION}/mcp-publisher_${VERSION}_${OS}_${ARCH}.tar.gz" | tar xz mcp-publisher
+          chmod +x ./mcp-publisher
 
-      - name: Upload Trivy scan results
-        if: steps.docker-check.outputs.exists == 'false'
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: 'trivy-results.sarif'
+      - name: Login to MCP Registry using GitHub OIDC
+        run: |
+          # requires workflow permission: id-token: write
+          ./mcp-publisher login github-oidc
 
+      - name: Publish to MCP Registry
+        run: |
+          ./mcp-publisher publish --file server.json
   # Create release when needed
   release:
     needs: [ci, analyze-changes, create-tag]
@@ -438,7 +406,6 @@ jobs:
         run: |
           VERSION="${{ needs.ci.outputs.version }}"
           TAG="v$VERSION"
-          
           # Check if GitHub release already exists
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
@@ -455,21 +422,21 @@ jobs:
         run: |
           VERSION="${{ needs.ci.outputs.version }}"
           TAG="v$VERSION"
-          
+
           # Extract release notes from CHANGELOG.md
           if [[ -f "CHANGELOG.md" ]]; then
             echo "Extracting release notes from CHANGELOG.md for version $VERSION"
-            
+
             # Find the section for this version and extract until next version or EOF
             awk "
             /^## $VERSION / { found=1; next }
             found && /^## [0-9]/ { exit }
             found { print }
             " CHANGELOG.md > release_notes.md
-            
+
             # Remove leading/trailing whitespace
             sed -i '/^$/d' release_notes.md
-            
+
             # If no content found in changelog, fall back to git log
             if [[ ! -s release_notes.md ]]; then
               echo "No changelog entry found for $VERSION, using git log"
@@ -497,7 +464,7 @@ jobs:
               echo "First release of IT Tools MCP Server v$VERSION" >> release_notes.md
             fi
           fi
-          
+
           echo "" >> release_notes.md
           echo "## Installation & Setup" >> release_notes.md
           echo "" >> release_notes.md

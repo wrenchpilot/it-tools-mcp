@@ -6,7 +6,7 @@
     "url": "https://github.com/wrenchpilot/it-tools-mcp",
     "source": "github"
   },
-  "status": "stable",
+  "status": "active",
   "icons": [
     {
       "src": "https://github.com/wrenchpilot/it-tools-mcp/blob/master/icons/icon.png?raw=true",
@@ -23,7 +23,7 @@
       ]
     }
   ],
-  "version": "5.8.13",
+  "version": "5.8.14",
   "packages": [
     {
       "registryType": "npm",
@@ -33,7 +33,69 @@
       "runtimeArguments": [],
       "packageArguments": [],
       "environmentVariables": [],
-      "version": "5.8.13",
+      "version": "5.8.14",
+      "transport": {
+        "type": "stdio"
+      }
+    },
+    {
+      "registryType": "oci",
+      "identifier": "docker.io/wrenchpilot/it-tools-mcp:v5.8.14",
+      "runtimeHint": "docker",
+      "runtimeArguments": [
+        {
+          "type": "positional",
+          "value": "run"
+        },
+        {
+          "type": "named",
+          "name": "-i"
+        },
+        {
+          "type": "named",
+          "name": "--rm"
+        },
+        {
+          "type": "named",
+          "name": "--init"
+        },
+        {
+          "type": "named",
+          "name": "--security-opt",
+          "value": "no-new-privileges:true"
+        },
+        {
+          "type": "named",
+          "name": "--cap-drop",
+          "value": "ALL"
+        },
+        {
+          "type": "named",
+          "name": "--read-only"
+        },
+        {
+          "type": "named",
+          "name": "--user",
+          "value": "1001:1001"
+        },
+        {
+          "type": "named",
+          "name": "--memory",
+          "value": "256m"
+        },
+        {
+          "type": "named",
+          "name": "--cpus",
+          "value": "0.5"
+        },
+        {
+          "type": "named",
+          "name": "--name",
+          "value": "it-tools-mcp"
+        }
+      ],
+      "packageArguments": [],
+      "environmentVariables": [],
       "transport": {
         "type": "stdio"
       }
