@@ -2,9 +2,10 @@
   "name": "it-tools-mcp",
   "displayName": "IT Tools MCP Server",
   "description": "MCP-compliant server access to over 100 IT tools and utilities commonly used by developers, system administrators, and IT professionals.",
-  "version": "5.8.13",
+  "version": "5.8.14",
   "author": "wrenchpilot",
   "license": "MIT",
+  "icon": "icons/icon.png",
   "homepage": "https://github.com/wrenchpilot/it-tools-mcp#readme",
   "repository": {
     "type": "git",
@@ -71,6 +72,494 @@
       "title": "ASCII Art Generation",
       "path": "screenshots/ascii-art-text-example.png",
       "description": "Creative ASCII art text generation"
+    }
+  ],
+  "server": {
+    "type": "node",
+    "mcp_config": {
+      "command": "npx",
+      "args": [
+        "it-tools-mcp"
+      ],
+      "env": {}
+    }
+  },
+  "tools": [
+    {
+      "name": "logging_setLevel",
+      "description": "Set the minimum logging level for MCP logging notifications. Available levels: debug, info, notice, warning, error, critical, alert, emergency"
+    },
+    {
+      "name": "logging_status",
+      "description": "Get current MCP logging configuration and status"
+    },
+    {
+      "name": "system_info",
+      "description": "Get comprehensive system information, server details, available tool categories, and resource usage. Example: system information, tool categories, installation guide"
+    },
+    {
+      "name": "decrypt_ansible_vault",
+      "description": "Decrypt Ansible Vault encrypted text"
+    },
+    {
+      "name": "encrypt_ansible_vault",
+      "description": "Encrypt text using Ansible Vault format"
+    },
+    {
+      "name": "generate_ansible_inventory",
+      "description": "Parse and validate Ansible inventory files"
+    },
+    {
+      "name": "parse_ansible_inventory",
+      "description": "Parse and validate Ansible inventory files"
+    },
+    {
+      "name": "show_ansible_reference",
+      "description": "Get Ansible commands reference and cheatsheet"
+    },
+    {
+      "name": "validate_ansible_playbook",
+      "description": "Validate Ansible playbook syntax and structure"
+    },
+    {
+      "name": "convert_hex_to_rgb",
+      "description": "Convert HEX color to RGB"
+    },
+    {
+      "name": "convert_rgb_to_hex",
+      "description": "Convert RGB color to HEX"
+    },
+    {
+      "name": "decode_jwt",
+      "description": "Decode JWT token (header and payload only)"
+    },
+    {
+      "name": "generate_basic_auth",
+      "description": "Generate HTTP Basic Authentication header"
+    },
+    {
+      "name": "generate_bip39",
+      "description": "Generate BIP39 mnemonic phrases"
+    },
+    {
+      "name": "generate_hmac",
+      "description": "Generate HMAC (Hash-based Message Authentication Code)"
+    },
+    {
+      "name": "generate_otp",
+      "description": "Generate Time-based One-Time Password (TOTP) codes"
+    },
+    {
+      "name": "generate_password",
+      "description": "Generate a secure password"
+    },
+    {
+      "name": "generate_token",
+      "description": "Generate secure random tokens"
+    },
+    {
+      "name": "hash_bcrypt",
+      "description": "Generate bcrypt hash or verify password against hash"
+    },
+    {
+      "name": "hash_md5",
+      "description": "Generate MD5 hash"
+    },
+    {
+      "name": "hash_sha1",
+      "description": "Generate SHA1 hash"
+    },
+    {
+      "name": "hash_sha256",
+      "description": "Generate SHA256 hash of input text. Example: \"hello\" → \"2cf24dba4f21d...\""
+    },
+    {
+      "name": "hash_sha512",
+      "description": "Generate SHA512 hash"
+    },
+    {
+      "name": "compare_json",
+      "description": "Compare two JSON objects and show differences"
+    },
+    {
+      "name": "convert_html_to_markdown",
+      "description": "Convert HTML to Markdown"
+    },
+    {
+      "name": "convert_json_to_csv",
+      "description": "Convert JSON to CSV format"
+    },
+    {
+      "name": "convert_json_to_toml",
+      "description": "Convert JSON to TOML format"
+    },
+    {
+      "name": "convert_markdown_to_html",
+      "description": "Convert Markdown to HTML"
+    },
+    {
+      "name": "convert_toml_to_json",
+      "description": "Convert TOML to JSON format"
+    },
+    {
+      "name": "format_json",
+      "description": "Format and prettify JSON with proper indentation. Example: {\"a\":1,\"b\":2} → formatted JSON with customizable spacing"
+    },
+    {
+      "name": "format_phone",
+      "description": "Parse and format phone numbers"
+    },
+    {
+      "name": "format_sql",
+      "description": "Format and prettify SQL queries"
+    },
+    {
+      "name": "format_xml",
+      "description": "Format and prettify XML"
+    },
+    {
+      "name": "format_yaml",
+      "description": "Format and prettify YAML"
+    },
+    {
+      "name": "minify_json",
+      "description": "Minify JSON by removing whitespace and unnecessary characters. Example: formatted JSON → compact single-line JSON"
+    },
+    {
+      "name": "convert_list",
+      "description": "Convert between different list formats (comma-separated, line-separated, etc.)"
+    },
+    {
+      "name": "format_html",
+      "description": "Format and beautify HTML code"
+    },
+    {
+      "name": "format_javascript",
+      "description": "Format and beautify JavaScript/CSS code"
+    },
+    {
+      "name": "generate_crontab",
+      "description": "Generate crontab expressions"
+    },
+    {
+      "name": "generate_markdown_toc",
+      "description": "Generate a table of contents from Markdown headers"
+    },
+    {
+      "name": "test_regex",
+      "description": "Test regular expressions against text"
+    },
+    {
+      "name": "convert_docker_compose_to_run",
+      "description": "Convert Docker Compose files to docker run commands"
+    },
+    {
+      "name": "convert_docker_run_to_compose",
+      "description": "Convert docker run commands to Docker Compose format"
+    },
+    {
+      "name": "generate_traefik_compose",
+      "description": "Generate Traefik Docker Compose configuration"
+    },
+    {
+      "name": "show_docker_reference",
+      "description": "Get Docker commands reference and cheatsheet"
+    },
+    {
+      "name": "validate_docker_compose",
+      "description": "Validate Docker Compose files for syntax errors, compatibility issues, and best practices. Example: check YAML syntax, service configuration, network setup"
+    },
+    {
+      "name": "convert_text_to_binary",
+      "description": "Convert text to binary and vice versa"
+    },
+    {
+      "name": "decode_base64",
+      "description": "Decode Base64 text back to original text. Example: \"SGVsbG8gV29ybGQ=\" → \"Hello World\""
+    },
+    {
+      "name": "decode_html",
+      "description": "Decode HTML entities"
+    },
+    {
+      "name": "decode_url",
+      "description": "URL decode text"
+    },
+    {
+      "name": "encode_base64",
+      "description": "Encode text to Base64 format. Example: \"Hello World\" → \"SGVsbG8gV29ybGQ=\""
+    },
+    {
+      "name": "encode_html",
+      "description": "Encode HTML entities"
+    },
+    {
+      "name": "encode_html_entities",
+      "description": "Extended HTML entity encoding/decoding"
+    },
+    {
+      "name": "encode_url",
+      "description": "URL encode text"
+    },
+    {
+      "name": "decode_safelink",
+      "description": "Decode Microsoft Outlook SafeLink URLs"
+    },
+    {
+      "name": "fang_url",
+      "description": "Defang or refang URLs for safe sharing (security analysis)"
+    },
+    {
+      "name": "identify_file_type",
+      "description": "Identify file type based on magic numbers/file signatures"
+    },
+    {
+      "name": "generate_qr_code",
+      "description": "Generate QR code for any text including URLs, WiFi networks, contact info, etc."
+    },
+    {
+      "name": "generate_svg_placeholder",
+      "description": "Generate SVG placeholder images"
+    },
+    {
+      "name": "generate_ulid",
+      "description": "Generate Universally Unique Lexicographically Sortable Identifier (ULID). Example: creates time-sortable unique IDs like '01ARZ3NDEKTSV4RRFFQ69G5FAV'"
+    },
+    {
+      "name": "generate_uuid",
+      "description": "Generate a universally unique identifier (UUID). Example: generates \"550e8400-e29b-41d4-a716-446655440000\""
+    },
+    {
+      "name": "calculate_percentage",
+      "description": "Calculate percentages, percentage of a number, or percentage change"
+    },
+    {
+      "name": "convert_number_base",
+      "description": "Convert numbers between different bases (binary, octal, decimal, hexadecimal)"
+    },
+    {
+      "name": "convert_roman_numerals",
+      "description": "Convert between Arabic numbers and Roman numerals"
+    },
+    {
+      "name": "convert_temperature",
+      "description": "Convert temperatures between Celsius, Fahrenheit, and Kelvin"
+    },
+    {
+      "name": "convert_unix_timestamp",
+      "description": "Convert between Unix timestamps and human-readable dates"
+    },
+    {
+      "name": "evaluate_math",
+      "description": "Safely evaluate mathematical expressions"
+    },
+    {
+      "name": "calculate_ip_subnet",
+      "description": "Calculate subnet information for IPv4"
+    },
+    {
+      "name": "calculate_ipv4_subnet",
+      "description": "Calculate IPv4 subnet information"
+    },
+    {
+      "name": "calculate_ipv6_subnet",
+      "description": "Calculate IPv6 subnet information"
+    },
+    {
+      "name": "cat",
+      "description": "Display content of a file"
+    },
+    {
+      "name": "convert_cidr_to_ip_range",
+      "description": "Convert CIDR notation to IP address range"
+    },
+    {
+      "name": "convert_ip_range_to_cidr",
+      "description": "Convert IP address range to CIDR notation(s)"
+    },
+    {
+      "name": "curl",
+      "description": "Make HTTP requests to web endpoints. Example: GET request to an API or POST data to a server"
+    },
+    {
+      "name": "dig",
+      "description": "Perform DNS lookup with dig command"
+    },
+    {
+      "name": "generate_ipv6_ula",
+      "description": "Generate IPv6 Unique Local Address (ULA) prefix"
+    },
+    {
+      "name": "generate_mac_address",
+      "description": "Generate random MAC address"
+    },
+    {
+      "name": "generate_random_port",
+      "description": "Generate random port numbers"
+    },
+    {
+      "name": "grep",
+      "description": "Search for patterns in files"
+    },
+    {
+      "name": "head",
+      "description": "Display the beginning of a file"
+    },
+    {
+      "name": "nslookup",
+      "description": "Perform DNS lookup on a hostname or IP address"
+    },
+    {
+      "name": "parse_url",
+      "description": "Parse URL into components"
+    },
+    {
+      "name": "ping",
+      "description": "Test network connectivity to a host. Example: ping google.com to check if it's reachable"
+    },
+    {
+      "name": "ps",
+      "description": "List running processes"
+    },
+    {
+      "name": "scp",
+      "description": "Copy files to or from a remote host using SFTP (SCP-like)"
+    },
+    {
+      "name": "ssh",
+      "description": "Connect to a target via SSH"
+    },
+    {
+      "name": "tail",
+      "description": "Display the end of a file"
+    },
+    {
+      "name": "telnet",
+      "description": "Test TCP connectivity to a host and port"
+    },
+    {
+      "name": "top",
+      "description": "Display system processes (snapshot)"
+    },
+    {
+      "name": "validate_iban",
+      "description": "Validate and parse IBAN (International Bank Account Number)"
+    },
+    {
+      "name": "convert_angle",
+      "description": "Convert between different angle units"
+    },
+    {
+      "name": "convert_energy",
+      "description": "Convert between different energy units"
+    },
+    {
+      "name": "convert_power",
+      "description": "Convert between different power units"
+    },
+    {
+      "name": "analyze_distinct_words",
+      "description": "Count distinct words in text and show their frequency"
+    },
+    {
+      "name": "analyze_text_stats",
+      "description": "Get statistics about text (character count, word count, etc.)"
+    },
+    {
+      "name": "capitalize_text",
+      "description": "Capitalize first letter of each word"
+    },
+    {
+      "name": "compare_text",
+      "description": "Compare two texts and show differences"
+    },
+    {
+      "name": "convert_text_to_camelcase",
+      "description": "Convert text to camelCase format. Example: 'hello world' → 'helloWorld', 'my-variable-name' → 'myVariableName'"
+    },
+    {
+      "name": "convert_text_to_kebabcase",
+      "description": "Convert text to kebab-case"
+    },
+    {
+      "name": "convert_text_to_lowercase",
+      "description": "Convert text to lowercase"
+    },
+    {
+      "name": "convert_text_to_nato",
+      "description": "Convert text to NATO phonetic alphabet"
+    },
+    {
+      "name": "convert_text_to_pascalcase",
+      "description": "Convert text to PascalCase"
+    },
+    {
+      "name": "convert_text_to_unicode",
+      "description": "Convert text to Unicode code points and vice versa"
+    },
+    {
+      "name": "convert_text_to_uppercase",
+      "description": "Convert text to uppercase"
+    },
+    {
+      "name": "generate_ascii_art",
+      "description": "Generate ASCII art text using figlet fonts. Example: 'Hello' → stylized ASCII text art, supports 295+ fonts"
+    },
+    {
+      "name": "generate_lorem_ipsum",
+      "description": "Generate Lorem Ipsum placeholder text"
+    },
+    {
+      "name": "generate_numeronym",
+      "description": "Generate numeronyms (abbreviations with numbers) from text"
+    },
+    {
+      "name": "obfuscate_string",
+      "description": "Obfuscate text by replacing characters with their HTML entities or other representations"
+    },
+    {
+      "name": "search_emoji",
+      "description": "Search for emojis by name or category"
+    },
+    {
+      "name": "show_unicode_names",
+      "description": "Convert text to Unicode character names"
+    },
+    {
+      "name": "slugify_text",
+      "description": "Convert text to URL-friendly slug format"
+    },
+    {
+      "name": "text_snakecase",
+      "description": "Convert text to snake_case"
+    },
+    {
+      "name": "convert_rem_px",
+      "description": "Convert between REM and PX units for CSS. Example: Convert 1.5rem to pixels, or 24px to rem units."
+    },
+    {
+      "name": "format_css",
+      "description": "Format and prettify CSS code"
+    },
+    {
+      "name": "lookup_http_status",
+      "description": "Get information about HTTP status codes"
+    },
+    {
+      "name": "lookup_mime_types",
+      "description": "Look up MIME types for file extensions"
+    },
+    {
+      "name": "lookup_port_numbers",
+      "description": "Look up common TCP/UDP port numbers and their services"
+    },
+    {
+      "name": "normalize_email",
+      "description": "Normalize email addresses (remove dots, plus aliases, etc.)"
+    },
+    {
+      "name": "show_device_info",
+      "description": "Get basic device/system information"
     }
   ]
 }
