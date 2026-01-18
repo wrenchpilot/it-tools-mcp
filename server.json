@@ -6,7 +6,24 @@
     "url": "https://github.com/wrenchpilot/it-tools-mcp",
     "source": "github"
   },
-  "version": "5.8.12",
+  "status": "stable",
+  "icons": [
+    {
+      "src": "https://github.com/wrenchpilot/it-tools-mcp/blob/master/icons/icon.png?raw=true",
+      "mimeType": "image/png",
+      "sizes": [
+        "32x32",
+        "48x48",
+        "64x64",
+        "96x96",
+        "128x128",
+        "192x192",
+        "256x256",
+        "512x512"
+      ]
+    }
+  ],
+  "version": "5.8.13",
   "packages": [
     {
       "registryType": "npm",
@@ -16,7 +33,7 @@
       "runtimeArguments": [],
       "packageArguments": [],
       "environmentVariables": [],
-      "version": "5.8.12",
+      "version": "5.8.13",
       "transport": {
         "type": "stdio"
       }
