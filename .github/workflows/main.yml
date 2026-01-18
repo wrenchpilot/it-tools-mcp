@@ -373,11 +373,13 @@ jobs:
       - name: Install MCP Publisher
         run: |
           set -e
-          VERSION=v1.1.0
+          # Use documented, released publisher version and fail fast on HTTP errors
+          VERSION=v1.0.0
           OS=$(uname -s | tr '[:upper:]' '[:lower:]')
           ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
-          curl -L "https://github.com/modelcontextprotocol/registry/releases/download/${VERSION}/mcp-publisher_${VERSION}_${OS}_${ARCH}.tar.gz" | tar xz mcp-publisher
-          chmod +x ./mcp-publisher
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/download/${VERSION}/mcp-publisher_${VERSION}_${OS}_${ARCH}.tar.gz" | tar xz mcp-publisher
+          sudo mv mcp-publisher /usr/local/bin/
+          sudo chmod +x /usr/local/bin/mcp-publisher
 
       - name: Login to MCP Registry using GitHub OIDC
         run: |
