@@ -39,8 +39,9 @@
     },
     {
       "registryType": "oci",
-      "identifier": "docker.io/wrenchpilot/it-tools-mcp:v5.10.0",
+      "identifier": "docker.io/wrenchpilot/it-tools-mcp",
       "version": "5.10.0",
+      "registryBaseUrl": "https://registry-1.docker.io",
       "runtimeHint": "docker",
       "runtimeArguments": [
         {
