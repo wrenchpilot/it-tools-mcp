@@ -76,23 +76,81 @@ function syncManifest() {
       const server = JSON.parse(fs.readFileSync(serverPath, 'utf8'));
       let serverChanged = false;
 
+      // Normalize package entries: ensure registryType (camelCase), set versions, and normalize OCI identifiers
+      if (Array.isArray(server.packages)) {
+        server.packages = server.packages.map((p, idx) => {
+          if (!p || typeof p !== 'object') return p;
+
+          // Migrate snake_case to camelCase if present
+          if (p.registry_type !== undefined) {
+            p.registryType = p.registry_type;
+            delete p.registry_type;
+            serverChanged = true;
+            console.log(`  📝 Migrated registry_type to registryType for package index ${idx}`);
+          }
+
+          // If this package references this repo (contains package name)
+          if (typeof p.identifier === 'string' && p.identifier.includes(pkg.name)) {
+            // Heuristic: if identifier contains a slash (docker registry) or registryType is oci => OCI image
+            const looksLikeOci = p.identifier.includes('/') || (p.registryType && p.registryType.toLowerCase() === 'oci');
+
+            if (looksLikeOci) {
+              // Remove any tag (after last colon following last slash)
+              let id = p.identifier;
+              const lastSlash = id.lastIndexOf('/');
+              const lastColon = id.lastIndexOf(':');
+              if (lastColon > lastSlash) {
+                id = id.slice(0, lastColon);
+              }
+
+              if (id !== p.identifier) {
+                p.identifier = id;
+                serverChanged = true;
+                console.log(`  📝 Updated OCI identifier for package index ${idx} to ${id}`);
+              }
+
+              if (p.version !== pkg.version) {
+                p.version = pkg.version;
+                serverChanged = true;
+                console.log(`  📝 Updated server.json.packages[${idx}].version to ${pkg.version}`);
+              }
+
+              if (p.registryType !== 'oci') {
+                p.registryType = 'oci';
+                serverChanged = true;
+                console.log(`  📝 Set registryType=oci for packages[${idx}]`);
+              }
+            } else {
+              // Treat as npm package
+              if (p.identifier !== pkg.name) {
+                p.identifier = pkg.name;
+                serverChanged = true;
+                console.log(`  📝 Normalized npm identifier for package index ${idx} to ${pkg.name}`);
+              }
+
+              if (p.version !== pkg.version) {
+                p.version = pkg.version;
+                serverChanged = true;
+                console.log(`  📝 Updated server.json.packages[${idx}].version to ${pkg.version}`);
+              }
+
+              if (p.registryType !== 'npm') {
+                p.registryType = 'npm';
+                serverChanged = true;
+                console.log(`  📝 Set registryType=npm for packages[${idx}]`);
+              }
+            }
+          }
+
+          return p;
+        });
+      }
+
+      // Ensure top-level version is in sync
       if (server.version !== pkg.version) {
         server.version = pkg.version;
         serverChanged = true;
         console.log(`  📝 Updated server.json version to ${pkg.version}`);
-      }
-
-      if (Array.isArray(server.packages)) {
-        server.packages.forEach((p, idx) => {
-          // If package item looks like this repo's package, update its version
-          if (p && p.identifier && p.version && p.identifier === pkg.name) {
-            if (p.version !== pkg.version) {
-              server.packages[idx].version = pkg.version;
-              serverChanged = true;
-              console.log(`  📝 Updated server.json.packages[${idx}].version to ${pkg.version}`);
-            }
-          }
-        });
       }
 
       if (serverChanged) {
