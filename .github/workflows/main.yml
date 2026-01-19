@@ -533,48 +533,48 @@ jobs:
           repository: wrenchpilot/it-tools-mcp
           readme-filepath: ./README.dockerhub.md
 
-  mcp-publish:
-    needs: [ci, analyze-changes, create-tag, publish, release]
-    if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.should-publish == 'true'
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    env:
-      MCP_PUBLISHER_TAG: v${{ needs.ci.outputs.version }} # Use release tag from CI for deterministic publishing
+  # mcp-publish:
+  #   needs: [ci, analyze-changes, create-tag, publish, release]
+  #   if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.should-publish == 'true'
+  #   timeout-minutes: 10
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     MCP_PUBLISHER_TAG: v${{ needs.ci.outputs.version }} # Use release tag from CI for deterministic publishing
 
-    permissions:
-      id-token: write   # required for GitHub OIDC auth to MCP Registry
-      contents: read
+  #   permissions:
+  #     id-token: write   # required for GitHub OIDC auth to MCP Registry
+  #     contents: read
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      # --- Install MCP Publisher (official) ---
-      - name: Install MCP Publisher
-        run: |
-          set -euo pipefail
+  #     # --- Install MCP Publisher (official) ---
+  #     - name: Install MCP Publisher
+  #       run: |
+  #         set -euo pipefail
 
-          URL="https://github.com/modelcontextprotocol/registry/releases/download/v1.0.0/mcp-publisher_1.0.0_linux_amd64.tar.gz"
+  #         URL="https://github.com/modelcontextprotocol/registry/releases/download/v1.0.0/mcp-publisher_1.0.0_linux_amd64.tar.gz"
 
-          echo "Downloading MCP Publisher from $URL"
-          if ! curl -fsSL "$URL" -o mcp-publisher.tar.gz; then
-            echo "ERROR: Failed to download mcp-publisher from $URL" >&2
-            exit 1
-          fi
+  #         echo "Downloading MCP Publisher from $URL"
+  #         if ! curl -fsSL "$URL" -o mcp-publisher.tar.gz; then
+  #           echo "ERROR: Failed to download mcp-publisher from $URL" >&2
+  #           exit 1
+  #         fi
 
-          tar xzf mcp-publisher.tar.gz mcp-publisher || { echo "Extraction failed" >&2; exit 1; }
-          chmod +x mcp-publisher
-          if [ -x ./mcp-publisher ]; then
-            ./mcp-publisher --version || true
-          else
-            echo "mcp-publisher binary missing after extraction" >&2
-            exit 1
-          fi
+  #         tar xzf mcp-publisher.tar.gz mcp-publisher || { echo "Extraction failed" >&2; exit 1; }
+  #         chmod +x mcp-publisher
+  #         if [ -x ./mcp-publisher ]; then
+  #           ./mcp-publisher --version || true
+  #         else
+  #           echo "mcp-publisher binary missing after extraction" >&2
+  #           exit 1
+  #         fi
 
-      # --- Authenticate to MCP Registry via GitHub OIDC ---
-      - name: Login to MCP Registry
-        run: ./mcp-publisher login github-oidc
+  #     # --- Authenticate to MCP Registry via GitHub OIDC ---
+  #     - name: Login to MCP Registry
+  #       run: ./mcp-publisher login github-oidc
 
-      # --- Publish server.json / metadata to MCP Registry ---
-      - name: Publish to MCP Registry
-        run: ./mcp-publisher publish
+  #     # --- Publish server.json / metadata to MCP Registry ---
+  #     - name: Publish to MCP Registry
+  #       run: ./mcp-publisher publish
