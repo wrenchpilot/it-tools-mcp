@@ -5,6 +5,8 @@ WORKDIR /app
 
 # Copy only necessary files for build (in order of change frequency)
 COPY package*.json ./
+# Ensure lifecycle scripts are available during `npm ci` which runs `prepare`
+COPY scripts/ ./scripts/
 COPY tsconfig.json ./
 
 # Install dependencies (this layer will be cached unless package.json changes)
@@ -32,6 +34,8 @@ LABEL io.modelcontextprotocol.server.name="io.github.wrenchpilot/it-tools-mcp"
 
 # Copy package files
 COPY package*.json ./
+# Also copy scripts used by lifecycle hooks (prepare)
+COPY scripts/ ./scripts/
 
 # Install only production dependencies
 # Try `npm ci` first (reproducible). If it fails for any reason (missing/invalid lockfile),
