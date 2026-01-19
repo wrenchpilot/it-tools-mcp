@@ -153,6 +153,26 @@ function syncManifest() {
         console.log(`  📝 Updated server.json version to ${pkg.version}`);
       }
 
+      // Remove unsupported top-level fields that the registry rejects (e.g., status)
+      if (server.status !== undefined) {
+        delete server.status;
+        serverChanged = true;
+        console.log('  📝 Removed unsupported top-level field: status');
+      }
+
+      // Clean up any lingering snake_case properties on packages
+      if (Array.isArray(server.packages)) {
+        server.packages.forEach((p, idx) => {
+          if (p && p.registry_type !== undefined) {
+            // migrate then remove
+            p.registryType = p.registry_type || p.registryType;
+            delete p.registry_type;
+            serverChanged = true;
+            console.log(`  📝 Removed lingering registry_type field for package index ${idx}`);
+          }
+        });
+      }
+
       if (serverChanged) {
         fs.writeFileSync(serverPath, JSON.stringify(server, null, 2) + '\n');
         console.log('✅ server.json synced with package.json');
