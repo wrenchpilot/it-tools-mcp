@@ -370,42 +370,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Install MCP Publisher
-        run: |
-          set -euo pipefail
-          URL="https://github.com/mcpcentral-io/mcpcentral-registry-publish-tool/archive/refs/tags/mcp.tar.gz"
-          TMPDIR=$(mktemp -d)
-          trap 'rm -rf "${TMPDIR}"' EXIT
-          echo "Downloading $URL"
-          curl -fSL "$URL" -o "$TMPDIR/mcp.tar.gz"
-
-          mkdir -p "$TMPDIR/extracted"
-          tar -xzf "$TMPDIR/mcp.tar.gz" -C "$TMPDIR/extracted"
-
-          echo "Archive top-level contents:"
-          ls -la "$TMPDIR/extracted" || true
-
-          # Locate the mcp-publisher binary inside the extracted archive
-          BINPATH=$(find "$TMPDIR/extracted" -type f -name 'mcp-publisher' -print -quit || true)
-          if [ -z "${BINPATH}" ]; then
-            echo "ERROR: mcp-publisher not found in archive. Showing first 512 bytes of the archive for debugging:" >&2
-            head -c 512 "$TMPDIR/mcp.tar.gz" | hexdump -C | sed -n '1,200p' >&2 || true
-            exit 2
-          fi
-
-          echo "Found binary at: $BINPATH"
-          sudo mv "$BINPATH" /usr/local/bin/mcp-publisher
-          sudo chmod +x /usr/local/bin/mcp-publisher
-          echo "/usr/local/bin/mcp-publisher installed"
-
-      - name: Login to MCP Registry using GitHub OIDC
-        run: |
-          # requires workflow permission: id-token: write
-          ./mcp-publisher login github-oidc
-
-      - name: Publish to MCP Registry
-        run: |
-          ./mcp-publisher publish --file server.json
   # Create release when needed
   release:
     needs: [ci, analyze-changes, create-tag]
@@ -568,3 +532,59 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: wrenchpilot/it-tools-mcp
           readme-filepath: ./README.dockerhub.md
+
+  mcp-publish:
+    needs: [ci, analyze-changes, create-tag, publish, release]
+    if: always() && !cancelled() && !failure() && needs.analyze-changes.outputs.should-publish == 'true'
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    env:
+      MCP_PUBLISHER_TAG: v${{ needs.ci.outputs.version }} # Use release tag from CI for deterministic publishing
+
+    permissions:
+      id-token: write   # required for GitHub OIDC auth to MCP Registry
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # --- Install MCP Publisher (official) ---
+      - name: Install MCP Publisher
+        run: |
+          set -euo pipefail
+          TAG="${MCP_PUBLISHER_TAG}"
+          ARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
+          OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+          if [ "$TAG" = "latest" ]; then
+            URL="https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_${OS}_${ARCH}.tar.gz"
+          else
+            URL="https://github.com/modelcontextprotocol/registry/releases/download/${TAG}/mcp-publisher_${OS}_${ARCH}.tar.gz"
+          fi
+          echo "Downloading MCP Publisher from $URL"
+          curl -fsSL "$URL" -o mcp-publisher.tar.gz
+
+          # Optional checksum verification if the project publishes a .sha256 file
+          CHECK_URL="${URL}.sha256"
+          if curl --head --fail "$CHECK_URL" >/dev/null 2>&1; then
+            echo "Found checksum at $CHECK_URL; verifying..."
+            REMOTE_SHA=$(curl -fsSL "$CHECK_URL" | awk '{print $1}')
+            LOCAL_SHA=$(sha256sum mcp-publisher.tar.gz 2>/dev/null | awk '{print $1}' || shasum -a 256 mcp-publisher.tar.gz | awk '{print $1}')
+            if [ -z "$LOCAL_SHA" ] || [ "$LOCAL_SHA" != "$REMOTE_SHA" ]; then
+              echo "Checksum verification failed" && exit 1
+            fi
+          else
+            echo "No checksum available; skipping verification. Consider pinning MCP_PUBLISHER_TAG and adding checksum file."
+          fi
+
+          tar xzf mcp-publisher.tar.gz mcp-publisher
+          chmod +x mcp-publisher
+          ./mcp-publisher --version || true
+
+      # --- Authenticate to MCP Registry via GitHub OIDC ---
+      - name: Login to MCP Registry
+        run: ./mcp-publisher login github-oidc
+
+      # --- Publish server.json / metadata to MCP Registry ---
+      - name: Publish to MCP Registry
+        run: ./mcp-publisher publish
