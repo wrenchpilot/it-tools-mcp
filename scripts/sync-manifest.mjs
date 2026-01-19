@@ -109,12 +109,6 @@ function syncManifest() {
                 console.log(`  📝 Updated OCI identifier for package index ${idx} to ${id}`);
               }
 
-              if (p.version !== pkg.version) {
-                p.version = pkg.version;
-                serverChanged = true;
-                console.log(`  📝 Updated server.json.packages[${idx}].version to ${pkg.version}`);
-              }
-
               if (p.registryType !== 'oci') {
                 p.registryType = 'oci';
                 serverChanged = true;
