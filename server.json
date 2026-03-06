@@ -22,7 +22,7 @@
       ]
     }
   ],
-  "version": "5.10.2",
+  "version": "5.10.3",
   "packages": [
     {
       "registryType": "npm",
@@ -32,14 +32,14 @@
       "runtimeArguments": [],
       "packageArguments": [],
       "environmentVariables": [],
-      "version": "5.10.2",
+      "version": "5.10.3",
       "transport": {
         "type": "stdio"
       }
     },
     {
       "registryType": "oci",
-      "identifier": "docker.io/wrenchpilot/it-tools-mcp:v5.10.2",
+      "identifier": "docker.io/wrenchpilot/it-tools-mcp:v5.10.3",
       "runtimeHint": "docker",
       "runtimeArguments": [
         {
