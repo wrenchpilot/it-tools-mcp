@@ -1,5 +1,12 @@
 # IT Tools MCP Server
 
+> [!WARNING]
+> **This project is deprecated and no longer maintained.**
+>
+> It was built as a learning exercise to explore AI-assisted development and the Model Context Protocol (MCP). No further updates, bug fixes, or pull requests will be accepted. The repository is kept for reference only.
+>
+> If you need an actively maintained MCP server with IT utilities, look for community alternatives.
+
 [![CI/CD Pipeline](https://github.com/wrenchpilot/it-tools-mcp/actions/workflows/main.yml/badge.svg)](https://github.com/wrenchpilot/it-tools-mcp/actions/workflows/main.yml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/wrenchpilot/it-tools-mcp?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
 [![Docker Image Size](https://img.shields.io/docker/image-size/wrenchpilot/it-tools-mcp/latest?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
@@ -404,7 +411,7 @@ src/
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow the guidelines below:
+> **This project is no longer accepting contributions.** It is archived for reference purposes only. The guidelines below are preserved for historical context.
 
 ### Commit Message Format
 

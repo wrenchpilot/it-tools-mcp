@@ -1,5 +1,9 @@
 # IT Tools MCP Server
 
+> **DEPRECATED: This image is no longer maintained.**
+>
+> This project was a learning exercise for AI-assisted development and the Model Context Protocol (MCP). No further updates will be published. The image remains available for reference but should not be used in production. No bug fixes, security patches, or new versions will be released.
+
 [![Docker Pulls](https://img.shields.io/docker/pulls/wrenchpilot/it-tools-mcp?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
 [![Docker Image Size](https://img.shields.io/docker/image-size/wrenchpilot/it-tools-mcp/latest?refresh=1)](https://hub.docker.com/r/wrenchpilot/it-tools-mcp)
 [![NPM Version](https://img.shields.io/npm/v/it-tools-mcp?color=blue)](https://www.npmjs.com/package/it-tools-mcp)
@@ -124,7 +128,7 @@ src/
 
 ## 🤝 Contributing
 
-Contributions welcome! Please submit a Pull Request on [GitHub](https://github.com/wrenchpilot/it-tools-mcp).
+This project is no longer accepting contributions. The repository is kept for reference only.
 
 ## 📄 License
 
